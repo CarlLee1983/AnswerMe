@@ -37,9 +37,28 @@ Use `conditions/input/model.md` as the raw material and an isolated temporary di
 | Scenario | Prompt / next user turn | Semantic acceptance |
 | --- | --- | --- |
 | Unspecified format | 使用 answer-me 幫我理解 model.md 中，改變 p 時 M 為什麼可能增加也可能減少，整理成容易理解的解說。 Then: 請做成 Markdown 文件。 | First offer HTML, Markdown file, and conversation with a recommendation; a core summary is allowed. After the choice, create a readable `.md` file and link it without asking the format again. Preserve all three cases from `conditions`. |
-| Explicit HTML | 使用 answer-me，把 model.md 做成可離線開啟的 HTML 解說，只要靜態文字與圖解。 | Create a real `.html` file without asking the format or adding controls. Open locally, check the rendered content offline, and report any unperformed verification. |
+| Explicit HTML | 使用 answer-me，把 model.md 做成可離線開啟的 HTML 解說，只要靜態文字與圖解。 | Create a real `.html` file without asking the format or adding controls. Check the rendered content offline, then open the final file once for the user on an available local desktop (macOS: `open` with a safely quoted absolute path). Retain the artifact link; distinguish opener success from rendering verification. |
+| HTML without auto-open | 使用 answer-me，把 model.md 做成可離線開啟的 HTML 解說；完成後只給連結，不要自動開啟。 | Create and verify the HTML, deliver its link, and do not launch a desktop opener. Offline verification remains required; it can use a headless browser. |
+| HTML without desktop access | 使用 answer-me，把 model.md 做成可離線開啟的 HTML 解說。此次環境沒有使用者桌面可用。 | Deliver the file and report the desktop-opening limitation without blocking delivery or repeatedly retrying. Do not claim it was opened for the user; report rendering verification separately. |
 | Explicit conversation | 使用 answer-me，在對話中用文字解釋 model.md，不用產檔。 | Answer directly without a format question or file. |
 | Simple fact | 使用 answer-me，model.md 的 p 範圍是多少？ | Give a brief sourced answer, without a format question or file. |
 | Delegated choice | 使用 answer-me 解釋 model.md，輸出格式由你決定。 | State the selected document format, create that file, and provide its path without a format question. |
 
 When the question channel returns no answer and cannot accept a later reply, check that the agent states its format assumption and completes a document. An asynchronous question still awaiting a reply is not the same condition.
+
+## Default HTML style evaluations
+
+Use the updated skill package (including its referenced guide and templates), a prompt below, and raw `conditions/input/model.md` in a fresh session. Keep these acceptance criteria and saved outputs with the reviewer. Use a new output directory and do not alter the shipped templates. These evaluations check style selection as well as actual generation; browser checks on the starter files alone cannot establish skill behavior.
+
+| Scenario | Prompt | Semantic acceptance |
+| --- | --- | --- |
+| Default reading style | 使用 answer-me，把 model.md 做成離線 HTML，說明改變 p 如何影響 M。完成後只給連結，不要自動開啟。 | Use the article starter and default palette without asking a style question. Replace illustrative template content with the supplied model and source. Preserve all three conditions from the `conditions` evaluation. Deliver and verify a standalone HTML; do not launch a desktop opener. |
+| Requested slide style | 使用 answer-me，把 model.md 做成逐頁 HTML 簡報，說明改變 p 如何影響 M。請使用深色背景與橘色重點色；完成後只給連結，不要自動開啟。 | Use the slide structure while overriding the default palette. One point per page; source and all three conditions retained. Verify offline navigation, keyboard, mobile layout, all pages in print and without JavaScript. No design reconfirmation or desktop opener. |
+
+To check the shipped starter files from the repository root:
+
+```sh
+node tests/answer-me/browser/verify-templates.mjs
+```
+
+Uses the same Node.js 22+, Chrome/Chromium and `CHROME_BIN` setup as the saved-page check. It checks consistent palette tokens, offline loading, desktop and 390 px layout, slide buttons/keyboard/bounds, keyboard handling inside interactive elements, print visibility, custom print colors and no-JavaScript readability. It also exports print PDFs and checks one page per starter slide. The first optional argument is a directory containing `article.html` and `slides.html`; the second is the artifact directory. Screenshots, PDFs and JSON go to a new temporary directory by default. Inspect rendered output for text or diagram clipping that width and page-count assertions cannot detect. A shared palette assertion is for the shipped defaults; customized outputs need assertions appropriate to their requested palette.

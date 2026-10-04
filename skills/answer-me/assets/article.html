@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>範例文章｜把主張與證據分開</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --ink: #21352b;
+      --muted: #526258;
+      --accent: #25634a;
+      --line: #d7ded5;
+      --soft: #e8efe5;
+      --code-bg: #eef1ea;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 16ch; margin: 0 0 24px; font-size: clamp(2.25rem, 6vw, 4rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    .flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 32px 0; }
+    .flow > div { min-width: 0; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .flow .step { display: block; margin-bottom: 16px; color: var(--accent); font-size: .78rem; font-weight: 700; }
+    .flow p { margin: 0; font-size: .95rem; line-height: 1.6; }
+    .flow .arrow { display: inline; color: var(--accent); }
+    .table-wrap, .code-wrap { max-width: 100%; overflow-x: auto; }
+    table { width: 100%; min-width: 620px; border-collapse: collapse; background: var(--surface); font-size: .9rem; }
+    caption { padding: 0 0 12px; text-align: left; color: var(--muted); font-size: .85rem; }
+    th, td { padding: 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; }
+    pre { width: max-content; min-width: 100%; margin: 0; padding: 24px; background: var(--code-bg); font: .85rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child { margin-bottom: 0; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow > div { padding: 16px; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav { display: none; }
+      section { padding-top: 20pt; }
+      .flow > div, .summary, .source-note { break-inside: avoid; }
+      .table-wrap, .code-wrap { overflow: visible; }
+      table { min-width: 0; font-size: 9pt; }
+      th, td { padding: 8pt; overflow-wrap: anywhere; }
+      pre { width: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Replace this illustrative article with sourced content. Remove every visible 「範例」 label only after the sample material is replaced and verified. -->
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">範例文章 · 示意內容</p>
+        <h1>把主張與證據分開</h1>
+        <p class="lead prose">一句話說得很肯定，不代表它已被證明。閱讀解說時，先找出主張，再看它依據什麼，最後確認證據的範圍。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">範例摘要</h2>
+          <p>把「我們認為會更快」和「在這組條件下量到更快」分開寫，讀者才能判斷結論能否用在自己的情境。</p>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#method">判讀流程</a></li>
+            <li><a href="#comparison">比較範例</a></li>
+            <li><a href="#example-code">文字範例</a></li>
+            <li><a href="#sources">來源與限制</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="method" aria-labelledby="method-title">
+        <div class="prose">
+          <h2 id="method-title">先問三個問題</h2>
+          <p>這個示意流程把判讀拆成三步。每一步都可以回頭修正前一步；箭頭只表示閱讀順序，並非實際系統流程。</p>
+        </div>
+        <div class="flow" role="group" aria-label="示意判讀流程：主張，證據，適用範圍">
+          <div><span class="step">01 · 主張 <span class="arrow" aria-hidden="true">→</span></span><h3>說了什麼？</h3><p>把可檢驗的句子寫清楚。</p></div>
+          <div><span class="step">02 · 證據 <span class="arrow" aria-hidden="true">→</span></span><h3>看到了什麼？</h3><p>指出來源、方法和觀測結果。</p></div>
+          <div><span class="step">03 · 範圍</span><h3>能推到哪裡？</h3><p>說明條件、例外與未知部分。</p></div>
+        </div>
+      </section>
+
+      <section id="comparison" aria-labelledby="comparison-title">
+        <div class="prose">
+          <h2 id="comparison-title">同一件事，可以寫得更可核對</h2>
+          <p>下表中的數字與情境都是<strong>虛構示意</strong>。它展示句子如何交代依據，沒有描述任何實際產品或測試。</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="比較範例表格，可水平捲動" tabindex="0">
+          <table>
+            <caption>範例句子的差異</caption>
+            <thead><tr><th scope="col">寫法</th><th scope="col">範例句子</th><th scope="col">讀者仍需知道</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">只有主張</th><td>「新流程更快。」</td><td>測量方法與比較對象。</td></tr>
+              <tr><th scope="row">附上示意證據</th><td>「在 10 次示意測量中，中位數由 8 秒變成 6 秒。」</td><td>工作量、環境與測量誤差；不能直接推論所有情境。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="example-code" aria-labelledby="code-title">
+        <div class="prose">
+          <h2 id="code-title">一段可直接套用的文字結構</h2>
+          <p>這是寫作格式示意，不是程式測試結果。先放結論，再緊跟可追溯的依據。</p>
+        </div>
+        <div class="code-wrap" role="region" aria-label="文字結構範例，可水平捲動" tabindex="0"><pre><code>主張：在條件 A 下，做法 B 的完成時間較短。
+證據：來源連結／檔案位置；測量方法；觀測值。
+限制：樣本數、環境差異，以及尚未測量的情境。</code></pre></div>
+      </section>
+
+      <section id="sources" aria-labelledby="sources-title">
+        <div class="source-note">
+          <h2 id="sources-title">範例來源與限制</h2>
+          <p>本文僅示範表達方式；流程、句子與數字均為自造示意材料，沒有外部來源，也不構成實際效能主張。</p>
+          <p>替換成真實內容時，請把原始資料、程式位置或測試紀錄連在對應主張附近，並列出尚未驗證的範圍。可回看<a href="#comparison">比較範例</a>確認句子是否交代了條件。</p>
+        </div>
+      </section>
+    </main>
+    <footer class="muted">範例文章 · 示意內容</footer>
+  </div>
+</body>
+</html>

@@ -32,6 +32,8 @@ Hook 預設使用 `.venv/bin/python`（若存在），否則 `python3`；可用 
 
 技能行為有變更時，依[演練說明](../tests/answer-me/README.md)用原始材料重新產出答案，再檢查語意及 HTML。已保存的範例可驗證瀏覽器檢查程式與既有成果，不能證明更新後的技能仍會產生相同品質。
 
+預設 HTML 模板變更時，執行 `node tests/answer-me/browser/verify-templates.mjs`，並檢視輸出的桌面、手機與列印截圖。它驗證模板的離線呈現、簡報導覽與降級閱讀；樣式選擇規則變更時，另依演練說明的 Default HTML style evaluations 重新產生成品。
+
 重跑已保存 HTML 的瀏覽器檢查：
 
 ```sh

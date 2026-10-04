@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>改變 p 如何影響平均時間 M</title>
+  <style>
+    :root { --bg:#f7f6f2; --surface:#fff; --ink:#21352b; --muted:#526258; --accent:#25634a; --line:#d7ded5; --soft:#e8efe5; --code-bg:#eef1ea; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.8 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .page { width:min(100% - 32px,1120px); margin:auto; padding:48px 0 96px; }
+    .prose { max-width:72ch; }
+    h1,h2 { line-height:1.25; letter-spacing:-.025em; }
+    h1 { max-width:17ch; margin:0 0 24px; font-size:clamp(2.25rem,6vw,4rem); }
+    h2 { margin:0 0 16px; font-size:clamp(1.5rem,3vw,2rem); }
+    p { margin:0 0 24px; }
+    a { color:var(--accent); text-underline-offset:.2em; }
+    :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    .eyebrow { margin:0 0 16px; color:var(--accent); font-size:.78rem; font-weight:700; letter-spacing:.08em; }
+    .lead { font-size:1.2rem; line-height:1.65; }
+    .intro { padding-bottom:32px; border-bottom:1px solid var(--line); }
+    .summary { max-width:72ch; margin:32px 0 0; padding:24px; background:var(--soft); border-left:3px solid var(--accent); }
+    .summary p:last-child { margin:0; }
+    nav ul { display:flex; flex-wrap:wrap; gap:8px 24px; margin:24px 0 0; padding:0; list-style:none; font-size:.9rem; }
+    section { padding-top:56px; }
+    .formula { width:fit-content; max-width:100%; overflow-x:auto; margin:24px 0; padding:16px 24px; background:var(--code-bg); font:1.2rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:24px 0; }
+    .control { min-width:0; padding:20px; background:var(--surface); border:1px solid var(--line); }
+    label { display:block; font-weight:700; }
+    .control p { margin:0 0 8px; color:var(--muted); font-size:.85rem; line-height:1.5; }
+    input[type=range] { width:100%; accent-color:var(--accent); }
+    output { color:var(--accent); font-weight:700; }
+    .result { padding:24px; background:var(--soft); border-left:3px solid var(--accent); }
+    .result strong { font-size:1.45rem; }
+    .result p { margin:8px 0 0; }
+    .compare { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:24px 0; }
+    .compare > div { min-width:0; padding:20px; background:var(--surface); border:1px solid var(--line); }
+    .compare b { display:block; color:var(--accent); }
+    .compare p { margin:8px 0 0; font-size:.92rem; line-height:1.55; }
+    .source { padding:24px; background:var(--surface); border:1px solid var(--line); }
+    .source p:last-child { margin:0; }
+    footer { margin-top:64px; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    @media (max-width:700px) { body { font-size:17px; } .page { padding-top:32px; } section { padding-top:40px; } .controls,.compare { grid-template-columns:1fr; } }
+    @media print { body { font-size:11pt; print-color-adjust:exact; -webkit-print-color-adjust:exact; } .page { width:100%; padding:0; } nav { display:none; } section { padding-top:20pt; } .control,.compare>div,.result,.source { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <div class="page"><main>
+    <header class="intro">
+      <p class="eyebrow">示意模型 · 互動文章</p>
+      <h1>改變 p，平均時間 M 會怎麼變？</h1>
+      <p class="lead prose">p 是走路徑 A 的比例。提高 p，就是把一部分工作從 B 移到 A；平均時間會朝 A 的時間靠近。</p>
+      <div class="summary"><h2>先看結論</h2><p>若 A 比 B 快，p 越大，M 越小；若 A 比 B 慢，M 越大；兩者一樣快時，M 不變。這只適用於下方的加權平均示意模型。</p></div>
+      <nav aria-label="本文段落"><ul><li><a href="#model">模型與起點</a></li><li><a href="#try">自己調整</a></li><li><a href="#direction">方向如何判斷</a></li><li><a href="#source">來源與限制</a></li></ul></nav>
+    </header>
+    <section id="model" class="prose"><h2>模型與起點</h2><p>A、B 是兩條路徑各自的處理時間，單位為毫秒。p 介於 0 和 1；1 − p 是走 B 的比例。</p><div class="formula" aria-label="M 等於 p 乘 A 加上括號 1 減 p 括號乘 B">M = p × A + (1 − p) × B</div><p>來源給的起點是 p = 0.5、A = 20 ms、B = 80 ms。因此 M = 0.5 × 20 + 0.5 × 80 = <strong>50 ms</strong>。</p></section>
+    <section id="try"><div class="prose"><h2>自己調整 p、A、B</h2><p>拖曳滑桿。先固定 A = 20、B = 80，只改 p；再交換 A、B 的快慢，觀察結論何時反轉。所有數字都是模型計算，並非實測。</p></div>
+      <div class="controls">
+        <div class="control"><label for="p">p：走 A 的比例 <output id="p-value" for="p">0.50</output></label><p>0 到 1；例如 0.50 代表一半走 A。</p><input id="p" type="range" min="0" max="1" step="0.01" value="0.5"></div>
+        <div class="control"><label for="a">A：路徑 A 時間 <output id="a-value" for="a">20 ms</output></label><p>可調整 0 到 100 毫秒。</p><input id="a" type="range" min="0" max="100" step="1" value="20"></div>
+        <div class="control"><label for="b">B：路徑 B 時間 <output id="b-value" for="b">80 ms</output></label><p>可調整 0 到 100 毫秒。</p><input id="b" type="range" min="0" max="100" step="1" value="80"></div>
+      </div>
+      <div class="result" role="status" aria-live="polite"><strong>M = <output id="m-value">50.0</output> ms</strong><p id="calculation">0.50 × 20 + 0.50 × 80 = 50.0 ms</p><p id="direction">現在 A 比 B 快；提高 p 會降低 M。</p></div>
+    </section>
+    <section id="direction"><div class="prose"><h2>用 A − B 判斷方向</h2><p>把公式改寫為 M = B + p × (A − B)。因此 p 每增加 0.1，M 就改變 0.1 × (A − B) ms。方向取決於 A 和 B 的大小，不能單靠 p 判斷。</p></div><div class="compare" role="group" aria-label="三種關係與改變 p 的結果"><div><b>A &lt; B</b><p>路徑 A 較快；提高 p 使 M 下降。起點從 p = 0.5 提到 1，M 由 50 降到 20 ms。</p></div><div><b>A &gt; B</b><p>路徑 A 較慢；提高 p 使 M 上升。例如 A = 80、B = 20，同樣從 p = 0.5 提到 1，M 由 50 升到 80 ms。</p></div><div><b>A = B</b><p>兩條路徑同速；改變 p 不影響 M。例如 A = B = 50 ms，任何 p 都有 M = 50 ms。</p></div></div></section>
+    <section id="source" class="prose"><div class="source"><h2>來源與限制</h2><p>模型、變數範圍與起始條件來自<a href="../../../tests/answer-me/conditions/input/model.md">提供的 model.md</a>。上方其他情境與數值是依同一公式計算的示例。</p><p>這是加權平均示意，不是產品量測數據。它只描述 A、B 固定時改變分流比例的結果；若調整 p 也改變兩條路徑的處理時間，這個固定 A、B 的方向判斷便不能直接套用。</p></div></section>
+  </main><footer>兩條處理路徑的平均耗時 · 離線可讀</footer></div>
+  <script>
+    (() => {
+      const p = document.getElementById('p'), a = document.getElementById('a'), b = document.getElementById('b');
+      function update() {
+        const P = Number(p.value), A = Number(a.value), B = Number(b.value), M = P*A+(1-P)*B;
+        document.getElementById('p-value').value = P.toFixed(2);
+        document.getElementById('a-value').value = `${A} ms`;
+        document.getElementById('b-value').value = `${B} ms`;
+        document.getElementById('m-value').value = M.toFixed(1);
+        document.getElementById('calculation').textContent = `${P.toFixed(2)} × ${A} + ${(1-P).toFixed(2)} × ${B} = ${M.toFixed(1)} ms`;
+        document.getElementById('direction').textContent = A < B ? '現在 A 比 B 快；提高 p 會降低 M。' : A > B ? '現在 A 比 B 慢；提高 p 會增加 M。' : '現在 A 與 B 一樣快；改變 p 不影響 M。';
+      }
+      for (const input of [p,a,b]) input.addEventListener('input', update);
+      update();
+    })();
+  </script>
+</body>
+</html>

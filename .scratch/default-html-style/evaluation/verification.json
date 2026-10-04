@@ -1,0 +1,127 @@
+{
+  "article": {
+    "initial": {
+      "title": "改變 p 如何影響平均時間 M",
+      "protocol": "file:",
+      "m": "50.0",
+      "bodyWidth": 1200,
+      "viewport": 1200,
+      "source": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md"
+    },
+    "lower": {
+      "m": "20.0",
+      "direction": "現在 A 比 B 快；提高 p 會降低 M。"
+    },
+    "higher": {
+      "m": "80.0",
+      "direction": "現在 A 比 B 慢；提高 p 會增加 M。"
+    },
+    "equal": {
+      "m": "50.0",
+      "direction": "現在 A 與 B 一樣快；改變 p 不影響 M。"
+    },
+    "mobile": {
+      "bodyWidth": 390,
+      "viewport": 390
+    },
+    "print": {
+      "background": "rgb(247, 246, 242)",
+      "slides": [],
+      "controls": null
+    },
+    "runtimeErrors": [],
+    "remoteRequests": []
+  },
+  "slides": {
+    "initial": {
+      "title": "改變 p 如何影響 M｜逐頁簡報",
+      "protocol": "file:",
+      "m": "50.0",
+      "bodyWidth": 1200,
+      "viewport": 1200,
+      "source": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md"
+    },
+    "lower": {
+      "m": "20.0",
+      "direction": "A 比 B 快，提高 p 會降低 M。"
+    },
+    "higher": {
+      "m": "80.0",
+      "direction": "A 比 B 慢，提高 p 會增加 M。"
+    },
+    "equal": {
+      "m": "50.0",
+      "direction": "A 與 B 一樣快，改變 p 不影響 M。"
+    },
+    "slides": {
+      "first": {
+        "count": "1 / 5",
+        "visible": 1,
+        "prevDisabled": true,
+        "nextDisabled": false
+      },
+      "second": {
+        "count": "2 / 5",
+        "visible": 1,
+        "prevDisabled": false,
+        "nextDisabled": false
+      },
+      "last": {
+        "count": "5 / 5",
+        "visible": 1,
+        "prevDisabled": false,
+        "nextDisabled": true
+      },
+      "home": {
+        "count": "1 / 5",
+        "visible": 1,
+        "prevDisabled": true,
+        "nextDisabled": false
+      }
+    },
+    "mobile": {
+      "bodyWidth": 390,
+      "viewport": 390
+    },
+    "print": {
+      "background": "rgb(21, 23, 25)",
+      "slides": [
+        "block",
+        "block",
+        "block",
+        "block",
+        "block"
+      ],
+      "controls": "none"
+    },
+    "runtimeErrors": [],
+    "remoteRequests": [],
+    "additional": {
+      "third": {
+        "page": "3 / 5",
+        "scrollWidth": 1200,
+        "viewport": 1200,
+        "slideHeight": 638,
+        "visibleHeight": 638
+      },
+      "thirdMobile": {
+        "page": "3 / 5",
+        "scrollWidth": 390,
+        "viewport": 390
+      },
+      "noJavaScript": {
+        "enhanced": false,
+        "slides": [
+          "block",
+          "block",
+          "block",
+          "block",
+          "block"
+        ],
+        "controls": "none"
+      },
+      "runtimeErrors": [],
+      "remoteRequests": []
+    }
+  }
+}

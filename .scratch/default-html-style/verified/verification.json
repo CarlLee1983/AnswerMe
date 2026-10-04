@@ -1,0 +1,131 @@
+{
+  "article": {
+    "fileProtocol": true,
+    "offline": true,
+    "palette": {
+      "--bg": "#f7f6f2",
+      "--surface": "#ffffff",
+      "--ink": "#21352b",
+      "--muted": "#526258",
+      "--accent": "#25634a",
+      "--line": "#d7ded5",
+      "--soft": "#e8efe5",
+      "--code-bg": "#eef1ea"
+    },
+    "desktop": {
+      "width": 1200,
+      "scrollWidth": 1200
+    },
+    "mobile": [
+      {
+        "width": 390,
+        "scrollWidth": 390
+      }
+    ],
+    "print": {
+      "palette": {
+        "--bg": "#f7f6f2",
+        "--surface": "#ffffff",
+        "--ink": "#21352b",
+        "--muted": "#526258",
+        "--accent": "#25634a",
+        "--line": "#d7ded5",
+        "--soft": "#e8efe5",
+        "--code-bg": "#eef1ea"
+      },
+      "printedPages": 2,
+      "customPalette": {
+        "--bg": "#16191d",
+        "--surface": "#20262c",
+        "--ink": "#f3f0e8",
+        "--muted": "#c2c9d0",
+        "--accent": "#ffb36b",
+        "--line": "#49525b",
+        "--soft": "#2b333b",
+        "--code-bg": "#252d35"
+      }
+    },
+    "runtimeErrors": [],
+    "remoteRequests": []
+  },
+  "slides": {
+    "fileProtocol": true,
+    "offline": true,
+    "palette": {
+      "--bg": "#f7f6f2",
+      "--surface": "#ffffff",
+      "--ink": "#21352b",
+      "--muted": "#526258",
+      "--accent": "#25634a",
+      "--line": "#d7ded5",
+      "--soft": "#e8efe5",
+      "--code-bg": "#eef1ea"
+    },
+    "desktop": {
+      "width": 1200,
+      "scrollWidth": 1200
+    },
+    "mobile": [
+      {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      {
+        "width": 390,
+        "scrollWidth": 390
+      }
+    ],
+    "navigation": {
+      "count": 5,
+      "buttons": true,
+      "arrows": true,
+      "homeEnd": true,
+      "bounds": true,
+      "interactiveTargets": true,
+      "lastPageLabel": "5 / 5"
+    },
+    "print": {
+      "palette": {
+        "--bg": "#f7f6f2",
+        "--surface": "#ffffff",
+        "--ink": "#21352b",
+        "--muted": "#526258",
+        "--accent": "#25634a",
+        "--line": "#d7ded5",
+        "--soft": "#e8efe5",
+        "--code-bg": "#eef1ea"
+      },
+      "printedPages": 5,
+      "customPalette": {
+        "--bg": "#16191d",
+        "--surface": "#20262c",
+        "--ink": "#f3f0e8",
+        "--muted": "#c2c9d0",
+        "--accent": "#ffb36b",
+        "--line": "#49525b",
+        "--soft": "#2b333b",
+        "--code-bg": "#252d35"
+      }
+    },
+    "runtimeErrors": [],
+    "remoteRequests": []
+  },
+  "noScript": {
+    "count": 5,
+    "allVisible": true,
+    "runtimeErrors": [],
+    "remoteRequests": []
+  }
+}

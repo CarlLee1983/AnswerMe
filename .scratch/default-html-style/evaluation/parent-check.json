@@ -1,0 +1,16 @@
+{
+  "article": {
+    "p": 0.6,
+    "m": 44,
+    "printedPages": 3,
+    "runtimeErrors": [],
+    "remoteRequests": []
+  },
+  "slides": {
+    "p": 0.6,
+    "m": 44,
+    "printedPages": 5,
+    "runtimeErrors": [],
+    "remoteRequests": []
+  }
+}

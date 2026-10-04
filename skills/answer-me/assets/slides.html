@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>範例投影片｜把主張與證據分開</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --ink: #21352b;
+      --muted: #526258;
+      --accent: #25634a;
+      --line: #d7ded5;
+      --soft: #e8efe5;
+      --code-bg: #eef1ea;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .frame { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 24px 0 56px; }
+    .masthead { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+    .masthead p { margin: 0; }
+    #deck { min-width: 0; }
+    .slide { min-height: min(640px, calc(100vh - 152px)); padding: clamp(32px, 6vw, 80px); margin: 24px 0; background: var(--surface); border: 1px solid var(--line); }
+    .enhanced .slide[hidden] { display: none; }
+    .eyebrow { margin: 0 0 32px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2 { max-width: 20ch; margin: 0 0 32px; line-height: 1.18; letter-spacing: -.03em; font-size: clamp(2.25rem, 5vw, 4rem); }
+    p { max-width: 62ch; margin: 0 0 24px; }
+    .lead { font-size: clamp(1.15rem, 2.2vw, 1.45rem); }
+    .statement { max-width: 28ch; padding-left: 24px; border-left: 3px solid var(--accent); font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.4; }
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px 0 0; padding: 0; list-style: none; }
+    .steps li { min-width: 0; padding: 24px; background: var(--soft); }
+    .steps strong { display: block; margin-bottom: 12px; color: var(--accent); }
+    .steps span { display: block; font-size: .9rem; }
+    .evidence { max-width: 64ch; padding: 24px; background: var(--soft); }
+    .evidence strong { display: block; margin-bottom: 8px; }
+    .evidence p { margin: 0; }
+    .quiet { color: var(--muted); font-size: .9rem; }
+    #slide-controls { display: none; align-items: center; justify-content: space-between; gap: 16px; max-width: 1120px; margin: 0 auto; }
+    .enhanced #slide-controls { display: flex; }
+    #slide-controls button { min-width: 96px; padding: 8px 16px; border: 1px solid var(--accent); border-radius: 0; background: var(--surface); color: var(--accent); cursor: pointer; }
+    #slide-controls button:hover:not(:disabled) { background: var(--soft); }
+    #slide-controls button:disabled { border-color: var(--line); color: var(--muted); cursor: default; }
+    #page-count { color: var(--muted); font-size: .85rem; text-align: center; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .slide { min-height: 0; padding: 32px 24px; }
+      .steps { grid-template-columns: 1fr; gap: 8px; }
+      .steps li { padding: 16px; }
+      .masthead { flex-wrap: wrap; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 15pt; }
+      .frame { width: 100%; padding: 0; }
+      .masthead, #slide-controls { display: none !important; }
+      .slide, .enhanced .slide[hidden] { display: block !important; min-height: 0; margin: 0; padding: 36pt; border: 0; break-after: page; }
+      .slide:last-child { break-after: auto; }
+      .steps li, .evidence { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Replace all illustrative slides and source notes with verified material. Remove visible 「範例」 labels only after real content is supplied. -->
+  <div class="frame">
+    <header class="masthead"><p>範例投影片 · 示意內容</p><p>把主張與證據分開</p></header>
+    <main id="deck" aria-label="範例投影片">
+      <section class="slide" aria-labelledby="slide-1-title">
+        <p class="eyebrow">範例 01 / 問題</p>
+        <h1 id="slide-1-title">說得肯定，仍需要證據。</h1>
+        <p class="lead">這組投影片示範如何讓讀者看見一個結論從哪裡來，以及它能用到哪裡。</p>
+        <p class="quiet">以下情境與數字均為自造示意材料。</p>
+      </section>
+      <section class="slide" aria-labelledby="slide-2-title">
+        <p class="eyebrow">範例 02 / 主張</p>
+        <h2 id="slide-2-title">先把可檢驗的句子寫清楚。</h2>
+        <p class="statement">「在條件 A 下，做法 B 的完成時間較短。」</p>
+        <p class="quiet">條件與比較對象是句子的一部分；缺少它們，讀者無法核對。</p>
+      </section>
+      <section class="slide" aria-labelledby="slide-3-title">
+        <p class="eyebrow">範例 03 / 證據</p>
+        <h2 id="slide-3-title">緊跟觀測值與來源。</h2>
+        <div class="evidence"><strong>虛構示意</strong><p>10 次示意測量的中位數由 8 秒變成 6 秒。實際解說應在這裡提供原始紀錄或測試位置。</p></div>
+        <p class="quiet">這裡的數字不是實測結果，也不指向任何實際產品。</p>
+      </section>
+      <section class="slide" aria-labelledby="slide-4-title">
+        <p class="eyebrow">範例 04 / 限制</p>
+        <h2 id="slide-4-title">最後說明不能推論什麼。</h2>
+        <p class="lead">樣本、環境與測量誤差都會影響結論。只有這組示意數字，無法宣稱所有情境都更快。</p>
+        <p class="quiet">來源說明：本組投影片沒有外部來源；所有例子均為教學示意。</p>
+      </section>
+      <section class="slide" aria-labelledby="slide-5-title">
+        <p class="eyebrow">範例 05 / 帶走一個方法</p>
+        <h2 id="slide-5-title">依序核對三件事。</h2>
+        <ol class="steps">
+          <li><strong>01 · 主張</strong><span>說了什麼、在哪些條件下成立？</span></li>
+          <li><strong>02 · 證據</strong><span>看到什麼、在哪裡能查到？</span></li>
+          <li><strong>03 · 範圍</strong><span>還有哪些情境未被驗證？</span></li>
+        </ol>
+      </section>
+    </main>
+    <nav id="slide-controls" aria-label="投影片導覽">
+      <button id="previous" type="button" aria-label="上一頁">上一頁</button>
+      <output id="page-count" aria-live="polite"></output>
+      <button id="next" type="button" aria-label="下一頁">下一頁</button>
+    </nav>
+  </div>
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('#deck .slide')];
+      const previous = document.querySelector('#previous');
+      const next = document.querySelector('#next');
+      const count = document.querySelector('#page-count');
+      let index = 0;
+
+      function show(nextIndex) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, position) => { slide.hidden = position !== index; });
+        previous.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+        count.value = `${index + 1} / ${slides.length}`;
+      }
+
+      previous.addEventListener('click', () => show(index - 1));
+      next.addEventListener('click', () => show(index + 1));
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      document.addEventListener('touchstart', event => {
+        if (event.touches.length === 1) {
+          touchStartX = event.touches[0].clientX;
+          touchStartY = event.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', event => {
+        if (event.changedTouches.length === 1) {
+          const deltaX = event.changedTouches[0].clientX - touchStartX;
+          const deltaY = event.changedTouches[0].clientY - touchStartY;
+          // Trigger swipe only when horizontal swipe exceeds 48px and is greater than vertical movement
+          if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+            if (deltaX < 0) show(index + 1);
+            else show(index - 1);
+          }
+        }
+      }, { passive: true });
+
+      document.addEventListener('keydown', event => {
+        if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+            event.target instanceof Element &&
+            event.target.closest('a, button, input, select, textarea, [contenteditable], [role="button"]')) return;
+        const destination = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: slides.length - 1 }[event.key];
+        if (destination === undefined) return;
+        event.preventDefault();
+        show(destination);
+      });
+      document.documentElement.classList.add('enhanced');
+      show(0);
+    })();
+  </script>
+</body>
+</html>

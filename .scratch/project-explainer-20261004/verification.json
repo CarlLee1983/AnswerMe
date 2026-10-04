@@ -1,0 +1,19 @@
+{
+  "fileProtocol": true,
+  "offline": true,
+  "desktop": {
+    "title": "Answer Me｜專案解說",
+    "sections": 6,
+    "width": 1200,
+    "scrollWidth": 1200
+  },
+  "mobile": {
+    "width": 390,
+    "scrollWidth": 390
+  },
+  "navigation": "example and checks anchors passed",
+  "quickCheck": "python3 scripts/check.py passed",
+  "scope": "This explainer only; no fresh full skill behavior evaluation",
+  "runtimeErrors": [],
+  "remoteRequests": []
+}

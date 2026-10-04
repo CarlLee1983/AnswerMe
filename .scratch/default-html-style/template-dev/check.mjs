@@ -1,0 +1,38 @@
+import { withOfflinePage } from '../../../tests/answer-me/browser/cdp.mjs';
+import { resolve } from 'node:path';
+const root = resolve('skills/answer-me/assets');
+const article = await withOfflinePage(`${root}/article.html`, async ({ send, evaluate, screenshot }) => {
+  const desktop = await evaluate(`({ overflow: document.documentElement.scrollWidth > innerWidth, title: document.title, main: !!document.querySelector('main#content') })`);
+  await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  const mobile = await evaluate(`({ overflow: document.documentElement.scrollWidth > innerWidth, tableScroll: document.querySelector('.table-wrap').scrollWidth > document.querySelector('.table-wrap').clientWidth, codeScroll: document.querySelector('.code-wrap').scrollWidth > document.querySelector('.code-wrap').clientWidth })`);
+  await screenshot('.scratch/default-html-style/template-dev/article-mobile.png');
+  return { desktop, mobile };
+});
+const slides = await withOfflinePage(`${root}/slides.html`, async ({ send, evaluate, screenshot }) => {
+  const snapshot = () => evaluate(`({ current: document.querySelector('#page-count').value, visible: [...document.querySelectorAll('.slide')].filter(s => !s.hidden).length, firstDisabled: document.querySelector('#previous').disabled, lastDisabled: document.querySelector('#next').disabled, overflow: document.documentElement.scrollWidth > innerWidth })`);
+  const first = await snapshot();
+  await evaluate(`document.querySelector('#previous').click()`);
+  const beforeFirst = await snapshot();
+  await evaluate(`document.querySelector('#next').click()`);
+  const second = await snapshot();
+  await evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', {key: 'End', bubbles: true}))`);
+  const last = await snapshot();
+  await evaluate(`document.querySelector('#next').click()`);
+  const afterLast = await snapshot();
+  await evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home', bubbles: true}))`);
+  const home = await snapshot();
+  await evaluate(`document.querySelector('#next').focus(); document.querySelector('#next').dispatchEvent(new KeyboardEvent('keydown', {key: 'End', bubbles: true}))`);
+  const controlTarget = await snapshot();
+  await send('Emulation.setEmulatedMedia', { media: 'print' });
+  const print = await evaluate(`({ shown: [...document.querySelectorAll('.slide')].filter(s => getComputedStyle(s).display !== 'none').length, nav: getComputedStyle(document.querySelector('#slide-controls')).display })`);
+  await send('Emulation.setEmulatedMedia', { media: 'screen' });
+  await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  const mobile = await snapshot();
+  await screenshot('.scratch/default-html-style/template-dev/slides-mobile.png');
+  await send('Emulation.setScriptExecutionDisabled', { value: true });
+  await send('Page.reload');
+  await new Promise(r => setTimeout(r, 250));
+  const noJs = await evaluate(`({ enhanced: document.documentElement.classList.contains('enhanced'), shown: [...document.querySelectorAll('.slide')].filter(s => getComputedStyle(s).display !== 'none').length, nav: getComputedStyle(document.querySelector('#slide-controls')).display })`);
+  return { first, beforeFirst, second, last, afterLast, home, controlTarget, print, mobile, noJs };
+});
+console.log(JSON.stringify({ article, slides }, null, 2));

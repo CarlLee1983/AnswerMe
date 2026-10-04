@@ -1,6 +1,6 @@
 # Answer Me
 
-Answer Me 是協助理解概念與 agent 工作成果的 Codex 技能。它先理解需求，未指定格式時會詢問要 HTML、Markdown 文件或對話回答，再依問題組織文字、圖解與必要的互動，並在關鍵主張旁保留來源與驗證限制。預設使用繁體中文，保留必要的英文術語。
+Answer Me 是協助理解概念與 agent 工作成果的解說技能，不限定特定 agent。它先理解需求，未指定格式時會詢問要 HTML、Markdown 文件或對話回答，再依問題組織文字、圖解與必要的互動，並在關鍵主張旁保留來源與驗證限制。預設使用繁體中文，保留必要的英文術語。
 
 ## 適合的問題
 
@@ -17,12 +17,22 @@ Answer Me 是協助理解概念與 agent 工作成果的 Codex 技能。它先�
 
 已指定格式時直接製作，單一事實查詢直接簡短回答。選擇 HTML 或 Markdown 會交付實際檔案與路徑；HTML 可用於靜態解說，只有互動能幫助理解時才加入控制項。完整 code review、修改程式及完整旁白影片不在這項技能的預設範圍內。
 
+HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；macOS 使用 `open`。可要求不要自動開啟，無法開啟時仍會交付檔案連結。詳見[技能的驗證與交付規則](skills/answer-me/SKILL.md#驗證與交付)。
+
+## HTML 預設呈現
+
+未指定外觀時採用共用的淺色閱讀樣式，不額外詢問。自行閱讀預設使用[文章式模板](skills/answer-me/assets/article.html)；明確要求簡報或逐頁講述時，使用[簡報式模板](skills/answer-me/assets/slides.html)。兩者都可離線開啟，模板中的內容是示例，產生成品時須換成本次解說與來源。
+
+需求發起者的明確要求優先於內容情境與預設樣式，例如「用深色文章式 HTML」或「用品牌色做成逐頁 HTML 簡報」。配色、字體、間距、內容元件與調整流程見[樣式指引](skills/answer-me/references/html-style.md)。
+
 ## 技能內容
 
 技能位於 [`skills/answer-me/`](skills/answer-me/SKILL.md)，包含：
 
 - [`SKILL.md`](skills/answer-me/SKILL.md)：理解目標、形式選擇、來源核對與交付驗證規則。
 - [`agents/openai.yaml`](skills/answer-me/agents/openai.yaml)：技能的顯示名稱與簡介。
+- [`references/html-style.md`](skills/answer-me/references/html-style.md)：HTML 預設樣式、版型選擇與調整方式。
+- [`assets/article.html`](skills/answer-me/assets/article.html)、[`assets/slides.html`](skills/answer-me/assets/slides.html)：可獨立開啟的文章式與簡報式起始模板。
 
 `show-me`、`archify`、`visualize` 是環境中可選的製作能力，並非必要依賴。互動 HTML 使用內嵌資源，閱讀與操作不依賴 CDN、套件安裝、本機伺服器或執行期網路請求。
 
