@@ -1,5 +1,7 @@
 # 檢查與回歸演練
 
+以下命令皆從 repository 根目錄執行。專案用途與使用範例見 [README](../README.md)。
+
 ## 快速檢查
 
 需求：Python 3.10+、PyYAML，以及已安裝的 `skill-creator/scripts/quick_validate.py`。
@@ -29,6 +31,14 @@ Hook 預設使用 `.venv/bin/python`（若存在），否則 `python3`；可用 
 ## 行為與瀏覽器驗證
 
 技能行為有變更時，依[演練說明](../tests/answer-me/README.md)用原始材料重新產出答案，再檢查語意及 HTML。已保存的範例可驗證瀏覽器檢查程式與既有成果，不能證明更新後的技能仍會產生相同品質。
+
+重跑已保存 HTML 的瀏覽器檢查：
+
+```sh
+node tests/answer-me/browser/verify.mjs
+```
+
+需要 Node.js 22+ 與 Google Chrome 或 Chromium；非標準安裝位置可透過 `CHROME_BIN` 指定瀏覽器執行檔。檢查使用 `file://` 與離線模式，將新截圖和 JSON 結果寫入新的暫存目錄，並印出路徑。情境範圍與自訂輸出目錄的參數見[演練說明](../tests/answer-me/README.md)。
 
 檢查器或 hook 改動時，執行：
 
