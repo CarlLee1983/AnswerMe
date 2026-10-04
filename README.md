@@ -2,6 +2,58 @@
 
 Answer Me 是協助理解概念與 agent 工作成果的解說技能，不限定特定 agent。它先理解需求，未指定格式時會詢問要 HTML、Markdown 文件或對話回答，再依問題組織文字、圖解與必要的互動，並在關鍵主張旁保留來源與驗證限制。預設使用繁體中文，保留必要的英文術語。
 
+## 安裝 skill
+
+建議使用 [Skills CLI](https://github.com/vercel-labs/skills#install-a-skill)。準備 Node.js 22.20+（含 npm／npx）、Git，以及支援 Agent Skills 的 agent；後文的 Python 檢查環境是維護本 repository 時才需要的工具。
+
+### 全域安裝
+
+安裝到使用者層級，供不同專案使用：
+
+```sh
+npx skills@latest add CarlLee1983/AnswerMe --skill answer-me -g
+```
+
+依 CLI 顯示的目標與提示完成安裝。也可以直接指定 agent，以下擇一執行：
+
+```sh
+# Codex
+npx skills@latest add CarlLee1983/AnswerMe --skill answer-me -g -a codex
+
+# Claude Code
+npx skills@latest add CarlLee1983/AnswerMe --skill answer-me -g -a claude-code
+```
+
+若只供某個專案使用，在該專案根目錄執行相同指令並移除 `-g`。其他 agent 名稱與安裝位置見 CLI 的[支援清單](https://github.com/vercel-labs/skills#supported-agents)。
+
+### 確認安裝與首次試用
+
+檢查全域安裝清單是否包含 `answer-me`；專案安裝則移除 `-g`：
+
+```sh
+npx skills@latest list -g
+```
+
+在 agent 中送出以下要求，並提供想了解的專案或材料：
+
+> 使用 answer-me，幫我理解目前專案一條代表性的請求處理流程，做成可離線開啟的 HTML，附上相關程式位置。
+
+如果 agent 尚未辨識技能，先確認安裝時選擇的 agent 與使用範圍，再依該 agent 的方式重新載入技能或開啟新對話。
+
+### 更新
+
+更新透過 CLI 安裝的全域 `answer-me`：
+
+```sh
+npx skills@latest update answer-me -g
+```
+
+專案安裝則在該專案根目錄執行 `npx skills@latest update answer-me -p`。這些指令限定更新 `answer-me`；省略技能名稱會更新所選範圍內的所有技能。更新行為見 [CLI 說明](https://github.com/vercel-labs/skills#skills-update)。
+
+### 手動安裝
+
+也可從 [GitHub Releases](https://github.com/CarlLee1983/AnswerMe/releases) 下載原始碼，將 `skills/answer-me/` 整個資料夾放入所用 agent 的技能目錄。保留 `SKILL.md`、`agents/`、`references/` 與 `assets/`，讓樣式指引與 HTML 模板一併可用。手動安裝的副本需自行更新；替換前保留自己的客製修改。
+
 ## 適合的問題
 
 - **概念學習**：理解陌生概念、文章或程式庫，沿著具體流程看懂它如何運作。
