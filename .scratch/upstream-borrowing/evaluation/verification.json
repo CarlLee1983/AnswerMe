@@ -1,0 +1,74 @@
+{
+  "desktop": {
+    "title": "TicketService 如何讀取票券",
+    "lang": "zh-Hant",
+    "h1": "一張票，第一次與第二次怎麼讀？",
+    "sections": [
+      "sequence",
+      "compare",
+      "missing",
+      "evidence"
+    ],
+    "svgCount": 1,
+    "links": [
+      {
+        "href": "file:///tmp/answerme-borrowing-eval.hsdHUm/ticket.html#sequence",
+        "text": "誰先呼叫誰"
+      },
+      {
+        "href": "file:///tmp/answerme-borrowing-eval.hsdHUm/ticket.html#compare",
+        "text": "首次與再次讀取"
+      },
+      {
+        "href": "file:///tmp/answerme-borrowing-eval.hsdHUm/ticket.html#missing",
+        "text": "找不到票"
+      },
+      {
+        "href": "file:///tmp/answerme-borrowing-eval.hsdHUm/ticket.html#evidence",
+        "text": "來源與限制"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py",
+        "text": "service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py",
+        "text": "service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py",
+        "text": "test_service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py",
+        "text": "service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py",
+        "text": "test_service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py",
+        "text": "service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py",
+        "text": "test_service.py"
+      },
+      {
+        "href": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/README.md",
+        "text": "README.md"
+      }
+    ]
+  },
+  "mobile": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "diagramWidth": 356,
+    "diagramScrollWidth": 992,
+    "tableWidth": 358,
+    "tableScrollWidth": 700
+  },
+  "runtimeErrors": [],
+  "remoteRequests": []
+}

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TicketService 如何讀取票券</title>
+  <style>
+    :root { --bg:#f7f6f2; --surface:#fff; --ink:#21352b; --muted:#526258; --accent:#25634a; --line:#d7ded5; --soft:#e8efe5; --code-bg:#eef1ea; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.8 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; overflow-wrap:break-word; }
+    a { color:var(--accent); text-underline-offset:.2em; }
+    a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    .page { width:min(100% - 32px,1120px); margin:auto; padding:48px 0 96px; }
+    .prose { max-width:72ch; }
+    .eyebrow { margin:0 0 16px; color:var(--accent); font-size:.78rem; font-weight:700; letter-spacing:.08em; }
+    h1,h2,h3 { line-height:1.25; letter-spacing:-.025em; }
+    h1 { max-width:18ch; margin:0 0 24px; font-size:clamp(2.25rem,6vw,4rem); }
+    h2 { margin:0 0 16px; font-size:clamp(1.5rem,3vw,2rem); }
+    h3 { margin:0 0 8px; font-size:1.08rem; }
+    p { margin:0 0 24px; }
+    .lead { font-size:1.2rem; line-height:1.65; }
+    .muted,small { color:var(--muted); }
+    .intro { padding-bottom:32px; border-bottom:1px solid var(--line); }
+    .summary { max-width:72ch; margin-top:32px; padding:24px; background:var(--soft); border-left:3px solid var(--accent); }
+    .summary p:last-child,.source-note p:last-child { margin-bottom:0; }
+    nav { margin-top:24px; }
+    nav ul { display:flex; flex-wrap:wrap; gap:8px 24px; margin:0; padding:0; list-style:none; font-size:.9rem; }
+    section { padding-top:56px; }
+    .diagram-wrap,.table-wrap { max-width:100%; overflow-x:auto; }
+    .diagram-wrap { padding:16px; background:var(--surface); border:1px solid var(--line); }
+    svg { display:block; width:960px; max-width:none; height:auto; font:16px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    svg .lane { stroke:var(--line); stroke-width:2; stroke-dasharray:5 6; }
+    svg .call { stroke:var(--accent); stroke-width:2.5; fill:none; marker-end:url(#arrow); }
+    svg .return { stroke:var(--muted); stroke-width:2; stroke-dasharray:6 5; fill:none; marker-end:url(#return-arrow); }
+    svg .label { fill:var(--ink); font-weight:600; }
+    svg .note { fill:var(--muted); font-size:14px; }
+    svg .box { fill:var(--soft); stroke:var(--line); }
+    .legend { margin:12px 0 0; font-size:.85rem; color:var(--muted); }
+    table { width:100%; min-width:700px; border-collapse:collapse; background:var(--surface); font-size:.9rem; }
+    caption { padding:0 0 12px; text-align:left; color:var(--muted); font-size:.85rem; }
+    th,td { padding:16px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:var(--soft); font-weight:700; }
+    .source-note { max-width:72ch; padding:24px; background:var(--surface); border:1px solid var(--line); }
+    .source-note ul { margin:0; padding-left:1.3em; }
+    .source-note li { margin:8px 0; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9em; background:var(--code-bg); padding:.08em .25em; }
+    .callout { max-width:72ch; padding:20px 24px; background:var(--soft); border-left:3px solid var(--accent); }
+    footer { margin-top:64px; padding-top:16px; border-top:1px solid var(--line); font-size:.85rem; }
+    @media (max-width:700px) { body{font-size:17px} .page{padding-top:32px} section{padding-top:40px} }
+    @media print { body{print-color-adjust:exact;-webkit-print-color-adjust:exact;font-size:11pt;line-height:1.55} .page{width:100%;padding:0} nav{display:none} section{padding-top:20pt} .summary,.source-note,.callout{break-inside:avoid} .diagram-wrap,.table-wrap{overflow:visible} svg{width:100%;height:auto} table{min-width:0;font-size:9pt} th,td{padding:8pt;overflow-wrap:anywhere} a{color:inherit} }
+  </style>
+</head>
+<body>
+  <div class="page"><main>
+    <header class="intro">
+      <p class="eyebrow">TICKET API · 呼叫流程</p>
+      <h1>一張票，第一次與第二次怎麼讀？</h1>
+      <p class="lead prose">入口是 <code>TicketService.handle_get(ticket_id)</code>。它先呼叫自己的 <code>get_ticket</code>；只有查不到這個 service 實例的 cache 時，<code>get_ticket</code> 才會呼叫 <code>FakeRepo.find</code>。</p>
+      <div class="summary"><h2>先記住這三件事</h2><p>首次讀到存在的票：repo 讀取一次、存入 cache、回覆 <code>200</code>。同一實例再次讀同一張票：直接從 cache 回覆 <code>200</code>，repo 不再被呼叫。找不到票：<code>get_ticket</code> 丟出 <code>NotFound</code>，由 <code>handle_get</code> 轉成 <code>404, {"error": "not found"}</code>。</p></div>
+      <nav aria-label="本文段落"><ul><li><a href="#sequence">誰先呼叫誰</a></li><li><a href="#compare">首次與再次讀取</a></li><li><a href="#missing">找不到票</a></li><li><a href="#evidence">來源與限制</a></li></ul></nav>
+    </header>
+
+    <section id="sequence" aria-labelledby="sequence-title">
+      <div class="prose"><h2 id="sequence-title">呼叫順序：先 service，後 repo</h2><p>下圖以已有 <code>T1</code>、cache 起初為空為例。實線是呼叫，虛線是回傳；時間由上往下。圖中的「呼叫端」只是示意發出 <code>handle_get</code> 的對象，不代表另有一個程式類別。</p></div>
+      <p class="legend">在窄螢幕上可左右捲動下圖，依時間順序閱讀三個參與者。</p>
+      <div class="diagram-wrap" role="img" aria-label="首次讀取 T1 的時序圖：呼叫端呼叫 TicketService.handle_get；handle_get 呼叫 get_ticket；cache 未命中時 get_ticket 呼叫 FakeRepo.find；repo 回傳 row；get_ticket 複製 row 存入 cache 並回傳；handle_get 回覆 200 與票券資料。">
+        <svg viewBox="0 0 960 565" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#25634a"/></marker><marker id="return-arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#526258"/></marker></defs>
+          <rect class="box" x="38" y="15" width="165" height="44" rx="5"/><text class="label" x="120" y="43" text-anchor="middle">呼叫端</text>
+          <rect class="box" x="368" y="15" width="225" height="44" rx="5"/><text class="label" x="480" y="43" text-anchor="middle">TicketService</text>
+          <rect class="box" x="742" y="15" width="170" height="44" rx="5"/><text class="label" x="827" y="43" text-anchor="middle">FakeRepo</text>
+          <path class="lane" d="M120 59 V535 M480 59 V535 M827 59 V535"/>
+          <path class="call" d="M120 105 H470"/><text class="label" x="190" y="96">1. handle_get("T1")</text>
+          <rect class="box" x="420" y="131" width="177" height="55" rx="5"/><text class="label" x="509" y="154" text-anchor="middle">2. get_ticket("T1")</text><text class="note" x="509" y="175" text-anchor="middle">cache 未命中</text>
+          <path class="call" d="M480 220 H817"/><text class="label" x="575" y="211">3. find("T1")</text>
+          <rect class="box" x="744" y="245" width="168" height="54" rx="5"/><text class="note" x="828" y="268" text-anchor="middle">reads 加 1</text><text class="note" x="828" y="289" text-anchor="middle">rows.get("T1")</text>
+          <path class="return" d="M827 330 H490"/><text class="label" x="583" y="322">4. 回傳 row</text>
+          <rect class="box" x="379" y="359" width="202" height="69" rx="5"/><text class="note" x="480" y="385" text-anchor="middle">5. dict(row) 存 cache</text><text class="note" x="480" y="409" text-anchor="middle">get_ticket 回傳資料</text>
+          <path class="return" d="M480 468 H130"/><text class="label" x="180" y="457">6. 回覆 200 與票券資料</text>
+          <text class="note" x="481" y="524" text-anchor="middle">同一實例再讀：步驟 2 直接命中 cache，跳過步驟 3–4，也不再寫入 cache</text>
+        </svg>
+      </div>
+      <p class="legend">依據：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 18–31 行；圖示依程式控制流程整理。</p>
+    </section>
+
+    <section id="compare" aria-labelledby="compare-title">
+      <div class="prose"><h2 id="compare-title">首次與再次讀同一張票</h2><p>比較的前提是<strong>同一個 <code>TicketService</code> 實例</strong>、同一個 <code>ticket_id</code>，而且第一次 repo 找得到票。cache 是實例上的字典，初始值為空。</p></div>
+      <div class="table-wrap" role="region" aria-label="首次與再次讀取比較表，可水平捲動" tabindex="0"><table><caption>以 <code>T1</code> 為例；窄螢幕可左右捲動表格</caption><thead><tr><th scope="col">觀察點</th><th scope="col">首次讀取</th><th scope="col">再次讀取</th></tr></thead><tbody>
+        <tr><th scope="row">cache</th><td>查不到 <code>T1</code></td><td>查得到 <code>T1</code></td></tr>
+        <tr><th scope="row"><code>FakeRepo.find</code></th><td>呼叫一次；<code>reads</code> 加 1</td><td>不呼叫；<code>reads</code> 不變</td></tr>
+        <tr><th scope="row">資料與回覆</th><td>把 <code>dict(row)</code> 存入 cache，回覆 <code>200</code> 與資料</td><td>直接回傳 cache 中的資料，回覆 <code>200</code> 與資料</td></tr>
+      </tbody></table></div>
+      <p class="prose muted">程式位置：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 14–25、27–29 行。<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 5–10 行也檢查兩次回覆為 <code>200</code>、repo 讀取計數為 1；測試沒有比較兩次回覆的資料內容。</p>
+      <p id="reader-note">讀者筆記：比較首次與再次讀取時，我只看同一個 TicketService 實例。</p>
+    </section>
+
+    <section id="missing" aria-labelledby="missing-title">
+      <div class="prose"><h2 id="missing-title">找不到票時，誰把錯誤轉成 404？</h2><p>若 cache 沒有該 ID，<code>get_ticket</code> 仍會呼叫 <code>FakeRepo.find</code>。<code>rows.get(ticket_id)</code> 找不到時回傳 <code>None</code>；<code>get_ticket</code> 因此丟出 <code>NotFound(ticket_id)</code>。外層的 <code>handle_get</code> 捕捉這個例外，回覆 <code>(404, {"error": "not found"})</code>。</p><p>找不到的 ID 不會寫入 cache。因此，在同一實例中重複查詢該 ID，依程式流程每次都會呼叫 repo，<code>reads</code> 也會再加 1；現有測試只檢查單次找不到的回覆，沒有測這個重複情境。</p></div>
+      <p class="muted prose">依據：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 9–11、18–31 行；單次 404 測試見 <a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 12–14 行。</p>
+    </section>
+
+    <section id="evidence" aria-labelledby="evidence-title">
+      <div class="source-note"><h2 id="evidence-title">來源與邊界</h2><ul>
+        <li><a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 是本文執行路徑的依據；<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 提供兩項行為檢查。從該目錄執行 <code>python3 -m unittest -v</code>，兩項測試通過。</li>
+        <li><a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/README.md">README.md</a> 說 cache 會在 60 秒後過期；目前 <code>service.py</code> 只有字典查詢與寫入，沒有時間欄位或過期判斷。本文按程式實際路徑解釋，不能把 60 秒過期視為已實作。</li>
+        <li>repo 是 <code>FakeRepo</code>，其 <code>find</code> 只從記憶體中的 <code>rows</code> 查找；本文不推論真實資料庫或 HTTP 框架的行為。</li>
+      </ul></div>
+    </section>
+  </main><footer class="muted">Ticket API 原始材料 · 離線可讀的靜態解說</footer></div>
+</body>
+</html>

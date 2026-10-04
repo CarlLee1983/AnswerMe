@@ -1,0 +1,10 @@
+--- ticket.before-followup.html
++++ ticket.html
+@@ -99 +99,6 @@
+-      <div class="prose"><h2 id="missing-title">找不到票時，誰把錯誤轉成 404？</h2><p>若 cache 沒有該 ID，<code>get_ticket</code> 仍會呼叫 <code>FakeRepo.find</code>。<code>rows.get(ticket_id)</code> 找不到時回傳 <code>None</code>；<code>get_ticket</code> 因此丟出 <code>NotFound(ticket_id)</code>。外層的 <code>handle_get</code> 捕捉這個例外，回覆 <code>(404, {"error": "not found"})</code>。</p><p>找不到的 ID 不會寫入 cache。因此，在同一實例中重複查詢該 ID，依程式流程每次都會呼叫 repo，<code>reads</code> 也會再加 1；現有測試只檢查單次找不到的回覆，沒有測這個重複情境。</p></div>
++      <div class="prose"><h2 id="missing-title">找不到票時，為什麼不寫入快取？</h2><p>若 cache 沒有該 ID，<code>get_ticket</code> 仍會呼叫 <code>FakeRepo.find</code>。<code>rows.get(ticket_id)</code> 找不到時回傳 <code>None</code>；<code>get_ticket</code> 因此丟出 <code>NotFound(ticket_id)</code>。外層的 <code>handle_get</code> 捕捉這個例外，回覆 <code>(404, {"error": "not found"})</code>。</p><p>找不到的 ID 不會寫入 cache。因此，在同一實例中重複查詢該 ID，依程式流程每次都會呼叫 repo，<code>reads</code> 也會再加 1；現有測試只檢查單次找不到的回覆，沒有測這個重複情境。</p></div>
++      <div class="callout" aria-label="找不到票時不寫入快取的原因">
++        <h3>關鍵是程式執行的先後順序</h3>
++        <p><code>find</code> 回傳 <code>None</code> → 第 22 行的條件成立 → 第 23 行執行 <code>raise NotFound</code>。<strong>這一刻 <code>get_ticket</code> 就中斷了</strong>，所以排在後面的第 24 行 <code>self.cache[ticket_id] = dict(row)</code> 根本不會執行。</p>
++        <p><code>handle_get</code> 接住例外後只組成 404 回覆，沒有寫入 cache 的程式。因此同一實例下次再查這個 ID，仍是 cache 未命中，會重新呼叫 <code>FakeRepo.find</code>。這是目前程式流程的結果；材料沒有另外實作「找不到也快取」的邏輯。</p>
++      </div>

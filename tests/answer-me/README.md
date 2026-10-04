@@ -46,6 +46,18 @@ Use `conditions/input/model.md` as the raw material and an isolated temporary di
 
 When the question channel returns no answer and cannot accept a later reply, check that the agent states its format assumption and completes a document. An asynchronous question still awaiting a reply is not the same condition.
 
+## Content organization and follow-up evaluations
+
+Use the current skill package and only the raw inputs named below. Generate into a fresh temporary directory. Keep the acceptance criteria and previous outputs with the reviewer; continue follow-ups in the same evaluation session.
+
+| Scenario | Prompt / next user turn | Semantic acceptance |
+| --- | --- | --- |
+| Calls and branches | 使用 answer-me，根據 evidence/input/ticket_api，做成離線靜態 HTML，讓我看懂 TicketService 與 FakeRepo 之間誰先呼叫誰、首次與再次讀取同一張票的差別，以及找不到票時怎麼回覆。完成後只給連結，不要自動開啟。 | Lead with the core answer; group sections by a reader question. Use a sequence view for ordered calls, with branches or an aligned comparison for hit/miss/not-found. Preserve actual method names and source links. A hit skips FakeRepo.find; a missing row raises NotFound and handle_get returns 404. Distinguish README's 60-second TTL claim from service.py, which has no expiry logic. Do not invent a network or database tier or test results. Reuse the article starter without changing the shipped template; verify the new file offline and at 390 px, with no unnecessary controls or desktop opener. |
+| Local follow-up | After the first answer, record a copy and add a distinctive reader note to an unrelated section. Then: 我只是不懂找不到票時，為什麼沒有寫入快取。請在同一份 HTML 補清楚這一段。 | Read the current artifact; explain the exception occurs before the cache assignment, citing the raw code. Preserve the reader note and unrelated sections, layout and sources. Recheck the edited content and any affected navigation. Evaluate the file diff, not merely the agent's claim that it made a local edit. |
+| Small explanation | 使用 answer-me，直接在對話中說明 conditions/input/model.md 的 p 增加時 M 會怎麼變，不用產檔。 | Retain all three A/B cases and illustrative status. A compact explanation or aligned table is enough; no forced diagrams, HTML, or format question. |
+
+These cases evaluate organization and revision behavior, not token savings or proven gains in reader comprehension. A changed shared premise needs an additional case that checks all dependent claims; the local follow-up above does not establish that behavior.
+
 ## Default HTML style evaluations
 
 Use the updated skill package (including its referenced guide and templates), a prompt below, and raw `conditions/input/model.md` in a fresh session. Keep these acceptance criteria and saved outputs with the reviewer. Use a new output directory and do not alter the shipped templates. These evaluations check style selection as well as actual generation; browser checks on the starter files alone cannot establish skill behavior.

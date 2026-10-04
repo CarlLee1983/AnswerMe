@@ -25,6 +25,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 
 需求發起者的明確要求優先於內容情境與預設樣式，例如「用深色文章式 HTML」或「用品牌色做成逐頁 HTML 簡報」。配色、字體、間距、內容元件與調整流程見[樣式指引](skills/answer-me/references/html-style.md)。
 
+製作時先整理核心答案與子問題，再依關係選用流程圖、時序圖、樹狀圖、時間線或比較表，並重用模板的排版與導覽。局部追問需要更新文件時，聚焦相關內容及受影響的結論。這些做法借鑑 [QingYunA/answer-me-with-html 的內容稿、資訊形狀選型與局部修訂流程](https://github.com/QingYunA/answer-me-with-html/blob/8a50e9b6da20edb8d9e11748264a30b3b5c75aec/skills/answer-me-with-html/SKILL.md)；此專案沿用自己的模板，未引入其 CLI。
+
 ## 技能內容
 
 技能位於 [`skills/answer-me/`](skills/answer-me/SKILL.md)，包含：
