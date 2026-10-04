@@ -20,6 +20,8 @@ Use each input directory as the only source material for a new answer. Compare t
 
 Give the evaluating agent only the skill, a scenario prompt, and its raw inputs. Keep the acceptance column and saved outputs with the reviewer so they cannot supply the answer to the evaluating agent.
 
+For prompts without an output format, capture the first response, then provide a simulated user choice and continue the same session. Evaluate the resulting artifact as well as the format question. For the existing `evidence` and `conditions` content evaluations, reply “直接在對話中回答” if asked; the explicit HTML requests in `interactive` need no format round-trip.
+
 | Scenario | Prompt to give the skill | Semantic acceptance |
 | --- | --- | --- |
 | `evidence` | Explain the ticket read flow from `input/ticket_api`; then review `input/change.diff`, `input/test-output.txt`, and `input/agent-report.md`. For a separate request, explain the cross-process lock from `input/design-note.md` (which is absent). For a simple request, define HTTP 404. | Cite available source lines; separate code behavior, documentation claims, and test evidence. State that only `test_missing` is shown passing. Do not claim deployment, full-suite success, concurrency safety, or verified TTL. Request the absent design note without inventing its content. Answer the 404 request briefly. |
@@ -27,3 +29,17 @@ Give the evaluating agent only the skill, a scenario prompt, and its raw inputs.
 | `conditions` | Explain how changing `p` affects `M` in `input/model.md`. | State `M = pA + (1-p)B` and change per unit `p` as `A-B`. Retain all three cases: **A < B** means M falls as p rises; **A > B** means M rises; **A = B** means M stays constant. For A=20, B=80, p=0.5 gives 50 ms and p=0.6 gives 44 ms. Label the model illustrative, not measured. |
 
 The `output` directories show one earlier response for each scenario, including four evidence response variants. For a fresh evaluation, regenerate outputs independently and check their claims against the provided inputs. The browser script is specific to the saved interactive HTML structure; adapt selectors and assertions if a fresh answer uses different markup while preserving the same behavior criteria.
+
+## Output-format evaluations
+
+Use `conditions/input/model.md` as the raw material and an isolated temporary directory for any new files. These scenarios check the format decision and actual delivery, not exact wording. Give the agent only the prompt, skill, and raw material; keep the expected behavior with the reviewer.
+
+| Scenario | Prompt / next user turn | Semantic acceptance |
+| --- | --- | --- |
+| Unspecified format | 使用 answer-me 幫我理解 model.md 中，改變 p 時 M 為什麼可能增加也可能減少，整理成容易理解的解說。 Then: 請做成 Markdown 文件。 | First offer HTML, Markdown file, and conversation with a recommendation; a core summary is allowed. After the choice, create a readable `.md` file and link it without asking the format again. Preserve all three cases from `conditions`. |
+| Explicit HTML | 使用 answer-me，把 model.md 做成可離線開啟的 HTML 解說，只要靜態文字與圖解。 | Create a real `.html` file without asking the format or adding controls. Open locally, check the rendered content offline, and report any unperformed verification. |
+| Explicit conversation | 使用 answer-me，在對話中用文字解釋 model.md，不用產檔。 | Answer directly without a format question or file. |
+| Simple fact | 使用 answer-me，model.md 的 p 範圍是多少？ | Give a brief sourced answer, without a format question or file. |
+| Delegated choice | 使用 answer-me 解釋 model.md，輸出格式由你決定。 | State the selected document format, create that file, and provide its path without a format question. |
+
+When the question channel returns no answer and cannot accept a later reply, check that the agent states its format assumption and completes a document. An asynchronous question still awaiting a reply is not the same condition.
