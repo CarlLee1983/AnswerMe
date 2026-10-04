@@ -49,12 +49,13 @@
 
 ## 證據與範圍
 
-本次原始輸入、獨立輸出、瀏覽器檢查程式及截圖暫存在 `/tmp/answer-me-eval-3vauikwo/`；暫存檔可能被系統清理，上述結果摘要保存在本紀錄。
+原演練使用 `/tmp/answer-me-eval-3vauikwo/`。2026-10-04 回顧改善已將輸入、代表輸出與原始 JSON 結果保存到 `tests/answer-me/`，並將瀏覽器檢查程式改為可攜版本；原截圖仍屬暫存產物，不作為必須存在的證據。下列連結改指向專案內保存的材料。
 
-- [文字情境輸出](/tmp/answer-me-eval-3vauikwo/evidence/output/)
-- [互動解說](/tmp/answer-me-eval-3vauikwo/interactive/output/explainer.html)與[修復版](/tmp/answer-me-eval-3vauikwo/interactive/output/repaired.html)
-- [離線檢查結果](/tmp/answer-me-eval-3vauikwo/browser/verification.json)與[負向基準](/tmp/answer-me-eval-3vauikwo/browser/broken-baseline.json)
-- [成立條件重測](/tmp/answer-me-eval-3vauikwo/conditions/output/response.md)
+- [文字情境輸出](../../tests/answer-me/evidence/output/)
+- [互動解說](../../tests/answer-me/interactive/output/explainer.html)與[修復版](../../tests/answer-me/interactive/output/repaired.html)
+- [原離線檢查結果](../../tests/answer-me/browser/verification.json)與[原負向基準](../../tests/answer-me/browser/broken-baseline.json)
+- [成立條件重測](../../tests/answer-me/conditions/output/response.md)
+- [重跑命令與獨立行為演練方式](../../tests/answer-me/README.md)。重跑保存範例不等於重測更新後的技能行為。
 
 這些是代表性演練與指定 Chrome 情境的驗證，沒有測量使用者是否理解、完整跨瀏覽器相容性，或其他技能的實際整合。安裝驗證涵蓋檔案系統連結與內容，沒有另外啟動新 Codex 對話測試自動載入。
 

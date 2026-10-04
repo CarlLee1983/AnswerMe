@@ -1,0 +1,122 @@
+{
+  "explainer": {
+    "fileProtocol": true,
+    "offline": true,
+    "rows": [
+      {
+        "h": 75,
+        "c": 4,
+        "d": 120,
+        "expected": 33,
+        "actual": 33
+      },
+      {
+        "h": 0,
+        "c": 4,
+        "d": 120,
+        "expected": 120,
+        "actual": 120
+      },
+      {
+        "h": 100,
+        "c": 4,
+        "d": 120,
+        "expected": 4,
+        "actual": 4
+      },
+      {
+        "h": 50,
+        "c": 4,
+        "d": 120,
+        "expected": 62,
+        "actual": 62
+      },
+      {
+        "h": 90,
+        "c": 4,
+        "d": 120,
+        "expected": 15.6,
+        "actual": 15.6
+      },
+      {
+        "h": 75,
+        "c": 10,
+        "d": 120,
+        "expected": 37.5,
+        "actual": 37.5
+      },
+      {
+        "h": 75,
+        "c": 4,
+        "d": 60,
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "h": 75,
+        "c": 0,
+        "d": 0,
+        "expected": 0,
+        "actual": 0
+      },
+      {
+        "h": 25,
+        "c": 80,
+        "d": 20,
+        "expected": 35,
+        "actual": 35
+      },
+      {
+        "h": 75,
+        "c": 80,
+        "d": 20,
+        "expected": 65,
+        "actual": 65
+      }
+    ],
+    "presets": [
+      33,
+      15.6,
+      18,
+      31.5
+    ],
+    "keyboard": {
+      "rate": "76",
+      "total": "31.84"
+    },
+    "mobileLayout": {
+      "width": 390,
+      "scrollWidth": 390
+    },
+    "runtimeErrors": [],
+    "remoteRequests": []
+  },
+  "repaired": {
+    "fileProtocol": true,
+    "offline": true,
+    "rows": [
+      {
+        "h": 0,
+        "expected": 120,
+        "actual": "120 ms"
+      },
+      {
+        "h": 100,
+        "expected": 4,
+        "actual": "4 ms"
+      },
+      {
+        "h": 50,
+        "expected": 62,
+        "actual": "62 ms"
+      },
+      {
+        "h": 75,
+        "expected": 33,
+        "actual": "33 ms"
+      }
+    ],
+    "runtimeErrors": [],
+    "remoteRequests": []
+  }
+}

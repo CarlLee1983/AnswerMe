@@ -1,0 +1,9 @@
+{
+  "initial": "31 ms",
+  "changed": "31 ms",
+  "detectsStuckResult": true,
+  "runtimeErrors": [],
+  "remoteRequests": [
+    "https://cdn.example.invalid/answer-me-latency.js"
+  ]
+}

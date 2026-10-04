@@ -1,0 +1,86 @@
+{
+  "copy": "/var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answer-me clean copy wf4ck300",
+  "fileCount": 47,
+  "results": [
+    {
+      "command": [
+        "git",
+        "init",
+        "-q"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "add",
+        "."
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS: skill frontmatter, display metadata, and relative documentation links\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "--staged"
+      ],
+      "exit": 0,
+      "stdout": "PASS: skill frontmatter, display metadata, and relative documentation links (staged snapshot)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_checks.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 4.396s\n\nOK\n"
+    },
+    {
+      "command": [
+        "sh",
+        "scripts/install-hooks.sh"
+      ],
+      "exit": 0,
+      "stdout": "Enabled .githooks for this repository.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".githooks/pre-commit"
+      ],
+      "exit": 0,
+      "stdout": "PASS: skill frontmatter, display metadata, and relative documentation links (staged snapshot)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "tests/answer-me/browser/verify.mjs"
+      ],
+      "exit": 0,
+      "stdout": "Browser artifacts: /var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answer-me-browser-NWphlf\n",
+      "stderr": ""
+    }
+  ]
+}

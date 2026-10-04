@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+answerme_root=$(git rev-parse --show-toplevel)
+answerme_python=${ANSWERME_PYTHON:-python3}
+if [ -z "${ANSWERME_PYTHON:-}" ] && [ -x "$answerme_root/.venv/bin/python" ]; then
+  answerme_python="$answerme_root/.venv/bin/python"
+fi
+exec "$answerme_python" "$answerme_root/scripts/check.py" --staged

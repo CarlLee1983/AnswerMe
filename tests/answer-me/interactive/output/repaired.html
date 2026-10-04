@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>快取延遲示意</title>
+</head>
+<body>
+  <h1>快取平均延遲</h1>
+  <label>命中率 <input id="hit" type="range" min="0" max="100" value="75"> <output id="rate" for="hit">75%</output></label>
+  <p id="answer" aria-live="polite">33 ms</p>
+  <p>平均時間 = 命中率 × 4 ms + (1 − 命中率) × 120 ms。120 ms 已包含完整 miss 路徑，不另加命中延遲。</p>
+  <p>這是兩路徑示意模型，不是實際量測。</p>
+  <script>
+    const hit = document.getElementById('hit');
+    const rate = document.getElementById('rate');
+    const answer = document.getElementById('answer');
+    function update() {
+      const percent = Number(hit.value);
+      const h = percent / 100;
+      const average = h * 4 + (1 - h) * 120;
+      rate.textContent = `${percent}%`;
+      answer.textContent = `${Number(average.toFixed(2))} ms`;
+    }
+    hit.addEventListener('input', update);
+    update();
+  </script>
+</body>
+</html>

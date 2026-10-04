@@ -1,0 +1,4 @@
+Command: python3 -m unittest -v test_service.TicketTests.test_missing
+test_missing (test_service.TicketTests.test_missing) ... ok
+Ran 1 test in 0.000s
+OK

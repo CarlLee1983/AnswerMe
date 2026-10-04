@@ -1,0 +1,12 @@
+diff --git a/service.py b/service.py
+--- a/service.py
++++ b/service.py
+@@ -17,8 +17,11 @@ class TicketService:
+     def get_ticket(self, ticket_id):
+         if ticket_id in self.cache:
+             return self.cache[ticket_id]
+         row = self.repo.find(ticket_id)
++        if row is None:
++            raise NotFound(ticket_id)
+         self.cache[ticket_id] = dict(row)
+         return self.cache[ticket_id]

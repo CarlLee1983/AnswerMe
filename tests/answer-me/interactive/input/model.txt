@@ -1,0 +1,8 @@
+Use this illustrative model for average read latency:
+L = h * C + (1 - h) * D
+h: hit rate between 0 and 1
+C: hit latency in milliseconds, initially 4
+D: miss latency in milliseconds, initially 120
+Starting h = 0.75.
+A miss latency D already includes all work on the miss path; do not add C to it again.
+This is an illustrative deterministic two-path model, not a production measurement.
