@@ -1,0 +1,1170 @@
+{
+ "answers": [
+  {
+   "file": "actors-48e63f.md",
+   "criteria": [
+    {
+     "criterion": "Uses 工作項 and 延後佇列 consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Explains unfamiliar terms",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher named as caller",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher requeues only TEMP_UNAVAILABLE",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Operator actions distinguished from Dispatcher",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "30-second eligibility without promising immediate execution",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Audit writer left unresolved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Numbered operator steps",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Provider recovery precedes dry-run command",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident-owner approval precedes --confirm",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Duplicate-notification risk explained before replay",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Both commands preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "accepted preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident note kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Acceptance distinguished from delivery",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No command execution / no files / no format question",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Calls 30 s the '最短等待' — reasonable reading of 'default wait before eligible', but a light inference stated flatly"
+    }
+   ],
+   "readability": [
+    "Clear conclusion-first lead, ASCII flow + responsibility table + numbered steps",
+    "Good gap list (notes other-error jobs may not be in delayed)",
+    "Length appropriate (~4.5 KB)"
+   ],
+   "score": 5
+  },
+  {
+   "file": "actors-7e93b0.md",
+   "criteria": [
+    {
+     "criterion": "Uses 工作項 and 延後佇列 consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Explains unfamiliar terms",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher named as caller",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher requeues only TEMP_UNAVAILABLE",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Operator actions distinguished from Dispatcher",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "30-second eligibility without promising immediate execution",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Audit writer left unresolved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Numbered operator steps",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Provider recovery precedes dry-run command",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident-owner approval precedes --confirm",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Duplicate-notification risk explained before replay",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Both commands preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "accepted preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident note kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Acceptance distinguished from delivery",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No command execution / no files / no format question",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Table attributes waiting in the delayed queue to '系統' — source names no actor"
+    },
+    {
+     "severity": "minor",
+     "text": "Precondition and command folded into the same numbered step (still ordered correctly)"
+    }
+   ],
+   "readability": [
+    "Meta sentence about not generating files is noise",
+    "'驗證方式' paragraph is self-assertion that adds little",
+    "Otherwise well structured"
+   ],
+   "score": 4
+  },
+  {
+   "file": "actors-ef20d2.md",
+   "criteria": [
+    {
+     "criterion": "Uses 工作項 and 延後佇列 consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Explains unfamiliar terms",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher named as caller",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher requeues only TEMP_UNAVAILABLE",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Operator actions distinguished from Dispatcher",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "30-second eligibility without promising immediate execution",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Audit writer left unresolved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Numbered operator steps",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Provider recovery precedes dry-run command",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident-owner approval precedes --confirm",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Duplicate-notification risk explained before replay",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Both commands preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "accepted preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident note kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Acceptance distinguished from delivery",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No command execution / no files / no format question",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "'手動重送只能由值班人員…執行' — 'only' is not stated in source"
+    },
+    {
+     "severity": "minor",
+     "text": "Table row merges incident-owner approval into the whole manual replay, not specifically --confirm (steps below are correct)"
+    }
+   ],
+   "readability": [
+    "Gaps section placed before the procedure, interrupting the actors→steps flow",
+    "Longest actors answer; explicit note that dry-run→confirm order is an interpretation is careful but adds length",
+    "Correctly flags its own inference about who re-executes delayed jobs"
+   ],
+   "score": 4
+  },
+  {
+   "file": "actors-f7af34.md",
+   "criteria": [
+    {
+     "criterion": "Uses 工作項 and 延後佇列 consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Explains unfamiliar terms",
+     "pass": false,
+     "reason": "Defines 工作項 and component roles but never defines 延後佇列 itself (only shows it maps to delayed)"
+    },
+    {
+     "criterion": "Dispatcher named as caller",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Dispatcher requeues only TEMP_UNAVAILABLE",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Operator actions distinguished from Dispatcher",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "30-second eligibility without promising immediate execution",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Audit writer left unresolved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Numbered operator steps",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Provider recovery precedes dry-run command",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident-owner approval precedes --confirm",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Duplicate-notification risk explained before replay",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Both commands preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "accepted preserved literally",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Incident note kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Acceptance distinguished from delivery",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No command execution / no files / no format question",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "延後佇列 not explained as a term"
+    }
+   ],
+   "readability": [
+    "Tight, well-ordered; shortest actors answer",
+    "Closing paragraph tying gaps back to the core answer is helpful"
+   ],
+   "score": 4
+  },
+  {
+   "file": "brief-3540e3.md",
+   "criteria": [
+    {
+     "criterion": "Short answer",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "30 seconds",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Sourced",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Eligibility vs immediate execution distinction",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No full procedure / glossary file / diagram / format question",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [],
+   "readability": [
+    "Shortest (two sentences + one context sentence); ideal for the request"
+   ],
+   "score": 5
+  },
+  {
+   "file": "brief-3d1103.md",
+   "criteria": [
+    {
+     "criterion": "Short answer",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "30 seconds",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Sourced",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Eligibility vs immediate execution distinction",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No full procedure / glossary file / diagram / format question",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Adds an unprompted note that the doc doesn't say whether the default is configurable — harmless but extra"
+    }
+   ],
+   "readability": [
+    "Uses bullets and a separate source line; slightly heavier than needed"
+   ],
+   "score": 5
+  },
+  {
+   "file": "brief-e2de56.md",
+   "criteria": [
+    {
+     "criterion": "Short answer",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "30 seconds",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Sourced",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Eligibility vs immediate execution distinction",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No full procedure / glossary file / diagram / format question",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [],
+   "readability": [
+    "Concise prose, two paragraphs"
+   ],
+   "score": 5
+  },
+  {
+   "file": "brief-e4473a.md",
+   "criteria": [
+    {
+     "criterion": "Short answer",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "30 seconds",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Sourced",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Eligibility vs immediate execution distinction",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No full procedure / glossary file / diagram / format question",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [],
+   "readability": [
+    "Concise prose, two paragraphs"
+   ],
+   "score": 5
+  },
+  {
+   "file": "claims-394541.md",
+   "criteria": [
+    {
+     "criterion": "Answers in English",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Uses batch consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Separates implemented connection reuse / author throughput claim / planned dedup",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "120 items/s preserved, no invented baseline/conditions/date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 42 ms with 10 concurrent, test env, 2026-09-15 preserved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 conditions not attached to throughput",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Possible duplicates preserved (modal 'may')",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "request_id logging kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No delivery guarantee (accepted != delivered)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Identifiers intact (batch_id=B-17, status=accepted, request_id=req_02)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Evidence limitations grouped readably",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Planned feature not implied to exist, no release date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Caller step 2 'Use request_id only for tracing' turns a description of current behavior into an instruction"
+    },
+    {
+     "severity": "minor",
+     "text": "Steps 3–4 listed under 'What callers are advised to do' are derived, not source advice; only the separate inference paragraph is labeled as inference"
+    }
+   ],
+   "readability": [
+    "Longest claims answer (~5.4 KB) with some repetition between sections",
+    "Good table separating claim / figure / observation",
+    "Evidence gaps grouped at end"
+   ],
+   "score": 4
+  },
+  {
+   "file": "claims-745ff6.md",
+   "criteria": [
+    {
+     "criterion": "Answers in English",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Uses batch consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Separates implemented connection reuse / author throughput claim / planned dedup",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "120 items/s preserved, no invented baseline/conditions/date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 42 ms with 10 concurrent, test env, 2026-09-15 preserved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 conditions not attached to throughput",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Possible duplicates preserved (modal 'may')",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "request_id logging kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No delivery guarantee (accepted != delivered)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Identifiers intact (batch_id=B-17, status=accepted, request_id=req_02)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Evidence limitations grouped readably",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Planned feature not implied to exist, no release date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "'A value was recorded once' — 'once' not stated in source"
+    },
+    {
+     "severity": "minor",
+     "text": "Typo '(lines 7)'"
+    }
+   ],
+   "readability": [
+    "Bold pseudo-headings instead of headings; fine",
+    "Table with 'what it supports' column is effective",
+    "Inferences explicitly labeled"
+   ],
+   "score": 5
+  },
+  {
+   "file": "claims-82fbc5.md",
+   "criteria": [
+    {
+     "criterion": "Answers in English",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Uses batch consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Separates implemented connection reuse / author throughput claim / planned dedup",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "120 items/s preserved, no invented baseline/conditions/date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 42 ms with 10 concurrent, test env, 2026-09-15 preserved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 conditions not attached to throughput",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Possible duplicates preserved (modal 'may')",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "request_id logging kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No delivery guarantee (accepted != delivered)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Identifiers intact (batch_id=B-17, status=accepted, request_id=req_02)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Evidence limitations grouped readably",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Planned feature not implied to exist, no release date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "'One change shipped' — source says 已完成 (done), not shipped/released"
+    },
+    {
+     "severity": "minor",
+     "text": "'Until it ships' slightly presumes the planned dedup will ship, though 'may' is preserved elsewhere"
+    }
+   ],
+   "readability": [
+    "Bold run-in headings; readable",
+    "Inferences labeled ('plausible guess', 'My inference')"
+   ],
+   "score": 4
+  },
+  {
+   "file": "claims-ba213d.md",
+   "criteria": [
+    {
+     "criterion": "Answers in English",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Uses batch consistently",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Separates implemented connection reuse / author throughput claim / planned dedup",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "120 items/s preserved, no invented baseline/conditions/date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 42 ms with 10 concurrent, test env, 2026-09-15 preserved",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "p95 conditions not attached to throughput",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Possible duplicates preserved (modal 'may')",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "request_id logging kept as recommendation",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "No delivery guarantee (accepted != delivered)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Identifiers intact (batch_id=B-17, status=accepted, request_id=req_02)",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Evidence limitations grouped readably",
+     "pass": true,
+     "reason": "present and faithful to source"
+    },
+    {
+     "criterion": "Planned feature not implied to exist, no release date",
+     "pass": true,
+     "reason": "present and faithful to source"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "'does not prevent duplicate notifications yet' — 'yet' leans toward the planned feature arriving"
+    },
+    {
+     "severity": "minor",
+     "text": "'callers still need to expect duplicates' slightly firmer than 可能仍有"
+    }
+   ],
+   "readability": [
+    "Side-by-side throughput vs latency table makes the unattached conditions very clear",
+    "Practical list partly inferred; inference flagged on item 3"
+   ],
+   "score": 5
+  },
+  {
+   "file": "conditions-00bd09.md",
+   "criteria": [
+    {
+     "criterion": "States M = pA + (1-p)B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Change per unit p is A-B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A<B: M falls as p rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A>B: M rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A=B: M constant",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.5 gives 50 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.6 gives 44 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Labeled illustrative, not measured",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No forced diagram/HTML/format question",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Compact explanation",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Lead sentence states the start-condition direction first; the reversal caveat comes in sentence two rather than as the headline"
+    }
+   ],
+   "readability": [
+    "Compact, table + bullets",
+    "Adds a reasonable load-dependency limitation"
+   ],
+   "score": 5
+  },
+  {
+   "file": "conditions-6f17b5.md",
+   "criteria": [
+    {
+     "criterion": "States M = pA + (1-p)B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Change per unit p is A-B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A<B: M falls as p rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A>B: M rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A=B: M constant",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.5 gives 50 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.6 gives 44 ms",
+     "pass": false,
+     "reason": "Only '每增加 0.1，M 減少 6' and a 0/0.5/1 table; 44 ms never stated"
+    },
+    {
+     "criterion": "Labeled illustrative, not measured",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No forced diagram/HTML/format question",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Compact explanation",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "Explicit 0.5→0.6 / 50→44 example missing"
+    }
+   ],
+   "readability": [
+    "Clean; three-case table with examples is the clearest presentation of the cases"
+   ],
+   "score": 4
+  },
+  {
+   "file": "conditions-7e1a8f.md",
+   "criteria": [
+    {
+     "criterion": "States M = pA + (1-p)B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Change per unit p is A-B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A<B: M falls as p rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A>B: M rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A=B: M constant",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.5 gives 50 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.6 gives 44 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Labeled illustrative, not measured",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No forced diagram/HTML/format question",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Compact explanation",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [],
+   "readability": [
+    "Shows the 50 and 44 computations in-table",
+    "Labels the per-unit derivation as algebraic inference"
+   ],
+   "score": 5
+  },
+  {
+   "file": "conditions-b572a3.md",
+   "criteria": [
+    {
+     "criterion": "States M = pA + (1-p)B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Change per unit p is A-B",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A<B: M falls as p rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A>B: M rises",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "A=B: M constant",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.5 gives 50 ms",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "p=0.6 gives 44 ms",
+     "pass": false,
+     "reason": "Table shows 0.8→32 instead; 44 ms never stated"
+    },
+    {
+     "criterion": "Labeled illustrative, not measured",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "No forced diagram/HTML/format question",
+     "pass": true,
+     "reason": "satisfied"
+    },
+    {
+     "criterion": "Compact explanation",
+     "pass": true,
+     "reason": "satisfied"
+    }
+   ],
+   "issues": [
+    {
+     "severity": "minor",
+     "text": "A=B case appears only in the opening sentence and closing question, not in the reversal section"
+    },
+    {
+     "severity": "minor",
+     "text": "Explicit 50→44 example missing"
+    }
+   ],
+   "readability": [
+    "Shortest; reversal section gives only one example",
+    "Meta line about answering in conversation is noise"
+   ],
+   "score": 4
+  }
+ ],
+ "rankings": {
+  "actors": {
+   "order": [
+    "actors-48e63f.md",
+    "actors-7e93b0.md",
+    "actors-f7af34.md",
+    "actors-ef20d2.md"
+   ],
+   "meaningful": false,
+   "note": "All four meet essentially every criterion; differences are minor wording/structure (one undefined term, one unsupported 'only', one '系統' attribution). Within noise."
+  },
+  "brief": {
+   "order": [
+    "brief-e2de56.md",
+    "brief-3540e3.md",
+    "brief-e4473a.md",
+    "brief-3d1103.md"
+   ],
+   "meaningful": false,
+   "note": "All four give 30 s with the eligibility caveat and source; differences are length only. Within noise."
+  },
+  "claims": {
+   "order": [
+    "claims-ba213d.md",
+    "claims-745ff6.md",
+    "claims-82fbc5.md",
+    "claims-394541.md"
+   ],
+   "meaningful": false,
+   "note": "All pass every criterion; ranking reflects small modal slips ('shipped', 'until it ships') and 394541's length/reframed advice. Within noise."
+  },
+  "conditions": {
+   "order": [
+    "conditions-7e1a8f.md",
+    "conditions-00bd09.md",
+    "conditions-6f17b5.md",
+    "conditions-b572a3.md"
+   ],
+   "meaningful": true,
+   "note": "Top two state 50→44 ms explicitly; bottom two omit the required 0.6→44 ms data point (implicit via slope only). Small but tied to an explicit acceptance item; otherwise all retain the three cases and illustrative status."
+  }
+ }
+}
