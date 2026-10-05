@@ -26,7 +26,7 @@ const changeControl = `(() => {
     next = candidates.find(v => (min === undefined || v >= min) && (max === undefined || v <= max));
   }
   if (next === undefined) return { control, reason: 'no alternative valid value' };
-  const textBefore = document.body.innerText;
+  const textBefore = document.body.textContent;
   el.value = String(next);
   el.dispatchEvent(new Event('input', { bubbles: true }));
   el.dispatchEvent(new Event('change', { bubbles: true }));
@@ -68,7 +68,7 @@ async function checkPage(path) {
         let changed = false;
         for (let waited = 0; !rest.reason && !changed && waited <= changeTimeoutMs; waited += pollMs) {
           if (waited) await sleep(pollMs);
-          changed = (await evaluate('document.body.innerText')) !== textBefore;
+          changed = (await evaluate('document.body.textContent')) !== textBefore;
         }
         interaction = { ...rest, changed };
         await sleep(settleMs);

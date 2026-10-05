@@ -123,6 +123,12 @@ test('select-driven example passes', async t => {
   assert.deepEqual([found.interaction.control, found.interaction.after, found.interaction.changed], ['select', 'b', true]);
 });
 
+test('control on a hidden slide still counts as changing the page', async t => {
+  const hidden = page('', `<section><h1>slide 1</h1></section><section hidden><input id="c" type="range" min="0" max="10" value="5"><output id="out">5</output></section><script>document.getElementById('c').addEventListener('input', e => { document.getElementById('out').textContent = e.target.value })</script>`);
+  const run = await check(t, { 'index.html': landing, 'examples/hidden.html': hidden });
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+});
+
 test('content wider than the desktop viewport fails with a desktop overflow failure', async t => {
   const run = await check(t, { 'index.html': landing, 'examples/huge.html': page('', '<div style="width:1500px;height:20px;background:#ccc">huge</div>') });
   assert.equal(run.status, 1);
