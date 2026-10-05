@@ -45,7 +45,7 @@ tag 必須是 annotated tag，訊息就是 Release notes，所以直接寫給讀
 
 ## 檢查失敗後重來
 
-Release 不會在檢查失敗時建立，但 tag 已在遠端。修正後必須刪除舊 tag 再重建（若 workflow 已建立了 Release，也要先在 GitHub 刪除該 Release，已發布 Release 的 tag 不能修改）：
+Release 不會在檢查失敗時建立，但 tag 已在遠端。修正後必須刪除舊 tag 再重建。若 workflow 已建立了 Release，先在 GitHub 刪除該 Release 再刪 tag，避免留下指向舊 commit 的 Release。只有 repository 啟用 immutable releases 時，已發布 Release 的 tag 才會被鎖定、無法刪除或移動，那種情況下只能改發新版本號；未啟用時 tag 仍可刪除重建：
 
 ```sh
 git push origin --delete v0.1.5
