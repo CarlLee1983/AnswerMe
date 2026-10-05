@@ -45,7 +45,7 @@ python3 scripts/check.py --release v0.1.4
 - 範例頁（`site/` 下 `index.html` 以外的 `.html`）中每個「由 answer-me vX.Y.Z 產生」標記的版本，都是 repository 中已存在的 tag；較舊但存在的版本通過。
 - tag 指向的 commit 通過上述快速檢查。
 
-範例頁與快速檢查都以 `git archive` 取出的 tag commit 內容為準，工作區的修改不影響結果。`--release` 與 `--staged` 不能併用。
+範例頁與快速檢查都以暫時 index 取出的 tag commit 內容為準（與 `--staged` 共用同一個快照程式），工作區的修改不影響結果。`--release` 與 `--staged` 不能併用。
 
 ## 行為與瀏覽器驗證
 

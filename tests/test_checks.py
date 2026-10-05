@@ -13,6 +13,8 @@ SOURCE = Path(__file__).resolve().parents[1]
 
 
 class CheckTests(unittest.TestCase):
+    NOTES = "Release\n\n文件與網站：README 與介紹頁已審視，無需更新\n"
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="answer-me guard ")
         self.addCleanup(self.temp.cleanup)
@@ -227,8 +229,6 @@ class CheckTests(unittest.TestCase):
         self.assertFalse((self.root / "site").exists())
         self.check()
 
-    NOTES = "Release\n\n文件與網站：README 與介紹頁已審視，無需更新\n"
-
     def commit(self):
         self.git("add", ".")
         self.git("commit", "-q", "-m", "commit")
@@ -285,6 +285,30 @@ class CheckTests(unittest.TestCase):
         self.release_repo()
         self.write("README.md", "[Details](docs/details.md)\n")
         self.assertIn("missing relative link", self.check("--release", "v0.2.0", valid=False).stderr)
+
+    def test_release_blank_notes_line_is_not_satisfied_by_next_line(self):
+        self.release_repo(notes="Release\n\n文件與網站：\n下一行有文字\n")
+        self.assertIn("文件與網站", self.check("--release", "v0.2.0", valid=False).stderr)
+        self.git("tag", "-a", "-f", "v0.2.0", "-m", "Release\n\n文件與網站：　 \n下一行有文字\n")
+        self.assertIn("文件與網站", self.check("--release", "v0.2.0", valid=False).stderr)
+
+    def test_release_invalid_tag_name_fails_with_single_error(self):
+        self.release_repo()
+        result = self.check("--release", "bad..name", valid=False)
+        self.assertEqual(len(result.stderr.strip().splitlines()), 1)
+        self.assertIn("bad..name", result.stderr)
+
+    def test_release_and_staged_are_mutually_exclusive(self):
+        self.release_repo()
+        self.check("--release", "v0.2.0", "--staged", valid=False)
+
+    def test_release_checks_example_pages_in_subdirectories(self):
+        self.release_repo()
+        self.write("site/examples/deep/two.html", "<p>範例：由 answer-me v0.9.0 產生</p>\n")
+        self.commit()
+        self.git("tag", "-a", "v0.3.0", "-m", self.NOTES)
+        result = self.check("--release", "v0.3.0", valid=False)
+        self.assertIn("site/examples/deep/two.html", result.stderr)
 
     def test_release_reports_all_errors_together(self):
         self.write("README.md", "[Broken](absent.md)\n")

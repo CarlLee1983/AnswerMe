@@ -17,7 +17,9 @@ RESOURCE_ATTRIBUTES = frozenset({
     ("audio", "src"), ("embed", "src"), ("object", "data"),
 })
 LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
-MARKER = re.compile(r"由 answer-me (v\d+\.\d+\.\d+) 產生")
+EXAMPLE_VERSION_MARKER = re.compile(r"由 answer-me (v\d+\.\d+\.\d+) 產生")
+# 只在同一行內比對：冒號後的空白（含全形）不得吃掉換行去借下一行的文字。
+NOTES_LINE = re.compile(r"^文件與網站：[^\S\n]*\S", re.M)
 LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://[^\s<>\"')]|/Users/|/home/)")
 CSS_EXTERNAL = re.compile(r"""url\(\s*["']?\s*((?:https?:)?//[^)"'\s]+)|@import\s+["']((?:https?:)?//[^"']+)""", re.I)
 
@@ -185,7 +187,7 @@ def check_site(root):
 
 
 def run_git(root, *args):
-    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, errors="replace")
 
 
 def example_versions(site):
@@ -194,14 +196,38 @@ def example_versions(site):
     for path in sorted(site.rglob("*.html")):
         if path == site / "index.html":
             continue
-        for version in MARKER.findall(path.read_text(encoding="utf-8")):
+        for version in EXAMPLE_VERSION_MARKER.findall(path.read_text(encoding="utf-8")):
             found.setdefault(version, path.relative_to(site.parent))
     return found
+
+
+def export_snapshot(root, directory, commit=None):
+    """把 Git index（commit 給定時為該 commit 的內容）展開到 directory；失敗回傳錯誤訊息，成功回傳 None。
+    以暫時 index 取出而非 git archive，內容才不受 .gitattributes 的 export-ignore / export-subst 影響。"""
+    env = None
+    if commit:
+        env = dict(os.environ, GIT_INDEX_FILE=str(Path(directory).parent / f"{Path(directory).name}.index"))
+        read = subprocess.run(["git", "read-tree", commit], cwd=root, capture_output=True, text=True, errors="replace", env=env)
+        if read.returncode:
+            return f"cannot read commit {commit}: {read.stderr.strip()}"
+    try:
+        result = subprocess.run(
+            ["git", "checkout-index", "--all", f"--prefix={directory}/"], cwd=root,
+            capture_output=True, text=True, errors="replace", env=env,
+        )
+    finally:
+        if env:
+            Path(env["GIT_INDEX_FILE"]).unlink(missing_ok=True)
+    if result.returncode:
+        return result.stderr.strip() or "cannot export snapshot"
+    return None
 
 
 def check_release(root, tag, validator):
     """發布檢查：逐項收集失敗；內容一律取自 tag 指向的 commit，不看工作區。"""
     ref = f"refs/tags/{tag}"
+    if run_git(root, "check-ref-format", ref).returncode:
+        return [f"{tag!r} is not a valid tag name."]
     kind = run_git(root, "cat-file", "-t", ref)
     if kind.returncode:
         return [f"tag {tag} does not exist."]
@@ -210,15 +236,12 @@ def check_release(root, tag, validator):
         errors.append(f"tag {tag} is not an annotated tag (create it with git tag -a).")
     else:
         notes = run_git(root, "for-each-ref", "--format=%(contents)", ref).stdout
-        if not re.search(r"^文件與網站：\s*\S", notes, re.M):
+        if not NOTES_LINE.search(notes):
             errors.append(f"tag {tag} message needs a line starting with 「文件與網站：」 followed by text.")
     with tempfile.TemporaryDirectory(prefix="answer-me-release-") as directory:
-        archive = subprocess.run(["git", "archive", "--format=tar", f"{ref}^{{commit}}"], cwd=root, capture_output=True)
-        if archive.returncode:
-            return errors + [f"cannot read commit of {tag}: {archive.stderr.decode().strip()}"]
-        unpack = subprocess.run(["tar", "-x", "-C", directory], input=archive.stdout, capture_output=True)
-        if unpack.returncode:
-            return errors + [f"cannot unpack commit of {tag}: {unpack.stderr.decode().strip()}"]
+        failure = export_snapshot(root, directory, f"{ref}^{{commit}}")
+        if failure:
+            return errors + [failure]
         snapshot = Path(directory)
         for version, page in example_versions(snapshot / "site").items():
             if run_git(root, "rev-parse", "-q", "--verify", f"refs/tags/{version}").returncode:
@@ -235,24 +258,18 @@ def main():
     root = Path(__file__).resolve().parent.parent
     codex_root = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex")))
     validator = Path(os.environ.get("SKILL_VALIDATOR", str(codex_root / "skills/.system/skill-creator/scripts/quick_validate.py"))).expanduser().resolve()
-    if args.release:
+    if args.release is not None:
         errors = check_release(root, args.release, validator)
     elif args.staged:
         with tempfile.TemporaryDirectory(prefix="answer-me-index-") as directory:
-            result = subprocess.run(
-                ["git", "checkout-index", "--all", f"--prefix={directory}/"], cwd=root,
-                capture_output=True, text=True,
-            )
-            if result.returncode:
-                print(result.stderr.strip(), file=sys.stderr)
-                return 1
-            errors = check(Path(directory), validator)
+            failure = export_snapshot(root, directory)
+            errors = [failure] if failure else check(Path(directory), validator)
     else:
         errors = check(root, validator)
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    suffix = f" (release {args.release})" if args.release else " (staged snapshot)" if args.staged else ""
+    suffix = f" (release {args.release})" if args.release is not None else " (staged snapshot)" if args.staged else ""
     print("PASS: skill frontmatter, display metadata, relative documentation links, and site pages" + suffix)
     return 0
 
