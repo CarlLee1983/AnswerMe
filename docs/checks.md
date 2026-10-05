@@ -49,6 +49,12 @@ python3 scripts/check.py --release v0.1.4
 
 範例頁與快速檢查都以暫時 index 取出的 tag commit 內容為準（與 `--staged` 共用同一個快照程式），工作區的修改不影響結果。`--release` 與 `--staged` 不能併用。
 
+## CI 檢查
+
+推送到 master 時（不限路徑，也可手動觸發），`.github/workflows/checks.yml` 會依序執行快速檢查與網站瀏覽器檢查（`verify-site.mjs`，使用 runner 內建的 Chrome 與 Node 22），並把瀏覽器檢查的截圖與 `results.json` 上傳為 `site-check` artifact，失敗時也會上傳。CI 的 validator 從 openai/codex 以固定 commit SHA 下載（SHA 寫在 workflow 中），下載失敗即讓 workflow 失敗；本機與 CI 結果分歧時手動更新該 SHA。
+
+這是事後揭露，不阻擋推送：檢查在提交進入 master 之後才跑，用來發現沒裝 hook 或以 `--no-verify` 繞過的提交。它的範圍只有上述兩項檢查，不含其他瀏覽器檢查或行為演練。
+
 ## 行為與瀏覽器驗證
 
 技能行為有變更時，依[演練說明](../tests/answer-me/README.md)用原始材料重新產出答案，再檢查語意及 HTML。已保存的範例可驗證瀏覽器檢查程式與既有成果，不能證明更新後的技能仍會產生相同品質。

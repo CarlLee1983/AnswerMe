@@ -1,0 +1,46 @@
+name: Checks
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SITE_ARTIFACT_DIR: site-check
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: 取得 skill validator
+        # 來源：openai/codex 的 skill-creator 範例（Apache-2.0），內容與本機 Codex 安裝的版本一致。
+        # 固定 commit SHA，避免上游變動讓 CI 無預警轉紅；本機與 CI 結果分歧時手動更新。
+        # curl -f 在 HTTP 錯誤時失敗，下載失敗即讓 workflow 失敗，不略過檢查。
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/quick_validate.py" \
+            https://raw.githubusercontent.com/openai/codex/7f892275e31002f0422477c6219189284560e689/codex-rs/skills/src/assets/samples/skill-creator/scripts/quick_validate.py
+      - name: 安裝檢查依賴
+        run: python -m pip install -r requirements-check.txt
+      - name: 快速檢查
+        run: python scripts/check.py
+        env:
+          SKILL_VALIDATOR: ${{ runner.temp }}/quick_validate.py
+      - name: 網站瀏覽器檢查
+        run: node tests/answer-me/browser/verify-site.mjs site "$SITE_ARTIFACT_DIR"
+      - name: 上傳瀏覽器檢查輸出
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: site-check
+          path: ${{ env.SITE_ARTIFACT_DIR }}
+          if-no-files-found: warn
