@@ -21,6 +21,7 @@ class CheckTests(unittest.TestCase):
         for key in ["GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR"]:
             self.env.pop(key, None)
         self.env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1", ANSWERME_PYTHON=sys.executable)
+        self.env.update(GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.com", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.com")
         for name in ["scripts/check.py", "scripts/install-hooks.sh", ".githooks/pre-commit"]:
             target = self.root / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -225,6 +226,72 @@ class CheckTests(unittest.TestCase):
     def test_tree_without_site_passes(self):
         self.assertFalse((self.root / "site").exists())
         self.check()
+
+    NOTES = "Release\n\n文件與網站：README 與介紹頁已審視，無需更新\n"
+
+    def commit(self):
+        self.git("add", ".")
+        self.git("commit", "-q", "-m", "commit")
+
+    def write_example(self, version):
+        self.write("site/index.html", '<a href="examples/one.html">One</a>\n')
+        self.write("site/examples/one.html", f"<p>範例：由 answer-me {version} 產生 · 2026-10-05</p>\n")
+
+    def release_repo(self, example_version="v0.1.0", notes=None):
+        """提交含範例頁的 commit，並建立舊版 tag v0.1.0 與待發布的 annotated tag v0.2.0。"""
+        self.write_example(example_version)
+        self.commit()
+        self.git("tag", "-a", "v0.1.0", "-m", "old")
+        self.git("tag", "-a", "v0.2.0", "-m", self.NOTES if notes is None else notes)
+
+    def test_release_valid_tag_passes_and_older_example_version_is_allowed(self):
+        self.release_repo()
+        self.assertIn("PASS", self.check("--release", "v0.2.0").stdout)
+
+    def test_release_missing_tag_fails(self):
+        self.release_repo()
+        self.assertIn("v9.9.9", self.check("--release", "v9.9.9", valid=False).stderr)
+
+    def test_release_lightweight_tag_fails(self):
+        self.release_repo()
+        self.git("tag", "v0.3.0")
+        self.assertIn("annotated", self.check("--release", "v0.3.0", valid=False).stderr)
+
+    def test_release_notes_need_docs_and_site_line(self):
+        self.release_repo(notes="Release\n\n只有說明\n")
+        self.assertIn("文件與網站", self.check("--release", "v0.2.0", valid=False).stderr)
+        self.git("tag", "-a", "-f", "v0.2.0", "-m", "Release\n\n文件與網站：   \n")
+        self.assertIn("文件與網站", self.check("--release", "v0.2.0", valid=False).stderr)
+        self.git("tag", "-a", "-f", "v0.2.0", "-m", "Release\n\n文件與網站：已審視\n")
+        self.check("--release", "v0.2.0")
+
+    def test_release_example_version_must_be_existing_tag(self):
+        self.release_repo(example_version="v0.9.0")
+        self.assertIn("v0.9.0", self.check("--release", "v0.2.0", valid=False).stderr)
+
+    def test_release_reads_tag_commit_not_worktree(self):
+        self.release_repo(example_version="v0.9.0")
+        self.write_example("v0.1.0")
+        self.assertIn("v0.9.0", self.check("--release", "v0.2.0", valid=False).stderr)
+        self.write_example("v0.1.0")
+        self.commit()
+        self.git("tag", "-a", "v0.3.0", "-m", self.NOTES)
+        self.write_example("v0.9.0")
+        self.write("README.md", "[Broken](absent.md)\n")
+        self.check("--release", "v0.3.0")
+
+    def test_release_tag_commit_with_broken_quick_check_fails(self):
+        self.write("README.md", "[Broken](absent.md)\n")
+        self.release_repo()
+        self.write("README.md", "[Details](docs/details.md)\n")
+        self.assertIn("missing relative link", self.check("--release", "v0.2.0", valid=False).stderr)
+
+    def test_release_reports_all_errors_together(self):
+        self.write("README.md", "[Broken](absent.md)\n")
+        self.release_repo(example_version="v0.9.0", notes="沒有審視紀錄\n")
+        stderr = self.check("--release", "v0.2.0", valid=False).stderr
+        for expected in ["文件與網站", "v0.9.0", "missing relative link"]:
+            self.assertIn(expected, stderr)
 
     def test_hook_install_and_execution(self):
         result = self.run_command("sh", "scripts/install-hooks.sh")

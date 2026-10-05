@@ -30,6 +30,23 @@ sh scripts/install-hooks.sh
 
 Hook 預設使用 `.venv/bin/python`（若存在），否則 `python3`；可用 `ANSWERME_PYTHON` 指定已備妥依賴的 Python，例如 `export ANSWERME_PYTHON="$HOME/.cache/answer-me/check-env/bin/python"`。若本次是首次安裝，移除設定可停用：`git config --local --unset core.hooksPath`。未來 checkout 須執行安裝命令；Git 不會自動啟用版本庫內的 hooks。
 
+## 發布檢查
+
+推送 tag 前，在本機以 tag 名稱執行發布模式（需先建立 annotated tag）：
+
+```sh
+python3 scripts/check.py --release v0.1.4
+```
+
+檢查項目逐項收集，有錯一次全部列到 stderr 並以非零狀態結束，通過時以零結束：
+
+- tag 存在且為 annotated tag（輕量 tag 沒有訊息可作為 Release notes）。
+- tag 訊息中有一行以「文件與網站：」（全形冒號）開頭，且冒號後有內容。
+- 範例頁（`site/` 下 `index.html` 以外的 `.html`）中每個「由 answer-me vX.Y.Z 產生」標記的版本，都是 repository 中已存在的 tag；較舊但存在的版本通過。
+- tag 指向的 commit 通過上述快速檢查。
+
+範例頁與快速檢查都以 `git archive` 取出的 tag commit 內容為準，工作區的修改不影響結果。`--release` 與 `--staged` 不能併用。
+
 ## 行為與瀏覽器驗證
 
 技能行為有變更時，依[演練說明](../tests/answer-me/README.md)用原始材料重新產出答案，再檢查語意及 HTML。已保存的範例可驗證瀏覽器檢查程式與既有成果，不能證明更新後的技能仍會產生相同品質。
