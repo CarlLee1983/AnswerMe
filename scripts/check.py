@@ -2,6 +2,7 @@
 """Check this repository's skill metadata and documentation; optionally use the index."""
 
 import argparse
+from html.parser import HTMLParser
 import os
 from pathlib import Path
 import re
@@ -9,6 +10,23 @@ import subprocess
 import sys
 import tempfile
 from urllib.parse import unquote, urlsplit
+
+RESOURCE_ATTRIBUTES = frozenset({
+    ("script", "src"), ("link", "href"), ("img", "src"), ("img", "srcset"), ("iframe", "src"),
+    ("source", "src"), ("source", "srcset"), ("video", "src"), ("video", "poster"),
+    ("audio", "src"), ("embed", "src"), ("object", "data"),
+})
+LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
+LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://|/Users/|/home/)")
+CSS_EXTERNAL = re.compile(r"""url\(\s*["']?\s*((?:https?:)?//[^)"'\s]+)|@import\s+["']((?:https?:)?//[^"']+)""", re.I)
+
+
+def local_path(target):
+    """Path part of a link that points at a file in the same tree; None for URLs and bare anchors."""
+    url = urlsplit(target)
+    if url.scheme or url.netloc or not url.path:
+        return None
+    return unquote(url.path)
 
 
 def check(root, validator):
@@ -61,11 +79,107 @@ def check(root, validator):
             line = re.sub(r"`[^`]*`", "", line)
             for target in re.findall(r"\[[^\]]*\]\((<[^>]+>|[^\s)]+)(?:\s+\"[^\"]*\")?\)", line):
                 target = target.strip("<>")
-                url = urlsplit(target)
-                if url.scheme or url.netloc or not url.path or url.path.startswith("/"):
+                path = local_path(target)
+                if path is None or path.startswith("/"):
                     continue
-                if not (doc.parent / unquote(url.path)).exists():
+                if not (doc.parent / path).exists():
                     errors.append(f"{doc.relative_to(root)}:{number}: missing relative link {target}")
+    return errors + check_site(root)
+
+
+def is_external(value):
+    return re.match(r"\s*(https?:)?//", value, re.I) is not None
+
+
+def is_forbidden(value, allowed_hosts):
+    return is_external(value) and urlsplit(value.strip()).hostname not in allowed_hosts
+
+
+def css_urls(text):
+    return [(text.count("\n", 0, m.start()), m.group(1) or m.group(2)) for m in CSS_EXTERNAL.finditer(text)]
+
+
+def srcset_urls(value):
+    return [candidate.split()[0] for candidate in value.split(",") if candidate.strip()]
+
+
+class SiteParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.attributes = []  # (line, tag, attribute, value)
+        self.css = []  # (line, external url)
+        self.in_style = False
+
+    def handle_endtag(self, tag):
+        if tag == "style":
+            self.in_style = False
+
+    def handle_data(self, data):
+        if self.in_style:
+            start = self.getpos()[0]
+            self.css.extend((start + offset, url) for offset, url in css_urls(data))
+
+    def handle_starttag(self, tag, attrs):
+        self.in_style = tag == "style"
+        line = self.getpos()[0]
+        for name, value in attrs:
+            if value is not None:
+                if name == "style":
+                    self.css.extend((line + offset, url) for offset, url in css_urls(value))
+                self.attributes.append((line, tag, name, value))
+
+
+def site_link_error(site, page, value):
+    path = local_path(value)
+    if path is None:
+        return None
+    if path.startswith("/"):
+        return f"root-absolute link {value}"
+    target = (page.parent / path).resolve()
+    if not target.is_relative_to(site.resolve()):
+        return f"link leaves site {value}"
+    if not (target / "index.html" if target.is_dir() else target).exists():
+        return f"missing relative link {value}"
+    return None
+
+
+def check_site(root):
+    site = root / "site"
+    errors = []
+    if not site.is_dir():
+        return errors
+    for path in sorted(p for p in site.rglob("*") if p.is_file()):
+        name = path.relative_to(root)
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        for number, line in enumerate(text.splitlines(), 1):
+            if LOCAL_PATH.search(line):
+                errors.append(f"{name}:{number}: local path")
+        if path.suffix != ".html":
+            continue
+        parser = SiteParser()
+        parser.feed(text)
+        landing = path == site / "index.html"
+        css_hosts = LANDING_HOSTS if landing else frozenset()
+        errors.extend(
+            f"{name}:{number}: loads external resource {url}"
+            for number, url in parser.css if is_forbidden(url, css_hosts)
+        )
+        for number, tag, attribute, value in parser.attributes:
+            hosts = LANDING_HOSTS if landing and tag == "link" else frozenset()
+            if (tag, attribute) not in RESOURCE_ATTRIBUTES:
+                urls = []
+            elif attribute == "srcset":
+                urls = srcset_urls(value)
+            else:
+                urls = [value]
+            errors.extend(f"{name}:{number}: loads external resource {url}" for url in urls if is_forbidden(url, hosts))
+            if attribute in ("href", "src"):
+                reason = site_link_error(site, path, value)
+                if reason:
+                    errors.append(f"{name}:{number}: {reason}")
     return errors
 
 
@@ -91,7 +205,7 @@ def main():
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print("PASS: skill frontmatter, display metadata, and relative documentation links" + (" (staged snapshot)" if args.staged else ""))
+    print("PASS: skill frontmatter, display metadata, relative documentation links, and site pages" + (" (staged snapshot)" if args.staged else ""))
     return 0
 
 

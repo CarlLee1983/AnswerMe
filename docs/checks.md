@@ -18,6 +18,8 @@ python3 -m venv "$HOME/.cache/answer-me/check-env"
 
 快速檢查涵蓋 skill frontmatter、`agents/openai.yaml` 必要顯示欄位，以及專案文件的行內相對檔案連結。外部網址、絕對路徑、頁內 anchor 及歷史演練產物中的來源連結不在連結檢查範圍；它不驗證解說語意或使用者理解。
 
+若 repository 根目錄有 `site/`，檢查器也會靜態掃描其中的檔案：不得含 `file://` 或 `/Users/`、`/home/` 形式的本機路徑；HTML 的 `href` / `src` 站內相對連結必須指向存在的檔案；範例頁（`site/index.html` 以外的 `.html`）不得以 `script`、`link`、`img`、`iframe` 等標記或 CSS 的 `url()` / `@import` 載入 http(s) 資源，介紹頁 `site/index.html` 只例外允許 `fonts.googleapis.com` 與 `fonts.gstatic.com`。站內連結必須留在 `site/` 內（只有該目錄會部署），指向目錄時該目錄需有 `index.html`，以 `/` 開頭的根絕對連結會被拒絕，因為專案網站部署在 `/AnswerMe/` 之下。介紹頁的例外只適用於 `<link>`。CSS 的 `url()` / `@import` 掃描只涵蓋 HTML 內嵌的 `<style>` 與 `style` 屬性，網站頁面是單檔，不含獨立 CSS。一般 `<a href>` 的外部網址不受限；這只是靜態掃描，不執行頁面，也不驗證內容語意。
+
 ## 提交檢查
 
 ```sh
