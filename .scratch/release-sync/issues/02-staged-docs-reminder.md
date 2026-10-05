@@ -6,9 +6,13 @@
 
 **Status:** ready-for-agent
 
-- [ ] 檢查器的 staged 模式在上述條件下於 stderr 輸出提醒，結束碼不因提醒改變
-- [ ] 非 staged 模式不輸出此提醒
-- [ ] 測試涵蓋：只動技能 → 有提醒且結束碼 0；技能加 README → 無提醒；技能加介紹頁 → 無提醒；只動文件 → 無提醒；技能變更未 stage → 無提醒；技能已 stage 但 README 修改未 stage → 有提醒
-- [ ] 測試沿用既有暫存 git repo 加 subprocess 的模式
-- [ ] 檢查說明文件補上提醒的條件與「不阻擋」的性質
-- [ ] 既有檢查測試全數通過
+- [x] 檢查器的 staged 模式在上述條件下於 stderr 輸出提醒，結束碼不因提醒改變
+- [x] 非 staged 模式不輸出此提醒
+- [x] 測試涵蓋：只動技能 → 有提醒且結束碼 0；技能加 README → 無提醒；技能加介紹頁 → 無提醒；只動文件 → 無提醒；技能變更未 stage → 無提醒；技能已 stage 但 README 修改未 stage → 有提醒
+- [x] 測試沿用既有暫存 git repo 加 subprocess 的模式
+- [x] 檢查說明文件補上提醒的條件與「不阻擋」的性質
+- [x] 既有檢查測試全數通過
+
+## Comments
+
+- 2026-10-05：實作於 `a80b480`，以 `git diff --cached` 判斷 staged 路徑；提醒文字為「提醒：本次提交改動了 skills/answer-me/，請考慮是否同步更新 README.md 或 site/index.html。」，輸出到 stderr，不影響結束碼。搬出技能資料夾的重新命名與刪除也算技能變更；初始提交以空 tree 為基準。`test_checks.py` 50 項通過（新增 11 項）。
