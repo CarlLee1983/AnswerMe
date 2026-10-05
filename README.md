@@ -71,6 +71,12 @@ npx skills@latest update answer-me -g
 
 HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；macOS 使用 `open`。可要求不要自動開啟，無法開啟時仍會交付檔案連結。詳見[技能的驗證與交付規則](skills/answer-me/SKILL.md#驗證與交付)。
 
+## 技術解說的用詞與原意
+
+解說會沿用來源的術語，寫清楚動作主體，並把操作條件放在指令前。簡化文字時仍保留例外、可能性與要求強度；量測數字附上來源已有的條件，計畫與已完成成果分開說明。
+
+這些做法參考 [hai-simplified-technical](https://github.com/hylarucoder/hai-stack/blob/d83d58d8699884d3cbda0c36b3541357d79478bb/skills/hai-simplified-technical/SKILL.zh_CN.md)，並依 Answer Me 的解說用途調整。完整執行規則見[寫清楚技術解說](skills/answer-me/SKILL.md#寫清楚技術解說)。本專案不要求固定句長、禁詞比例或 STE 符合度，也不依賴該專案的檢查器。
+
 ## HTML 預設呈現
 
 未指定外觀時採用共用的淺色閱讀樣式，不額外詢問。自行閱讀預設使用[文章式模板](skills/answer-me/assets/article.html)；明確要求簡報或逐頁講述時，使用[簡報式模板](skills/answer-me/assets/slides.html)。兩者都可離線開啟，模板中的內容是示例，產生成品時須換成本次解說與來源。
@@ -108,5 +114,5 @@ python3 scripts/check.py
 | --- | --- |
 | [CONTEXT.md](CONTEXT.md) | 概念學習與成果審視的領域用語 |
 | [docs/checks.md](docs/checks.md) | 檢查依賴、命令、hook 與驗證範圍 |
-| [tests/answer-me/README.md](tests/answer-me/README.md) | 三組演練情境、語意驗收條件與瀏覽器檢查方式 |
+| [tests/answer-me/README.md](tests/answer-me/README.md) | 演練情境、語意驗收條件與瀏覽器檢查方式 |
 | [AGENTS.md](AGENTS.md) | 在此 repository 工作的 agent 指引 |

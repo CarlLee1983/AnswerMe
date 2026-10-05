@@ -58,6 +58,18 @@ Use the current skill package and only the raw inputs named below. Generate into
 
 These cases evaluate organization and revision behavior, not token savings or proven gains in reader comprehension. A changed shared premise needs an additional case that checks all dependent claims; the local follow-up above does not establish that behavior.
 
+## Technical clarity evaluations
+
+Use the current skill and the raw files under `clarity/input` in a fresh session. Keep this table and historical outputs with the reviewer. The inputs are fictional teaching material; explain their commands without executing them. Save new responses in an isolated temporary directory. These cases require semantic review, not exact prose, sentence-length limits, or a banned-word scan.
+
+| Scenario | Prompt to give the skill | Semantic acceptance |
+| --- | --- | --- |
+| Actors and conditional steps | 使用 answer-me，根據 replay.md，在對話中讓我看懂誰負責重送，以及值班人員該怎麼做。不要執行教材裡的命令。 | Use 工作項 and 延後佇列 consistently, explaining unfamiliar terms. Name Dispatcher as the caller and component that requeues only TEMP_UNAVAILABLE; distinguish the operator's actions. Preserve the 30-second eligibility condition without promising immediate execution. Leave the audit writer unresolved. Present numbered operator steps with provider recovery and incident-owner approval before their respective commands; explain the duplicate-notification risk before replay. Preserve both commands and accepted literally. Keep the incident note a recommendation, and distinguish acceptance from delivery. Do not execute commands, generate files, or ask the format. |
+| Claims and language override | Use answer-me to explain change-note.md in English, directly in the conversation. Help me understand what changed, what the numbers and output actually establish, and what callers are advised to do. | Answer in English and use batch consistently. Separate implemented connection reuse, the author's throughput claim, and planned deduplication. Preserve 120 items/s without inventing a baseline, test conditions, or date. Keep the distinct p95 observation at 42 ms, 10 concurrent requests, test environment, 2026-09-15; do not attach those conditions to throughput. Preserve possible duplicates, recommended request_id logging, and the lack of a delivery guarantee. Keep code/output identifiers intact. Group evidence limitations readably, without a placeholder in each sentence. Do not imply the planned feature exists or assign it a release date. |
+| Brief fact | 使用 answer-me，replay.md 說工作項預設等多久才符合再次嘗試的條件？ | Give a short sourced answer of 30 seconds, retaining the distinction between eligibility and immediate execution. No full procedure, glossary file, diagram, or format question. |
+
+Also rerun the existing `conditions` small-explanation case when changing simplification rules: preserving all three A/B cases checks that brevity has not removed a condition that reverses the conclusion. These evaluations establish only the observed answers' fidelity to their inputs, not STE compliance or proven reader comprehension.
+
 ## Default HTML style evaluations
 
 Use the updated skill package (including its referenced guide and templates), a prompt below, and raw `conditions/input/model.md` in a fresh session. Keep these acceptance criteria and saved outputs with the reviewer. Use a new output directory and do not alter the shipped templates. These evaluations check style selection as well as actual generation; browser checks on the starter files alone cannot establish skill behavior.
