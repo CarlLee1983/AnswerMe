@@ -44,6 +44,20 @@ node tests/answer-me/browser/verify.mjs
 
 需要 Node.js 22+ 與 Google Chrome 或 Chromium；非標準安裝位置可透過 `CHROME_BIN` 指定瀏覽器執行檔。檢查使用 `file://` 與離線模式，將新截圖和 JSON 結果寫入新的暫存目錄，並印出路徑。情境範圍與自訂輸出目錄的參數見[演練說明](../tests/answer-me/README.md)。
 
+網站（`site/`）變更時，手動檢查所有頁面並檢視輸出的桌面與手機截圖：
+
+```sh
+node tests/answer-me/browser/verify-site.mjs [siteRoot] [artifactDir]
+```
+
+檢查以 `file://` 與離線模式開啟 `site/` 下每個 `.html`（找不到任何頁面視為失敗），斷言沒有執行期例外、桌面（1200 px）與手機（390 px）寬度皆無水平溢出。範例頁不得有任何 http(s) 請求，介紹頁 `site/index.html` 只允許 `fonts.googleapis.com` 與 `fonts.gstatic.com`；載入後會先等 2 秒，讓延遲發出的請求被記錄，若有互動則在互動後再等 2 秒。自動操作的控制項只有 `input[type=range]`、`input[type=number]` 與 `select`：頁面若有，會把第一個控制項改成另一個合法值，並在最多 2 秒內輪詢頁面文字是否改變；按鈕驅動的互動（例如簡報換頁）仍須人工檢查。
+
+單頁的例外（載入失敗、CDP 逾時等）記為該頁的失敗，不會中斷其餘頁面；所有頁面的失敗都收集到 `results.json`，任一失敗則以非零狀態結束。截圖與 `results.json` 寫入新的暫存目錄並印出路徑，不寫入 repository。與其他瀏覽器檢查相同，需要 Node.js 22+ 與 Chrome 或 Chromium（可用 `CHROME_BIN` 指定），不接 pre-commit。它不驗證內容語意。檢查程式本身的測試：
+
+```sh
+node --test tests/answer-me/browser/verify-site.test.mjs
+```
+
 檢查器或 hook 改動時，執行：
 
 ```sh
