@@ -112,6 +112,9 @@
     .preview img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: .9; transition: opacity .3s; }
     .preview:hover img { opacity: 1; }
     .preview-cap { max-width: 880px; margin: 10px auto 0; text-align: left; font: .8rem var(--mono); color: var(--dim); }
+    .demo { max-width: 880px; margin: 64px auto 0; }
+    .demo video { display: block; width: 100%; height: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+    .demo figcaption { margin-top: 10px; font: .8rem/1.7 var(--mono); color: var(--dim); }
 
     /* 段落 */
     section { padding-top: 96px; scroll-margin-top: 16px; }
@@ -289,6 +292,14 @@
         <p class="preview-cap">↑ 上面那句請求的實際產出，點開可讀完整頁。</p>
       </div>
 
+      <figure class="demo">
+        <video controls muted loop playsinline preload="metadata" poster="assets/demo-poster.webp" width="1280" height="760" aria-describedby="demo-cap">
+          <source src="assets/demo.webm" type="video/webm">
+          <source src="assets/demo.mp4" type="video/mp4">
+        </video>
+        <figcaption id="demo-cap">實錄：同一句請求拿掉「做成離線靜態 HTML」。answer-me 先給核心摘要，再問一次要 HTML、Markdown 還是對話；選 HTML 後產出頁面。等待思考與生成的段落已加速。</figcaption>
+      </figure>
+
       <section id="compare" aria-labelledby="compare-title">
         <p class="kicker">示意對照 · 素材 ticket_api</p>
         <h2 id="compare-title">差別在於能不能被核對</h2>
@@ -447,6 +458,17 @@
           }, RESET_MS);
         });
       });
+
+      // 示範影片捲入畫面時自動播放一次；減少動態偏好下只留播放控制
+      const demo = document.querySelector('.demo video');
+      if (demo && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const observer = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return;
+          observer.disconnect();
+          demo.play().catch(() => {}); // 瀏覽器拒絕自動播放時保留 poster 與控制列
+        }, { threshold: .5 });
+        observer.observe(demo);
+      }
 
       // 範例分頁（WAI-ARIA tabs，自動啟用）；沒有 JS 時維持為清單
       document.querySelectorAll('[data-tabs]').forEach(viewer => {
