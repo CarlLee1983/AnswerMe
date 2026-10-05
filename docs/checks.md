@@ -51,7 +51,9 @@ python3 scripts/check.py --release v0.1.4
 
 ## CI 檢查
 
-推送到 master 時（不限路徑，也可手動觸發），`.github/workflows/checks.yml` 會依序執行快速檢查與網站瀏覽器檢查（`verify-site.mjs`，使用 runner 內建的 Chrome 與 Node 22），並把瀏覽器檢查的截圖與 `results.json` 上傳為 `site-check` artifact，失敗時也會上傳。CI 的 validator 從 openai/codex 以固定 commit SHA 下載（SHA 寫在 workflow 中），下載失敗即讓 workflow 失敗；本機與 CI 結果分歧時手動更新該 SHA。
+推送到 master 時（不限路徑，也可手動觸發），`.github/workflows/checks.yml` 會依序執行快速檢查與網站瀏覽器檢查（`verify-site.mjs`，使用 runner 內建的 Chrome 與 Node 22），並把瀏覽器檢查的截圖與 `results.json` 上傳為 `site-check` artifact，失敗時也會上傳。CI 的 validator 由 `scripts/fetch-validator.sh` 從 openai/codex 以固定 commit SHA 下載（SHA 只寫在該腳本中），下載失敗即讓 workflow 失敗；本機與 CI 結果分歧時只需更新該腳本的 SHA。
+
+推送 `v*` tag 時，`.github/workflows/release.yml` 另外執行：以同一支腳本取得 validator、跑上述發布模式檢查，通過後以 tag 訊息建立 GitHub Release；它不跑瀏覽器檢查。checkout 後會強制重新抓取 tag ref，確保拿到真正的 annotated tag 物件。步驟見[發布步驟](release.md)。
 
 這是事後揭露，不阻擋推送：檢查在提交進入 master 之後才跑，用來發現沒裝 hook 或以 `--no-verify` 繞過的提交。它的範圍只有上述兩項檢查，不含其他瀏覽器檢查或行為演練。
 
