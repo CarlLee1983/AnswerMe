@@ -68,12 +68,14 @@ for (const kind of ['article', 'slides']) {
       }
       navigation = { count, buttons: true, arrows: true, homeEnd: true, bounds: true, interactiveTargets: true, lastPageLabel };
     }
-    await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    // 行動模擬下 Chrome 會把 innerWidth 撐到內容寬度，所以溢出要對照模擬的視窗寬度，不能對照 innerWidth。
+    const mobileWidth = 390;
+    await send('Emulation.setDeviceMetricsOverride', { width: mobileWidth, height: 844, deviceScaleFactor: 1, mobile: true });
     const mobile = [];
     const pages = navigation?.count ?? 1;
     for (let i = 0; i < pages; i++) {
       const row = await evaluate(`({width:innerWidth,scrollWidth:document.documentElement.scrollWidth})`);
-      assert.ok(row.scrollWidth <= row.width, `${kind} mobile page ${i + 1}: ${JSON.stringify(row)}`);
+      assert.ok(row.scrollWidth <= mobileWidth, `${kind} mobile page ${i + 1}: ${JSON.stringify(row)}`);
       mobile.push(row);
       await screenshot(join(outputRoot, `${kind}-mobile-${i + 1}.png`));
       if (kind === 'slides') await evaluate(`document.querySelector('#next').click()`);
