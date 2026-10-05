@@ -29,6 +29,10 @@
 - 首次執行時 model-slides.html 被誤判互動無效：互動頁位於隱藏投影片，`innerText` 不計隱藏文字。檢查改用 `textContent`，並先以「隱藏頁上的控制項」測試確認失敗再修正；`node:test` 16 項通過。
 - 簡報翻頁屬按鈕互動，自動檢查不涵蓋；產生 agent 自述已測翻頁與鍵盤，本次未另行實測。列印版面未實測。
 
-## 專案自我介紹（未發布）
+## 專案自我介紹
 
-產生的頁面在缺口段落寫「`interactive/input/existing-explainer.html` 是 0 位元組的空檔」，實際為 304 bytes，屬事實錯誤。此外，匯出素材時移除了 `.scratch/` 與 `tests/answer-me/*/output/`，頁面因此把「`verify.mjs` 失敗」與「ADR 引用的決策文件不存在」寫成專案現況，對 v0.1.3 並不成立。依規格不改動解說內文，此頁暫不發布，待決定處理方式。
+- 第一版未發布：缺口段落寫「`interactive/input/existing-explainer.html` 是 0 位元組的空檔」，實際為 304 bytes；且因匯出時移除 `.scratch/` 與 `tests/answer-me/*/output/`，把「`verify.mjs` 失敗」寫成專案現況。依規格不改內文，經維護者決定重新產生。
+- 第二版素材：完整的 `git archive v0.1.3`，只移除先前的專案介紹成品 `.scratch/project-explainer-*`。請求原文與第一版相同：「使用 answer-me，幫我理解這個專案（Answer Me）是什麼、實際怎麼運作，做成可離線開啟的靜態 HTML，文章式，附上相關檔案位置。（存檔路徑）完成後只給連結，不要自動開啟。」
+- 語意核對：上述兩項錯誤未再出現；`SKILL.md` 各節行號（1–4、10–15、17–21、23–41、43–52、54–60、62–82、84 起）與 v0.1.3 對得上；「五份 ADR 皆 accepted」屬實；`check.py`、`test_checks.py`（10 項）、`verify.mjs` 為產生 agent 在素材上的實測，未執行項目（模板檢查、語意演練、真實 Git hook）頁面已標明。通過。
+- 發布處理：移除 Google Fonts `<link>`；20 個 `../repo2/` 相對連結改指 `https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/<同路徑>`；外框標示另說明文中「repo2 快照」即 v0.1.3 內容，且頁尾關於相對路徑的說明因連結改寫而不再適用（未改內文）。
+- 發布時網站檢查把內文 `<code>file://</code>` 誤判為本機路徑；檢查器改為 `file://` 後須接路徑才算，先以測試確認失敗再修正，單元測試 27 項通過；網站瀏覽器檢查 5 頁、0 失敗。
