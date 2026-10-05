@@ -1,5 +1,7 @@
 # Answer Me
 
+[![answer-me：看懂陌生的東西，也看懂 agent 做了什麼](site/assets/og.jpg)](https://carllee1983.github.io/AnswerMe/)
+
 Answer Me 是協助理解概念與 agent 工作成果的解說技能，不限定特定 agent。它先理解需求，未指定格式時會詢問要 HTML、Markdown 文件或對話回答，再依問題組織文字、圖解與必要的互動，並在關鍵主張旁保留來源與驗證限制。預設使用繁體中文，保留必要的英文術語。
 
 網站：<https://carllee1983.github.io/AnswerMe/>，含介紹與技能實際產生的範例。
@@ -82,6 +84,12 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 ## HTML 預設呈現
 
 未指定外觀時採用共用的淺色閱讀樣式，不額外詢問。自行閱讀預設使用[文章式模板](skills/answer-me/assets/article.html)；明確要求簡報或逐頁講述時，使用[簡報式模板](skills/answer-me/assets/slides.html)。兩者都可離線開啟，模板中的內容是示例，產生成品時須換成本次解說與來源。
+
+以下是技能 v0.1.3 只拿到原始素材時實際產生的成品，點圖可在網站上開啟；更多範例見[網站](https://carllee1983.github.io/AnswerMe/#examples)。
+
+| 成果審視：程式碼走讀 | 概念學習：互動模型 |
+| --- | --- |
+| [![TicketService 與 FakeRepo 的呼叫順序解說](site/assets/ticket.webp)](https://carllee1983.github.io/AnswerMe/examples/ticket.html) | [![p 增加時 M 往哪走的互動解說](site/assets/model-article.webp)](https://carllee1983.github.io/AnswerMe/examples/model-article.html) |
 
 需求發起者的明確要求優先於內容情境與預設樣式，例如「用深色文章式 HTML」或「用品牌色做成逐頁 HTML 簡報」。配色、字體、間距、內容元件與調整流程見[樣式指引](skills/answer-me/references/html-style.md)。
 

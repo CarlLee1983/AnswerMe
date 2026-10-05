@@ -70,6 +70,12 @@
     .install code::before { content: "$ "; color: var(--accent); }
     .copy { border: 0; border-radius: 6px; padding: 8px 14px; background: var(--accent); color: var(--bg); font: 700 .82rem var(--mono); white-space: nowrap; cursor: pointer; transition: transform .15s var(--ease); }
     .copy:active { transform: scale(.97); }
+    .cta { position: relative; isolation: isolate; margin-top: 96px; padding: 72px 32px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+    .cta::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to right, var(--bg) 52%, rgba(12, 14, 17, .6) 70%, rgba(12, 14, 17, .15)), url("assets/cta.webp") right center / cover no-repeat; }
+    .cta h2 { margin-top: 0; text-wrap: balance; }
+    .cta .install { margin-top: 8px; }
+    .mode-art { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; margin: -8px 0 12px; -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 40%, transparent 96%); mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 40%, transparent 96%); }
+    .cta-links { margin: 20px 0 0; font: .88rem var(--mono); }
     .hero-links { margin-top: 16px; font: .88rem var(--mono); }
     .hero-links a { color: var(--muted); }
 
@@ -168,6 +174,7 @@
       section { padding-top: 64px; }
     }
     @media (max-width: 520px) {
+      .cta { padding: 48px 20px; }
       .bar li:not(:last-child) { display: none; }
       .install { grid-template-columns: 1fr; width: 100%; }
       .copy { justify-self: start; }
@@ -251,11 +258,13 @@
         <p class="sec-sub">技能先判斷你卡在哪裡，再決定用文字、圖解或互動呈現。</p>
         <div class="modes">
           <article class="mode">
+            <img class="mode-art" src="assets/use-learn.webp" alt="" width="800" height="400" loading="lazy">
             <p class="kicker">陌生概念 · 文章 · 系統</p>
             <h3>概念學習</h3>
             <p>沿一條實際流程追到負責的程式，建立用得上的理解，而不是目錄清單。</p>
           </article>
           <article class="mode">
+            <img class="mode-art" src="assets/use-review.webp" alt="" width="800" height="400" loading="lazy">
             <p class="kicker">方案 · diff · 測試結果</p>
             <h3>成果審視</h3>
             <p>說清前後行為與取捨，核對關鍵主張；<strong>agent 自稱成功不算證據</strong>。</p>
@@ -316,6 +325,16 @@
           <dt>html</dt><dd>單檔、離線可開，內嵌所需的樣式、程式與資料，不需要伺服器。</dd>
           <dt>scope</dt><dd>解說不是 code review；完整審查或修改程式屬於另外的任務。</dd>
         </dl>
+      </section>
+
+      <section class="cta" aria-labelledby="cta-title">
+        <h2 id="cta-title">下一次看不懂，就叫它來解說</h2>
+        <p class="sec-sub">一行指令安裝，在 agent 裡說「使用 answer-me」。</p>
+        <div class="install">
+          <code id="install-cmd-2"><span>npx skills@latest add</span> <span>CarlLee1983/AnswerMe</span> <span>--skill answer-me -g</span></code>
+          <button class="copy" type="button" data-copy-target="install-cmd-2" aria-label="複製安裝指令">複製</button>
+        </div>
+        <p class="cta-links"><a href="#examples">先看範例 →</a></p>
       </section>
     </main>
 
