@@ -54,7 +54,7 @@ Status: ready-for-agent
   | 外部連結 | `arrow-up-right` |
   | 站內連結 | `arrow-right` |
 
-  外部連結：頁首導覽的 GitHub，頁尾的 GitHub、Releases，hero 的 repo 連結，頁尾的 README 安裝說明與 Skills CLI。站內連結：四張範例卡的「打開範例」與 CTA 的「先看範例」。原本文字裡的「→」由圖示取代。GitHub 不用品牌圖示。
+  外部連結：頁首導覽的 GitHub，頁尾的 GitHub、Releases，hero 的 repo 連結，頁尾的 README 安裝說明與 Skills CLI。站內連結：四張範例卡的「打開範例」與 CTA 的「先看範例」。原本文字裡的「→」由圖示取代。
 - **不改的符號**：hero 模擬終端機的完成標記「✓」與「交付 →」維持文字。
 - **樣式**：圖示用 `currentColor`、大小約 1em、線寬 1.75、對齊文字基線；同類圖示間距一致（文字前的類別與按鈕圖示一組、連結文字後的箭頭一組）。
 - **無障礙**：所有圖示 `aria-hidden="true"` 且不可聚焦；每個控制項保留可見文字，沒有只有圖示的按鈕。既有的螢幕閱讀器狀態區宣告不變。
@@ -72,7 +72,6 @@ Status: ready-for-agent
 
 - 範例頁與其外框。
 - 範例卡的分類 tag、各段 `h2` 加圖示，或任何純裝飾圖示。
-- GitHub 等品牌圖示。
 - 替換現有的 webp 插圖、logo 或 favicon。
 - 為複製按鈕新增自動化瀏覽器斷言。
 - README 中的第三方授權說明（授權聲明只放在 sprite 內）。
@@ -81,3 +80,9 @@ Status: ready-for-agent
 
 - 決策來自一次 grilling；決策都容易撤回，未寫 ADR。
 - Lucide 授權與圖示存在性已於 2026-10-05 查證。
+
+## 追加決策（2026-10-05，上線後）
+
+- 推翻原本「不用品牌圖示」：頁首、hero、頁尾三處 GitHub 連結文字前加 GitHub 標誌，頁尾 Releases 前加 Lucide `tag`。連結後的外連箭頭保留，「↗＝離開網站」的規則不變，標誌另外標示目的地。
+- GitHub 標誌取自 Simple Icons（CC0 1.0，固定 commit `98820a4`），因 Lucide 已不提供品牌圖示（已查證）；實心填色，略縮小（0.9em）讓視覺重量接近線條圖示。`tag` 不在 Lucide 的 Feather 衍生清單內，ISC 聲明已涵蓋。
+- 安裝指令不加 `terminal` 圖示，因已有 `$` 提示符與終端機外觀。
