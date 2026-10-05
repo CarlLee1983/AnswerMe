@@ -317,6 +317,84 @@ class CheckTests(unittest.TestCase):
         for expected in ["文件與網站", "v0.9.0", "missing relative link"]:
             self.assertIn(expected, stderr)
 
+    REMINDER = "提醒"
+
+    def reminder_repo(self):
+        """已有 HEAD、技能資料夾與兩份使用者文件的 repo，之後的變更都相對於這個基線。"""
+        self.write("skills/answer-me/notes.md", "# Notes\n")
+        self.write("site/index.html", "<p>intro</p>\n")
+        self.commit()
+
+    def test_staged_reminder_when_only_technique_folder_changes(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.git("add", "skills")
+        result = self.check("--staged")
+        self.assertIn(self.REMINDER, result.stderr)
+        self.assertIn("README", result.stderr)
+        self.assertEqual(result.returncode, 0)
+
+    def test_staged_no_reminder_when_readme_also_staged(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.write("README.md", "[Details](docs/details.md)\nupdated\n")
+        self.git("add", ".")
+        self.assertNotIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_no_reminder_when_landing_page_also_staged(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.write("site/index.html", "<p>updated</p>\n")
+        self.git("add", ".")
+        self.assertNotIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_no_reminder_when_only_docs_change(self):
+        self.reminder_repo()
+        self.write("README.md", "[Details](docs/details.md)\nupdated\n")
+        self.git("add", ".")
+        self.assertNotIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_no_reminder_for_unstaged_technique_change(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.assertNotIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_reminder_ignores_unstaged_readme_change(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.git("add", "skills")
+        self.write("README.md", "[Details](docs/details.md)\nupdated\n")
+        self.assertIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_reminder_in_initial_commit_without_docs(self):
+        self.write("skills/answer-me/notes.md", "# Notes\n")
+        self.git("add", "skills")
+        self.assertIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_no_reminder_in_initial_commit_with_docs(self):
+        self.write("skills/answer-me/notes.md", "# Notes\n")
+        self.git("add", ".")
+        self.assertNotIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_reminder_for_deletion_in_technique_folder(self):
+        self.reminder_repo()
+        self.git("rm", "-q", "skills/answer-me/notes.md")
+        self.assertIn(self.REMINDER, self.check("--staged").stderr)
+
+    def test_staged_reminder_does_not_block_failing_check(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "[Broken](absent.md)\n")
+        self.git("add", "skills")
+        stderr = self.check("--staged", valid=False).stderr
+        self.assertIn("missing relative link", stderr)
+        self.assertIn(self.REMINDER, stderr)
+
+    def test_reminder_not_printed_outside_staged_mode(self):
+        self.reminder_repo()
+        self.write("skills/answer-me/notes.md", "# Notes\nmore\n")
+        self.git("add", "skills")
+        self.assertNotIn(self.REMINDER, self.check().stderr)
+
     def test_hook_install_and_execution(self):
         result = self.run_command("sh", "scripts/install-hooks.sh")
         self.assertEqual(result.returncode, 0, result.stderr)

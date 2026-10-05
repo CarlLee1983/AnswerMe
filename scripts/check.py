@@ -19,6 +19,8 @@ RESOURCE_ATTRIBUTES = frozenset({
 LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
 EXAMPLE_VERSION_MARKER = re.compile(r"由 answer-me (v\d+\.\d+\.\d+) 產生")
 # 只在同一行內比對：冒號後的空白（含全形）不得吃掉換行去借下一行的文字。
+TECHNIQUE_FOLDER = "skills/answer-me/"
+USER_DOCS = frozenset({"README.md", "site/index.html"})
 NOTES_LINE = re.compile(r"^文件與網站：[^\S\n]*\S", re.M)
 LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://[^\s<>\"')]|/Users/|/home/)")
 CSS_EXTERNAL = re.compile(r"""url\(\s*["']?\s*((?:https?:)?//[^)"'\s]+)|@import\s+["']((?:https?:)?//[^"']+)""", re.I)
@@ -223,6 +225,18 @@ def export_snapshot(root, directory, commit=None):
     return None
 
 
+def docs_reminder(root):
+    """staged 變更動到技能資料夾卻沒動使用者文件時的提醒；只看 index 相對 HEAD，不需要提醒時回傳 None。
+    尚無 HEAD 的初始提交，`git diff --cached` 會以空 tree 為基準，所有 staged 路徑都算變更。"""
+    result = run_git(root, "diff", "--cached", "--name-only", "--no-renames", "-z")
+    if result.returncode:
+        return None
+    paths = set(result.stdout.split("\0")) - {""}
+    if any(path in USER_DOCS for path in paths) or not any(path.startswith(TECHNIQUE_FOLDER) for path in paths):
+        return None
+    return "提醒：本次提交改動了 skills/answer-me/，請考慮是否同步更新 README.md 或 site/index.html。"
+
+
 def check_release(root, tag, validator):
     """發布檢查：逐項收集失敗；內容一律取自 tag 指向的 commit，不看工作區。"""
     ref = f"refs/tags/{tag}"
@@ -264,6 +278,9 @@ def main():
         with tempfile.TemporaryDirectory(prefix="answer-me-index-") as directory:
             failure = export_snapshot(root, directory)
             errors = [failure] if failure else check(Path(directory), validator)
+        reminder = docs_reminder(root)
+        if reminder:
+            print(reminder, file=sys.stderr)
     else:
         errors = check(root, validator)
     if errors:

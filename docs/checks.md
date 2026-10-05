@@ -28,6 +28,8 @@ sh scripts/install-hooks.sh
 
 安裝器只設定本 repository 的 `core.hooksPath`，遇到既有 hooks 路徑或啟用的 hooks 會保留並停止。pre-commit 呼叫同一檢查器的 `--staged` 模式：從 Git index 建立暫存快照，檢查即將提交的內容，避免未暫存的修正掩蓋待提交錯誤。
 
+`--staged` 另外會在 stderr 印出一行文件提醒：Git index 相對於 HEAD 的變更路徑中，有路徑位於 `skills/answer-me/` 下，且沒有任何路徑是 `README.md` 或 `site/index.html`。判斷只看 index，未暫存的修改不影響；尚無 HEAD 的初始提交則所有 staged 路徑都算變更。提醒只是提示，絕不阻擋提交，也不改變結束碼；非 `--staged` 模式不輸出。它只在路徑層級判斷，不檢查文件內容是否跟上。
+
 Hook 預設使用 `.venv/bin/python`（若存在），否則 `python3`；可用 `ANSWERME_PYTHON` 指定已備妥依賴的 Python，例如 `export ANSWERME_PYTHON="$HOME/.cache/answer-me/check-env/bin/python"`。若本次是首次安裝，移除設定可停用：`git config --local --unset core.hooksPath`。未來 checkout 須執行安裝命令；Git 不會自動啟用版本庫內的 hooks。
 
 ## 發布檢查
