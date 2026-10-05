@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>兩條處理路徑的平均耗時｜p 增加時 M 往哪走</title>
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.6 "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    button, input { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .frame { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 24px 0 56px; }
+    .masthead { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+    .masthead p { margin: 0; }
+    #deck { min-width: 0; }
+    .slide { min-height: min(640px, calc(100vh - 152px)); padding: clamp(32px, 6vw, 80px); margin: 24px 0; background: var(--surface); border: 1px solid var(--line); }
+    .enhanced .slide[hidden] { display: none; }
+    .eyebrow { margin: 0 0 32px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2 { font-family: "Noto Serif TC", Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; max-width: 20ch; margin: 0 0 32px; line-height: 1.18; letter-spacing: -.03em; font-size: clamp(2.25rem, 5vw, 4rem); }
+    #slide-4 h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); margin-bottom: 24px; max-width: none; }
+    p { max-width: 62ch; margin: 0 0 24px; }
+    .lead { font-size: clamp(1.15rem, 2.2vw, 1.45rem); }
+    .statement { max-width: 28ch; padding-left: 24px; border-left: 3px solid var(--accent); font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.4; }
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px 0 0; padding: 0; list-style: none; }
+    .steps li { min-width: 0; padding: 24px; background: var(--soft); }
+    .steps strong { display: block; margin-bottom: 12px; color: var(--accent); }
+    .steps span { display: block; font-size: .9rem; }
+    .evidence { max-width: 64ch; padding: 24px; background: var(--soft); margin-bottom: 24px; }
+    .evidence strong { display: block; margin-bottom: 8px; }
+    .evidence p { margin: 0; }
+    .quiet { color: var(--muted); font-size: .9rem; }
+    code, .formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { background: var(--code-bg); padding: 0 .3em; }
+    .formula { display: block; max-width: 100%; overflow-x: auto; padding: 16px 24px; margin: 0 0 24px; background: var(--code-bg); font-size: clamp(1rem, 2.4vw, 1.35rem); white-space: nowrap; }
+    dl.vars { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; max-width: 64ch; margin: 0 0 24px; }
+    dl.vars dt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 700; color: var(--accent); }
+    dl.vars dd { margin: 0; }
+    .table-wrap { max-width: 100%; overflow-x: auto; margin: 0 0 24px; }
+    table { border-collapse: collapse; min-width: 560px; }
+    th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: .85rem; color: var(--muted); font-weight: 600; }
+    /* Interactive model */
+    .lab { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; align-items: start; }
+    .controls { display: grid; gap: 16px; min-width: 0; }
+    .control label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: .95rem; }
+    .control label output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--accent); }
+    .control input[type=range] { width: 100%; accent-color: var(--accent); margin: 4px 0 0; }
+    .control small { display: block; color: var(--muted); font-size: .8rem; }
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+    .presets button { padding: 4px 12px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); cursor: pointer; font-size: .85rem; }
+    .presets button:hover { background: var(--soft); }
+    .readout { padding: 16px 20px; background: var(--soft); font-size: .95rem; }
+    .readout p { margin: 0 0 8px; max-width: none; }
+    .readout p:last-child { margin: 0; }
+    .readout .big { font-size: 1.35rem; font-weight: 700; }
+    .chart { min-width: 0; }
+    .chart svg { width: 100%; height: auto; display: block; background: var(--surface); }
+    .chart .axis { stroke: var(--muted); stroke-width: 1; }
+    .chart .grid { stroke: var(--line); stroke-width: 1; }
+    .chart .tick { fill: var(--muted); font-size: 12px; font-family: system-ui, sans-serif; }
+    .chart .mline { stroke: var(--accent); stroke-width: 3; }
+    .chart .ref { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4; }
+    .chart .lbl { fill: var(--ink); font-size: 13px; font-family: system-ui, sans-serif; font-weight: 600; }
+    .chart .pt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+    .chart figcaption { color: var(--muted); font-size: .8rem; margin-top: 8px; }
+    .tag { display: inline-block; padding: 0 8px; margin-right: 6px; border: 1px solid var(--accent); color: var(--accent); font-size: .75rem; font-weight: 700; }
+    #slide-controls { display: none; align-items: center; justify-content: space-between; gap: 16px; max-width: 1120px; margin: 0 auto; }
+    .enhanced #slide-controls { display: flex; }
+    #slide-controls button { min-width: 96px; padding: 8px 16px; border: 1px solid var(--accent); border-radius: 0; background: var(--surface); color: var(--accent); cursor: pointer; }
+    #slide-controls button:hover:not(:disabled) { background: var(--soft); }
+    #slide-controls button:disabled { border-color: var(--line); color: var(--muted); cursor: default; }
+    #page-count { color: var(--muted); font-size: .85rem; text-align: center; }
+    .js-only { display: none; }
+    .enhanced .js-only { display: block; }
+    .enhanced .no-js { display: none; }
+    @media (max-width: 860px) {
+      .lab { grid-template-columns: 1fr; gap: 24px; }
+    }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .slide { min-height: 0; padding: 32px 20px; }
+      .steps { grid-template-columns: 1fr; gap: 8px; }
+      .steps li { padding: 16px; }
+      .masthead { flex-wrap: wrap; }
+      dl.vars { grid-template-columns: 1fr; gap: 0 0; }
+      dl.vars dd { margin-bottom: 12px; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 15pt; }
+      .frame { width: 100%; padding: 0; }
+      .masthead, #slide-controls, .presets { display: none !important; }
+      .slide, .enhanced .slide[hidden] { display: block !important; min-height: 0; margin: 0; padding: 36pt; border: 0; break-after: page; }
+      .slide:last-child { break-after: auto; }
+      .steps li, .evidence, .readout, .chart, .lab { break-inside: avoid; }
+      .lab { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18pt; }
+      #slide-4 h2 { margin-bottom: 12pt; }
+    }
+  </style>
+</head>
+<body><div style="font:14px/1.6 system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;background:#302b26;color:#f5f2eb;padding:8px 16px;"><a href="../index.html" style="color:#f5f2eb;">← Answer Me</a> · 範例：由 answer-me v0.1.3 產生 · 2026-10-05 · 經人工核對 · 素材：<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/conditions/input/model.md" style="color:#f5f2eb;">model.md</a></div>
+  <div class="frame">
+    <header class="masthead"><p>讀書會 · 逐頁講解 model.md</p><p>兩條處理路徑的平均耗時（示意模型）</p></header>
+    <main id="deck" aria-label="model.md 講解投影片">
+
+      <section class="slide" id="slide-1" aria-labelledby="slide-1-title">
+        <p class="eyebrow">01 / 問題</p>
+        <h1 id="slide-1-title">p 變大，平均時間 M 會變大還是變小？</h1>
+        <p class="lead">答案是「看 A 與 B 誰比較大」。A 比 B 快時，M 會減少；A 比 B 慢時，M 會增加；兩者相等時，M 不變。</p>
+        <p>接下來依序看：變數定義 → 公式改寫 → 可調整的模型 → 三種情況對照 → 這個模型不能說明什麼。</p>
+        <p class="quiet">來源：<code>model.md</code>「兩條處理路徑的平均耗時」。來源自述：「這是加權平均的示意，不是任何產品的量測數據。」本投影片的所有數字都是由公式算出的示意值。</p>
+      </section>
+
+      <section class="slide" id="slide-2" aria-labelledby="slide-2-title">
+        <p class="eyebrow">02 / 來源定義</p>
+        <h2 id="slide-2-title">模型只有三個輸入和一條公式。</h2>
+        <dl class="vars">
+          <dt>p</dt><dd>採用路徑 A 的比例，介於 0 與 1。其餘比例 <code>1 − p</code> 走路徑 B。</dd>
+          <dt>A、B</dt><dd>兩條路徑各自的處理時間，各可調整為 0 到 100 毫秒。</dd>
+          <dt>M</dt><dd>平均時間，<code>M = p * A + (1 - p) * B</code>。</dd>
+        </dl>
+        <div class="evidence"><strong>起始條件（來源指定）</strong><p>p = 0.5、A = 20 ms、B = 80 ms，所以 M = 0.5 × 20 + 0.5 × 80 = 50 ms。</p></div>
+        <p class="quiet">以上定義、範圍與起始條件逐條取自 <code>model.md</code>；M 的計算結果是依公式算出的值。</p>
+      </section>
+
+      <section class="slide" id="slide-3" aria-labelledby="slide-3-title">
+        <p class="eyebrow">03 / 機制</p>
+        <h2 id="slide-3-title">把公式改寫，方向就寫在 A − B 裡。</h2>
+        <span class="formula">M = p·A + (1 − p)·B = B + p·(A − B)</span>
+        <p class="lead">p 每增加 0.1，就有 10% 的工作從路徑 B 改走路徑 A，M 改變 0.1 × (A − B) 毫秒。</p>
+        <ul>
+          <li>A &lt; B：A − B 為負，p 增加時 M <strong>減少</strong>。</li>
+          <li>A &gt; B：A − B 為正，p 增加時 M <strong>增加</strong>。</li>
+          <li>A = B：A − B 為零，p 怎麼調 M 都等於 A。</li>
+        </ul>
+        <p class="quiet">改寫與斜率是本投影片依來源公式所做的代數推導，來源本身沒有寫出這一步。M 對 p 是一條直線：p = 0 時 M = B，p = 1 時 M = A。</p>
+      </section>
+
+      <section class="slide" id="slide-4" aria-labelledby="slide-4-title">
+        <p class="eyebrow">04 / 動手調整（示意模型）</p>
+        <h2 id="slide-4-title">拖動 p、A、B，看直線怎麼傾斜。</h2>
+        <div class="lab">
+          <div class="controls">
+            <div class="control">
+              <label for="in-p">p：走路徑 A 的比例 <output id="out-p" for="in-p">0.50</output></label>
+              <input id="in-p" type="range" min="0" max="1" step="0.01" value="0.5">
+              <small>0 = 全部走 B，1 = 全部走 A</small>
+            </div>
+            <div class="control">
+              <label for="in-a">A：路徑 A 的處理時間 <output id="out-a" for="in-a">20 ms</output></label>
+              <input id="in-a" type="range" min="0" max="100" step="1" value="20">
+            </div>
+            <div class="control">
+              <label for="in-b">B：路徑 B 的處理時間 <output id="out-b" for="in-b">80 ms</output></label>
+              <input id="in-b" type="range" min="0" max="100" step="1" value="80">
+            </div>
+            <div class="presets js-only" role="group" aria-label="快速情境">
+              <button type="button" data-a="20" data-b="80">A 比 B 快</button>
+              <button type="button" data-a="80" data-b="20">A 比 B 慢</button>
+              <button type="button" data-a="50" data-b="50">A = B</button>
+              <button type="button" data-p="0.5" data-a="20" data-b="80">回到起始條件</button>
+            </div>
+            <div class="readout" aria-live="polite">
+              <p class="big">M = <span id="out-m">50.0</span> ms</p>
+              <p id="out-calc">0.50 × 20 + 0.50 × 80 = 50.0</p>
+              <p id="out-dir"><strong>A &lt; B，p 增加時 M 減少。</strong>p 每增加 0.1，M 減少 6.0 ms。</p>
+            </div>
+          </div>
+          <figure class="chart" style="margin:0">
+            <svg id="chart" viewBox="0 0 440 320" role="img" aria-labelledby="chart-title chart-desc">
+              <title id="chart-title">M 隨 p 變化的直線</title>
+              <desc id="chart-desc">橫軸是 p，從 0 到 1；縱軸是 M，從 0 到 100 毫秒。直線左端高度等於 B，右端高度等於 A，圓點標示目前的 p 與 M。</desc>
+              <g id="grid"></g>
+              <line class="axis" x1="56" y1="20" x2="56" y2="270"/>
+              <line class="axis" x1="56" y1="270" x2="400" y2="270"/>
+              <line id="ref-x" class="ref" x1="228" y1="270" x2="228" y2="145"/>
+              <line id="m-line" class="mline" x1="56" y1="70" x2="400" y2="220"/>
+              <text id="lbl-b" class="lbl" x="62" y="62">p=0 → M=B=80</text>
+              <text id="lbl-a" class="lbl" x="394" y="242" text-anchor="end">p=1 → M=A=20</text>
+              <circle id="pt" class="pt" cx="228" cy="145" r="7"/>
+              <text class="tick" x="228" y="304" text-anchor="middle">p</text>
+              <text class="tick" x="16" y="150" text-anchor="middle" transform="rotate(-90 16 150)">M (ms)</text>
+            </svg>
+            <figcaption><span class="tag">示意</span>依 <code>model.md</code> 的公式即時計算，不是量測結果。</figcaption>
+          </figure>
+        </div>
+        <p class="quiet no-js">此頁的滑桿需要 JavaScript；目前顯示起始條件 p = 0.5、A = 20、B = 80 的結果。</p>
+      </section>
+
+      <section class="slide" id="slide-5" aria-labelledby="slide-5-title">
+        <p class="eyebrow">05 / 三種情況對照</p>
+        <h2 id="slide-5-title">同樣把 p 從 0.5 調到 0.6，結果可能相反。</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>情況</th><th>A、B（ms）</th><th>p = 0.5 時 M</th><th>p = 0.6 時 M</th><th>p 增加時 M</th></tr></thead>
+            <tbody>
+              <tr><td>A 比 B 快（起始條件）</td><td>20、80</td><td>50</td><td>44</td><td>減少，每 +0.1 少 6 ms</td></tr>
+              <tr><td>A 比 B 慢</td><td>80、20</td><td>50</td><td>56</td><td>增加，每 +0.1 多 6 ms</td></tr>
+              <tr><td>A 與 B 相等</td><td>50、50</td><td>50</td><td>50</td><td>不變</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="statement">決定方向的是 A − B 的正負，不是 p 本身。</p>
+        <p class="quiet">第一列是來源的起始條件；第二、三列是為了對照而自訂的示意值，都在來源允許的 0–100 ms 範圍內。所有 M 值依公式計算。</p>
+      </section>
+
+      <section class="slide" id="slide-6" aria-labelledby="slide-6-title">
+        <p class="eyebrow">06 / 範圍與限制</p>
+        <h2 id="slide-6-title">這個模型能說明什麼，不能說明什麼。</h2>
+        <ul>
+          <li><strong>能說明：</strong>在公式成立時，p 增加會讓 M 往 A 靠近；M 一定落在 A 與 B 之間（含端點）。</li>
+          <li><strong>不能說明：</strong>任何真實系統的耗時。來源明說這「不是任何產品的量測數據」。</li>
+          <li><strong>模型假設：</strong>A、B 是固定值，不隨 p 改變。若真實系統中分流比例會影響各路徑的處理時間（例如某條路徑變擁擠），這條直線就不適用；來源沒有討論這種情況，這一點是本投影片的推論。</li>
+        </ul>
+        <p class="quiet">來源：<code>model.md</code> 的變數定義、範圍與聲明。推論部分已在句中標明。</p>
+      </section>
+
+      <section class="slide" id="slide-7" aria-labelledby="slide-7-title">
+        <p class="eyebrow">07 / 帶回去想</p>
+        <h2 id="slide-7-title">先預測，再到第 4 頁驗證。</h2>
+        <ol class="steps">
+          <li><strong>01 · 預測</strong><span>A = 30、B = 30 時，p 從 0 拉到 1，M 的直線長什麼樣？</span></li>
+          <li><strong>02 · 預測</strong><span>A = 90、B = 10、p = 0.25 時，M 是多少？p 再增加會怎樣？</span></li>
+          <li><strong>03 · 判斷</strong><span>想讓 M 變小，應該把更多比例分給哪條路徑？答案取決於什麼？</span></li>
+        </ol>
+      </section>
+    </main>
+    <nav id="slide-controls" aria-label="投影片導覽">
+      <button id="previous" type="button" aria-label="上一頁">上一頁</button>
+      <output id="page-count" aria-live="polite"></output>
+      <button id="next" type="button" aria-label="下一頁">下一頁</button>
+    </nav>
+  </div>
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('#deck .slide')];
+      const previous = document.querySelector('#previous');
+      const next = document.querySelector('#next');
+      const count = document.querySelector('#page-count');
+      let index = 0;
+
+      function show(nextIndex) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, position) => { slide.hidden = position !== index; });
+        previous.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+        count.value = `${index + 1} / ${slides.length}`;
+      }
+
+      previous.addEventListener('click', () => show(index - 1));
+      next.addEventListener('click', () => show(index + 1));
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      document.addEventListener('touchstart', event => {
+        if (event.touches.length === 1) {
+          touchStartX = event.touches[0].clientX;
+          touchStartY = event.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', event => {
+        if (event.changedTouches.length === 1) {
+          if (event.target instanceof Element && event.target.closest('input')) return;
+          const deltaX = event.changedTouches[0].clientX - touchStartX;
+          const deltaY = event.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+            if (deltaX < 0) show(index + 1);
+            else show(index - 1);
+          }
+        }
+      }, { passive: true });
+
+      document.addEventListener('keydown', event => {
+        if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+            event.target instanceof Element &&
+            event.target.closest('a, button, input, select, textarea, [contenteditable], [role="button"]')) return;
+        const destination = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: slides.length - 1 }[event.key];
+        if (destination === undefined) return;
+        event.preventDefault();
+        show(destination);
+      });
+
+      // 示意模型：M = p * A + (1 - p) * B（model.md）
+      const inP = document.querySelector('#in-p');
+      const inA = document.querySelector('#in-a');
+      const inB = document.querySelector('#in-b');
+      const $ = id => document.getElementById(id);
+      const X0 = 56, X1 = 400, Y0 = 270, Y1 = 20;
+      const sx = p => X0 + p * (X1 - X0);
+      const sy = ms => Y0 - (ms / 100) * (Y0 - Y1);
+      const fmt = n => n.toFixed(1);
+
+      const grid = $('grid');
+      const NS = 'http://www.w3.org/2000/svg';
+      const add = (tag, attrs, text) => {
+        const el = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+        if (text !== undefined) el.textContent = text;
+        grid.appendChild(el);
+      };
+      [0, 25, 50, 75, 100].forEach(ms => {
+        add('line', { class: 'grid', x1: X0, x2: X1, y1: sy(ms), y2: sy(ms) });
+        add('text', { class: 'tick', x: X0 - 8, y: sy(ms) + 4, 'text-anchor': 'end' }, String(ms));
+      });
+      [0, 0.25, 0.5, 0.75, 1].forEach(p => {
+        add('text', { class: 'tick', x: sx(p), y: Y0 + 18, 'text-anchor': 'middle' }, String(p));
+      });
+
+      function update() {
+        const p = Number(inP.value), a = Number(inA.value), b = Number(inB.value);
+        const m = p * a + (1 - p) * b;
+        const step = 0.1 * (a - b);
+        $('out-p').value = p.toFixed(2);
+        $('out-a').value = `${a} ms`;
+        $('out-b').value = `${b} ms`;
+        $('out-m').textContent = fmt(m);
+        $('out-calc').textContent = `${p.toFixed(2)} × ${a} + ${(1 - p).toFixed(2)} × ${b} = ${fmt(m)}`;
+        const dir = $('out-dir');
+        if (a < b) dir.innerHTML = `<strong>A &lt; B，p 增加時 M 減少。</strong>p 每增加 0.1，M 減少 ${fmt(-step)} ms。`;
+        else if (a > b) dir.innerHTML = `<strong>A &gt; B，p 增加時 M 增加。</strong>p 每增加 0.1，M 增加 ${fmt(step)} ms。`;
+        else dir.innerHTML = `<strong>A = B，p 怎麼調 M 都不變。</strong>M 固定為 ${a} ms。`;
+
+        const line = $('m-line');
+        line.setAttribute('y1', sy(b));
+        line.setAttribute('y2', sy(a));
+        const pt = $('pt');
+        pt.setAttribute('cx', sx(p));
+        pt.setAttribute('cy', sy(m));
+        const ref = $('ref-x');
+        ref.setAttribute('x1', sx(p)); ref.setAttribute('x2', sx(p)); ref.setAttribute('y2', sy(m));
+        const lb = $('lbl-b'), la = $('lbl-a');
+        lb.textContent = `p=0 → M=B=${b}`;
+        la.textContent = `p=1 → M=A=${a}`;
+        // 標籤放在遠離另一端點的一側，避免壓在直線上；靠近上下邊界時翻到另一側
+        const place = (own, other) => {
+          const away = own < other ? true : own > other ? false : own > 50;
+          let below = away;
+          if (below && sy(own) + 22 > Y0 - 4) below = false;
+          if (!below && sy(own) - 10 < Y1 + 4) below = true;
+          // 被迫放在直線同側時，往圖內水平移開，讓標籤離開陡峭的線段
+          return { y: below ? sy(own) + 22 : sy(own) - 10, shift: below === away ? 0 : 50 };
+        };
+        const pb = place(b, a), pa = place(a, b);
+        lb.setAttribute('y', pb.y); lb.setAttribute('x', 62 + pb.shift);
+        la.setAttribute('y', pa.y); la.setAttribute('x', 394 - pa.shift);
+      }
+
+      [inP, inA, inB].forEach(el => el.addEventListener('input', update));
+      document.querySelectorAll('.presets button').forEach(btn => btn.addEventListener('click', () => {
+        if (btn.dataset.p) inP.value = btn.dataset.p;
+        inA.value = btn.dataset.a;
+        inB.value = btn.dataset.b;
+        update();
+      }));
+
+      document.documentElement.classList.add('enhanced');
+      update();
+      show(0);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TicketService 與 FakeRepo 的呼叫順序</title>
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+      --warn-bg: #f3e1d8;
+      --idle-bg: #ece9e4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 20ch; margin: 0 0 24px; font-size: clamp(2rem, 5.5vw, 3.4rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    ul.plain { margin: 0 0 24px; padding-left: 1.2em; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child, .summary ul:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    .src { display: block; margin: -8px 0 24px; color: var(--muted); font-size: .85rem; }
+    .diagram { max-width: 760px; margin: 0 0 16px; padding: 16px; background: var(--surface); border: 1px solid var(--line); overflow-x: auto; }
+    .diagram svg { display: block; width: 100%; min-width: 520px; height: auto; }
+    .scroll-hint { display: none; margin: 0 0 8px; color: var(--muted); font-size: .8rem; }
+    .actor { fill: var(--soft); stroke: var(--line); }
+    .actor-t { fill: var(--ink); font: 600 15px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .actor-s { fill: var(--muted); font-size: 12px; }
+    .life { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .call { stroke: var(--ink); stroke-width: 1.6; }
+    .ret { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 6 4; }
+    .head-call { fill: var(--ink); }
+    .head-ret { fill: var(--muted); }
+    .msg-t { fill: var(--ink); font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .note { fill: var(--surface); stroke: var(--line); }
+    .note.hl { fill: var(--soft); stroke: var(--accent); }
+    .note.warn { fill: var(--warn-bg); stroke: var(--accent); }
+    .note.idle { fill: var(--idle-bg); stroke: var(--line); stroke-dasharray: 3 3; }
+    .note-t { fill: var(--ink); font-size: 12.5px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 24px; padding: 0; list-style: none; color: var(--muted); font-size: .85rem; }
+    .legend svg { vertical-align: middle; margin-right: 6px; }
+    .table-wrap, .code-wrap { max-width: 100%; overflow-x: auto; margin-bottom: 24px; }
+    table { width: 100%; min-width: 620px; border-collapse: collapse; background: var(--surface); font-size: .9rem; line-height: 1.6; }
+    caption { padding: 0 0 12px; text-align: left; color: var(--muted); font-size: .85rem; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; }
+    tbody th { background: transparent; }
+    pre { width: max-content; min-width: 100%; margin: 0; padding: 24px; background: var(--code-bg); font: .85rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
+    .ln { color: var(--muted); user-select: none; }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child, .source-note ul:last-child { margin-bottom: 0; }
+    .tag { display: inline-block; padding: 0 8px; margin-right: 6px; border: 1px solid var(--line); background: var(--soft); font-size: .78rem; font-weight: 700; line-height: 1.7; }
+    details { max-width: 72ch; padding: 16px 24px; background: var(--surface); border: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 600; }
+    details p { margin: 12px 0 0; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .diagram { padding: 8px; }
+      .scroll-hint { display: block; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav { display: none; }
+      section { padding-top: 20pt; }
+      .diagram, .summary, .source-note { break-inside: avoid; }
+      .diagram svg { min-width: 0; }
+      .table-wrap, .code-wrap, .diagram { overflow: visible; }
+      table { min-width: 0; font-size: 9pt; }
+      th, td { padding: 8pt; overflow-wrap: anywhere; }
+      pre { width: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body><div style="font:14px/1.6 system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;background:#302b26;color:#f5f2eb;padding:8px 16px;"><a href="../index.html" style="color:#f5f2eb;">← Answer Me</a> · 範例：由 answer-me v0.1.3 產生 · 2026-10-05 · 經人工核對 · 素材：<a href="https://github.com/CarlLee1983/AnswerMe/tree/v0.1.3/tests/answer-me/evidence/input/ticket_api" style="color:#f5f2eb;">ticket_api</a></div>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">ticket_api · 呼叫順序解說</p>
+        <h1>TicketService 先查自己的 cache，沒有才問 FakeRepo</h1>
+        <p class="lead prose">呼叫端只跟 <code>TicketService</code> 說話。<code>TicketService</code> 一律先檢查自己的 <code>cache</code>；只有 cache 沒有這張票時，才呼叫 <code>FakeRepo.find</code>。<code>FakeRepo</code> 從不主動呼叫 <code>TicketService</code>，只回傳結果。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">三種情況一句話</h2>
+          <ul class="plain">
+            <li><strong>首次讀取</strong>：cache 未命中 → 呼叫 <code>FakeRepo.find</code>（<code>reads</code> 加 1）→ 把結果複製進 cache → 回 <code>200</code>。</li>
+            <li><strong>再次讀取同一張票</strong>：cache 命中 → 直接回 <code>200</code>，<code>FakeRepo</code> 完全沒被呼叫。</li>
+            <li><strong>找不到票</strong>：<code>FakeRepo.find</code> 回 <code>None</code> → <code>get_ticket</code> 拋出 <code>NotFound</code> → <code>handle_get</code> 接住並回 <code>(404, {"error": "not found"})</code>。</li>
+          </ul>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#code">程式本體</a></li>
+            <li><a href="#first">首次讀取</a></li>
+            <li><a href="#repeat">再次讀取</a></li>
+            <li><a href="#compare">首次與再次對照</a></li>
+            <li><a href="#missing">找不到票</a></li>
+            <li><a href="#sources">證據與限制</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="code" aria-labelledby="code-title">
+        <div class="prose">
+          <h2 id="code-title">所有判斷都在 <code>get_ticket</code> 這八行</h2>
+          <p>呼叫端的入口是 <code>handle_get</code>，它把工作交給 <code>get_ticket</code>，再把結果或例外轉成「狀態碼＋內容」的 tuple。<code>FakeRepo</code> 是測試用的假資料來源：<code>find</code> 每被呼叫一次，計數器 <code>reads</code> 就加 1，並用 <code>dict.get</code> 查表，查不到時回 <code>None</code>。</p>
+        </div>
+        <div class="code-wrap" role="region" aria-label="service.py 節錄，可水平捲動" tabindex="0"><pre><code><span class="ln"> 9</span>    def find(self, ticket_id):            <span class="ln"># FakeRepo</span>
+<span class="ln">10</span>        self.reads += 1
+<span class="ln">11</span>        return self.rows.get(ticket_id)
+ ⋮
+<span class="ln">18</span>    def get_ticket(self, ticket_id):      <span class="ln"># TicketService</span>
+<span class="ln">19</span>        if ticket_id in self.cache:
+<span class="ln">20</span>            return self.cache[ticket_id]
+<span class="ln">21</span>        row = self.repo.find(ticket_id)
+<span class="ln">22</span>        if row is None:
+<span class="ln">23</span>            raise NotFound(ticket_id)
+<span class="ln">24</span>        self.cache[ticket_id] = dict(row)
+<span class="ln">25</span>        return self.cache[ticket_id]
+<span class="ln">26</span>
+<span class="ln">27</span>    def handle_get(self, ticket_id):
+<span class="ln">28</span>        try:
+<span class="ln">29</span>            return 200, self.get_ticket(ticket_id)
+<span class="ln">30</span>        except NotFound:
+<span class="ln">31</span>            return 404, {"error": "not found"}</code></pre></div>
+        <small class="src">來源：<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/evidence/input/ticket_api/service.py">ticket_api/service.py</a> 第 9–11、18–31 行（節錄，未改動程式）。</small>
+        <ul class="legend" aria-label="時序圖圖例">
+          <li><svg width="40" height="10" aria-hidden="true"><line x1="0" y1="5" x2="32" y2="5" stroke="#302b26" stroke-width="1.6"/><path d="M40 5 L30 0 L30 10 Z" fill="#302b26"/></svg>實線：呼叫</li>
+          <li><svg width="40" height="10" aria-hidden="true"><line x1="0" y1="5" x2="32" y2="5" stroke="#6b6259" stroke-width="1.4" stroke-dasharray="6 4"/><path d="M40 5 L30 0 L30 10 Z" fill="#6b6259"/></svg>虛線：回傳</li>
+          <li>方框：該參與者內部的動作</li>
+          <li>「呼叫端」在測試中是 <code>test_service.py</code>；圖中的票號沿用測試資料</li>
+        </ul>
+      </section>
+
+      <section id="first" aria-labelledby="first-title">
+        <div class="prose">
+          <h2 id="first-title">首次讀取：TicketService → FakeRepo，一來一回</h2>
+          <p>第一次要 <code>"T1"</code> 時，cache 是空的（建構時設為 <code>{}</code>，第 16 行），所以 <code>TicketService</code> 呼叫 <code>FakeRepo.find("T1")</code>。<code>FakeRepo</code> 把 <code>reads</code> 加 1 並回傳那一列資料；<code>TicketService</code> 用 <code>dict(row)</code> 複製一份放進 cache，再回傳 cache 裡的那份。</p>
+        </div>
+        <figure class="diagram" role="group" aria-label="首次讀取時序圖" tabindex="0"><span class="scroll-hint">← 圖較寬，可在框內左右捲動 →</span><svg viewBox="0 0 680 424" role="img" aria-label="首次讀取 T1 的時序圖：TicketService 查 cache 未命中，呼叫 FakeRepo.find，存入 cache 後回 200" xmlns="http://www.w3.org/2000/svg">
+<rect class="actor" x="20" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="110" y="30" text-anchor="middle">呼叫端</text>
+<text class="actor-s" x="110" y="48" text-anchor="middle">例：測試程式</text>
+<line class="life" x1="110" y1="56" x2="110" y2="416"/>
+<rect class="actor" x="250" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="340" y="30" text-anchor="middle">TicketService</text>
+<text class="actor-s" x="340" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="340" y1="56" x2="340" y2="416"/>
+<rect class="actor" x="470" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="560" y="30" text-anchor="middle">FakeRepo</text>
+<text class="actor-s" x="560" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="560" y1="56" x2="560" y2="416"/>
+<line class="call" x1="110" y1="106" x2="332" y2="106"/>
+<path class="head-call" d="M340 106 L330 101 L330 111 Z"/>
+<text class="msg-t" x="225.0" y="98" text-anchor="middle">1. handle_get(&quot;T1&quot;)</text>
+<rect class="note " x="236" y="126" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="146" text-anchor="middle">2. get_ticket：cache 沒有 &quot;T1&quot;</text>
+<line class="call" x1="340" y1="198" x2="552" y2="198"/>
+<path class="head-call" d="M560 198 L550 193 L550 203 Z"/>
+<text class="msg-t" x="450.0" y="190" text-anchor="middle">3. find(&quot;T1&quot;)</text>
+<rect class="note hl" x="456" y="218" width="208" height="30" rx="2"/>
+<text class="note-t" x="560" y="238" text-anchor="middle">4. reads += 1（0 → 1）</text>
+<line class="ret" x1="560" y1="290" x2="348" y2="290"/>
+<path class="head-ret" d="M340 290 L350 285 L350 295 Z"/>
+<text class="msg-t" x="450.0" y="282" text-anchor="middle">5. row = {&quot;title&quot;: &quot;hello&quot;}</text>
+<rect class="note " x="236" y="310" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="330" text-anchor="middle">6. cache[&quot;T1&quot;] = dict(row)</text>
+<line class="ret" x1="340" y1="382" x2="118" y2="382"/>
+<path class="head-ret" d="M110 382 L120 377 L120 387 Z"/>
+<text class="msg-t" x="225.0" y="374" text-anchor="middle">7. (200, cache[&quot;T1&quot;])</text>
+</svg></figure>
+        <small class="src">依據：service.py 第 19、21、24–25、29 行；FakeRepo 第 10–11 行。</small>
+      </section>
+
+      <section id="repeat" aria-labelledby="repeat-title">
+        <div class="prose">
+          <h2 id="repeat-title">再次讀取：停在 TicketService，不碰 FakeRepo</h2>
+          <p>第二次要 <code>"T1"</code> 時，第 19 行的 <code>if ticket_id in self.cache</code> 成立，第 20 行直接回傳，第 21 行的 <code>self.repo.find</code> 根本不會執行。因此 <code>FakeRepo.reads</code> 停在 1。這正是測試 <code>test_repeat_hit</code> 要確認的事。</p>
+        </div>
+        <figure class="diagram" role="group" aria-label="再次讀取時序圖" tabindex="0"><span class="scroll-hint">← 圖較寬，可在框內左右捲動 →</span><svg viewBox="0 0 680 286" role="img" aria-label="再次讀取 T1 的時序圖：TicketService 在 cache 命中，直接回 200，不呼叫 FakeRepo" xmlns="http://www.w3.org/2000/svg">
+<rect class="actor" x="20" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="110" y="30" text-anchor="middle">呼叫端</text>
+<text class="actor-s" x="110" y="48" text-anchor="middle">例：測試程式</text>
+<line class="life" x1="110" y1="56" x2="110" y2="278"/>
+<rect class="actor" x="250" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="340" y="30" text-anchor="middle">TicketService</text>
+<text class="actor-s" x="340" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="340" y1="56" x2="340" y2="278"/>
+<rect class="actor" x="470" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="560" y="30" text-anchor="middle">FakeRepo</text>
+<text class="actor-s" x="560" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="560" y1="56" x2="560" y2="278"/>
+<line class="call" x1="110" y1="106" x2="332" y2="106"/>
+<path class="head-call" d="M340 106 L330 101 L330 111 Z"/>
+<text class="msg-t" x="225.0" y="98" text-anchor="middle">1. handle_get(&quot;T1&quot;)</text>
+<rect class="note hl" x="236" y="126" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="146" text-anchor="middle">2. get_ticket：cache 已有 &quot;T1&quot;</text>
+<line class="ret" x1="340" y1="198" x2="118" y2="198"/>
+<path class="head-ret" d="M110 198 L120 193 L120 203 Z"/>
+<text class="msg-t" x="225.0" y="190" text-anchor="middle">3. (200, cache[&quot;T1&quot;])</text>
+<rect class="note idle" x="456" y="218" width="208" height="30" rx="2"/>
+<text class="note-t" x="560" y="238" text-anchor="middle">4. 未被呼叫，reads 仍為 1</text>
+</svg></figure>
+        <small class="src">依據：service.py 第 19–20 行；<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 5–10 行斷言兩次都是 200，且 <code>repo.reads == 1</code>。</small>
+      </section>
+
+      <section id="compare" aria-labelledby="compare-title">
+        <div class="prose">
+          <h2 id="compare-title">首次與再次讀取對照</h2>
+        </div>
+        <div class="table-wrap" role="region" aria-label="首次與再次讀取對照表，可水平捲動" tabindex="0">
+          <table>
+            <caption>同一個 <code>TicketService</code> 實例，連續兩次 <code>handle_get("T1")</code></caption>
+            <thead><tr><th scope="col">面向</th><th scope="col">首次讀取</th><th scope="col">再次讀取</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">cache 檢查（第 19 行）</th><td>未命中</td><td>命中</td></tr>
+              <tr><th scope="row">是否呼叫 <code>FakeRepo.find</code></th><td>是，呼叫 1 次</td><td>否</td></tr>
+              <tr><th scope="row"><code>reads</code> 之後的值</th><td>1</td><td>仍為 1</td></tr>
+              <tr><th scope="row">cache 變化</th><td>寫入 <code>cache["T1"] = dict(row)</code></td><td>不變</td></tr>
+              <tr><th scope="row">回傳</th><td><code>(200, cache["T1"])</code></td><td><code>(200, cache["T1"])</code>，與首次是<strong>同一個 dict 物件</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="prose">
+          <p><span class="tag">程式推論，已小型實測</span>兩次回傳的是 cache 裡同一個 dict（第 20、25 行都回 <code>self.cache[ticket_id]</code>），不是各自的複本；而它與 <code>FakeRepo.rows</code> 裡的原始資料是不同物件（第 24 行做了 <code>dict(row)</code>）。所以若呼叫端改動拿到的 dict，下一次讀取會看到改動後的內容。我以一段臨時 Python 指令確認：兩次回傳 <code>is</code> 比較為 <code>True</code>，與 <code>rows["T1"]</code> 比較為 <code>False</code>。現有測試沒有涵蓋這一點。</p>
+        </div>
+      </section>
+
+      <section id="missing" aria-labelledby="missing-title">
+        <div class="prose">
+          <h2 id="missing-title">找不到票：例外在 TicketService 內部被轉成 404</h2>
+          <p>找不到票時，<code>FakeRepo</code> 仍然被呼叫，只是 <code>rows.get</code> 回 <code>None</code>。<code>get_ticket</code> 看到 <code>None</code> 就拋出 <code>NotFound</code>，不寫入 cache；外層 <code>handle_get</code> 的 <code>except NotFound</code> 接住它，回傳 <code>(404, {"error": "not found"})</code>。例外不會傳到呼叫端，呼叫端收到的是一般的 tuple。</p>
+        </div>
+        <figure class="diagram" role="group" aria-label="找不到票時序圖" tabindex="0"><span class="scroll-hint">← 圖較寬，可在框內左右捲動 →</span><svg viewBox="0 0 680 470" role="img" aria-label="找不到票的時序圖：FakeRepo.find 回 None，get_ticket 拋出 NotFound，handle_get 接住後回 404" xmlns="http://www.w3.org/2000/svg">
+<rect class="actor" x="20" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="110" y="30" text-anchor="middle">呼叫端</text>
+<text class="actor-s" x="110" y="48" text-anchor="middle">例：測試程式</text>
+<line class="life" x1="110" y1="56" x2="110" y2="462"/>
+<rect class="actor" x="250" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="340" y="30" text-anchor="middle">TicketService</text>
+<text class="actor-s" x="340" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="340" y1="56" x2="340" y2="462"/>
+<rect class="actor" x="470" y="8" width="180" height="48" rx="2"/>
+<text class="actor-t" x="560" y="30" text-anchor="middle">FakeRepo</text>
+<text class="actor-s" x="560" y="48" text-anchor="middle">service.py</text>
+<line class="life" x1="560" y1="56" x2="560" y2="462"/>
+<line class="call" x1="110" y1="106" x2="332" y2="106"/>
+<path class="head-call" d="M340 106 L330 101 L330 111 Z"/>
+<text class="msg-t" x="225.0" y="98" text-anchor="middle">1. handle_get(&quot;missing&quot;)</text>
+<rect class="note " x="236" y="126" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="146" text-anchor="middle">2. get_ticket：cache 沒有 &quot;missing&quot;</text>
+<line class="call" x1="340" y1="198" x2="552" y2="198"/>
+<path class="head-call" d="M560 198 L550 193 L550 203 Z"/>
+<text class="msg-t" x="450.0" y="190" text-anchor="middle">3. find(&quot;missing&quot;)</text>
+<rect class="note " x="456" y="218" width="208" height="30" rx="2"/>
+<text class="note-t" x="560" y="238" text-anchor="middle">4. reads += 1</text>
+<line class="ret" x1="560" y1="290" x2="348" y2="290"/>
+<path class="head-ret" d="M340 290 L350 285 L350 295 Z"/>
+<text class="msg-t" x="450.0" y="282" text-anchor="middle">5. None（rows 沒有這個 key）</text>
+<rect class="note warn" x="236" y="310" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="330" text-anchor="middle">6. raise NotFound(&quot;missing&quot;)</text>
+<rect class="note warn" x="236" y="356" width="208" height="30" rx="2"/>
+<text class="note-t" x="340" y="376" text-anchor="middle">7. handle_get 的 except 接住</text>
+<line class="ret" x1="340" y1="428" x2="118" y2="428"/>
+<path class="head-ret" d="M110 428 L120 423 L120 433 Z"/>
+<text class="msg-t" x="225.0" y="420" text-anchor="middle">8. (404, {&quot;error&quot;: &quot;not found&quot;})</text>
+</svg></figure>
+        <small class="src">依據：service.py 第 11、22–23、28–31 行；test_service.py 第 12–14 行斷言完整回傳值等於 <code>(404, {"error": "not found"})</code>。</small>
+        <div class="prose">
+          <p><span class="tag">程式推論，已小型實測</span>因為找不到時不寫入 cache，對同一個不存在的票號重複查詢，每次都會再呼叫一次 <code>FakeRepo.find</code>。臨時指令中連查兩次 <code>"X"</code>，<code>reads</code> 依序加 1，cache 裡也沒有 <code>"X"</code>。現有測試沒有涵蓋這一點。</p>
+          <p><span class="tag">程式推論，未測試</span><code>handle_get</code> 只接 <code>NotFound</code>。若 <code>find</code> 拋出其他例外，它會直接傳到呼叫端，不會變成 404 或其他狀態碼。</p>
+        </div>
+      </section>
+
+      <section id="sources" aria-labelledby="sources-title">
+        <div class="source-note">
+          <h2 id="sources-title">證據與限制</h2>
+          <ul class="plain">
+            <li><strong>讀過的來源</strong>：<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/evidence/input/ticket_api/README.md">README.md</a>、<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a>、<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a>，共三個檔案。</li>
+            <li><strong>測試實際執行</strong>：2026-10-05 在 <code>ticket_api</code> 目錄以 Python 3.14.7 執行 <code>python3 -m unittest -v</code>，<code>test_repeat_hit</code> 與 <code>test_missing</code> 兩項皆 ok（Ran 2 tests，OK）。</li>
+            <li><strong>來源衝突：60 秒過期</strong>。README 寫「Cached values expire after 60 seconds」，但 <code>service.py</code> 的 cache 只是普通 dict（第 16、24 行），沒有任何時間或過期邏輯。依程式，只要是同一個 <code>TicketService</code> 實例，再次讀取不論隔多久都會命中 cache。兩者哪個代表預期行為，現有材料無法判斷；測試也沒有測過期。</li>
+            <li><strong>「process-local」的範圍</strong>：README 說 cache 屬於行程；依程式，cache 是每個 <code>TicketService</code> 實例各自的 <code>self.cache</code>，兩個實例不共用。這是從第 16 行推論，未另行測試。</li>
+            <li><strong>範圍</strong>：<code>FakeRepo</code> 是記憶體中的假資料來源；材料中沒有真實資料庫或 HTTP 層，<code>200</code>／<code>404</code> 只是 <code>handle_get</code> 回傳 tuple 的第一個元素。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="check" aria-labelledby="check-title">
+        <div class="prose"><h2 id="check-title">自我檢查（可略過）</h2></div>
+        <details>
+          <summary>先查 <code>handle_get("T9")</code> 得到 404，之後有人把 <code>"T9"</code> 加進 <code>FakeRepo.rows</code>，再查一次會得到什麼？</summary>
+          <p>會得到 <code>200</code> 和那張票。找不到時沒有寫入 cache，所以第二次仍會呼叫 <code>FakeRepo.find</code>，這次查得到。這是依第 22–24 行的推論，現有測試沒有涵蓋。</p>
+        </details>
+      </section>
+    </main>
+    <footer class="muted">依 ticket_api 的 README.md、service.py、test_service.py 整理 · 2026-10-05 · 本頁為離線靜態 HTML，不載入任何外部資源</footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>兩條路徑的平均耗時｜p 增加時 M 往哪走</title>
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+      --path-a: #9a5038;
+      --path-b: #4f6a5c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "Noto Serif TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 18ch; margin: 0 0 24px; font-size: clamp(2.1rem, 6vw, 3.6rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--code-bg); padding: 0 .3em; }
+    .formula { max-width: 72ch; margin: 0 0 24px; padding: 20px 24px; background: var(--code-bg); font: 1rem/1.9 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; }
+    .formula div { white-space: nowrap; }
+    .lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px; margin: 32px 0 0; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .controls { min-width: 0; }
+    .control { margin-bottom: 20px; }
+    .control label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: .95rem; }
+    .control label output { font-variant-numeric: tabular-nums; color: var(--accent); }
+    .control small { display: block; font-size: .8rem; line-height: 1.5; }
+    input[type=range] { width: 100%; accent-color: var(--accent); }
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    button { font: inherit; font-size: .85rem; padding: 6px 12px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    .result { min-width: 0; }
+    .readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+    .readout div { padding: 12px; background: var(--soft); }
+    .readout span { display: block; font-size: .75rem; color: var(--muted); font-weight: 600; }
+    .readout strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+    .verdict { margin: 0 0 16px; padding: 16px; border-left: 3px solid var(--accent); background: var(--bg); font-size: .95rem; line-height: 1.7; }
+    .verdict b { color: var(--accent); }
+    svg { display: block; width: 100%; max-width: 520px; height: auto; }
+    .axis { stroke: var(--muted); stroke-width: 1; }
+    .grid { stroke: var(--line); stroke-width: 1; }
+    .tick { fill: var(--muted); font-size: 11px; font-family: system-ui, sans-serif; }
+    .mline { stroke: var(--ink); stroke-width: 2.5; }
+    .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+    .guide { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; }
+    .lbl-a { fill: var(--path-a); font-size: 12px; font-weight: 700; font-family: system-ui, sans-serif; }
+    .lbl-b { fill: var(--path-b); font-size: 12px; font-weight: 700; font-family: system-ui, sans-serif; }
+    .end-a { fill: var(--path-a); }
+    .end-b { fill: var(--path-b); }
+    .bar { display: flex; height: 28px; margin: 4px 0 6px; border: 1px solid var(--line); font-size: .75rem; font-weight: 700; color: #fff; overflow: hidden; }
+    .bar div { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
+    .bar .a { background: var(--path-a); }
+    .bar .b { background: var(--path-b); }
+    .caption { font-size: .8rem; color: var(--muted); line-height: 1.5; margin: 0; }
+    .table-wrap { max-width: 100%; overflow-x: auto; }
+    table { width: 100%; min-width: 600px; border-collapse: collapse; background: var(--surface); font-size: .9rem; }
+    caption { padding: 0 0 12px; text-align: left; color: var(--muted); font-size: .85rem; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child, .source-note ul:last-child { margin-bottom: 0; }
+    .question { max-width: 72ch; padding: 20px 24px; border: 1px dashed var(--accent); }
+    .question p:last-child { margin-bottom: 0; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    .js-only { display: none; }
+    .has-js .js-only { display: block; }
+    @media (max-width: 760px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .lab { grid-template-columns: 1fr; padding: 16px; }
+      .readout strong { font-size: 1.05rem; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav, .presets { display: none; }
+      section { padding-top: 20pt; }
+      .lab, .summary, .source-note { break-inside: avoid; }
+      table { min-width: 0; font-size: 9pt; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body><div style="font:14px/1.6 system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;background:#302b26;color:#f5f2eb;padding:8px 16px;"><a href="../index.html" style="color:#f5f2eb;">← Answer Me</a> · 範例：由 answer-me v0.1.3 產生 · 2026-10-05 · 經人工核對 · 素材：<a href="https://github.com/CarlLee1983/AnswerMe/blob/v0.1.3/tests/answer-me/conditions/input/model.md" style="color:#f5f2eb;">model.md</a></div>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">示意模型 · 加權平均</p>
+        <h1>多走路徑 A，平均耗時會變快還是變慢？</h1>
+        <p class="lead prose">把更多工作改走路徑 A（提高 p），平均時間 M 不一定下降。M 往哪個方向走，只取決於 A 和 B 哪一條比較慢。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">核心說明</h2>
+          <p>M = p·A + (1 − p)·B 可以改寫成 <code>M = B + p·(A − B)</code>。p 每增加 0.1，M 就改變 0.1 × (A − B) 毫秒。</p>
+          <p>A 比 B 快（A &lt; B）時，提高 p 會讓 M 下降；A 比 B 慢（A &gt; B）時，同樣的動作會讓 M 上升；兩者相等時 M 不變。起始條件 A = 20、B = 80 屬於第一種情況。</p>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#model">模型與改寫</a></li>
+            <li><a href="#lab">自己調整 p、A、B</a></li>
+            <li><a href="#cases">三種情況</a></li>
+            <li><a href="#sources">來源與限制</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="model" aria-labelledby="model-title">
+        <div class="prose">
+          <h2 id="model-title">M 是兩條路徑時間的加權平均</h2>
+          <p>來源模型有三個可調參數。<b>p</b> 是採用路徑 A 的比例，範圍 0 到 1；其餘 1 − p 的比例走路徑 B。<b>A</b> 和 <b>B</b> 是兩條路徑各自的處理時間，範圍 0 到 100 毫秒。<b>M</b> 是平均處理時間：</p>
+        </div>
+        <div class="formula" role="group" aria-label="公式改寫">
+          <div>M = p·A + (1 − p)·B　　　<span class="muted">← 來源公式</span></div>
+          <div>&nbsp;&nbsp;= B + p·(A − B)　　　<span class="muted">← 展開後整理</span></div>
+        </div>
+        <div class="prose">
+          <p>改寫後的形式更容易看出關係。p = 0 時 M 等於 B；p = 1 時 M 等於 A。p 介於兩者之間時，M 落在 B 與 A 之間的直線上。這條直線的斜率是 <code>A − B</code>：p 增加時，M 朝 A 的值移動。</p>
+          <p>所以「p 增加會怎樣」這個問題沒有單一答案。M 被拉向 A；如果 A 在 B 下方，M 下降；如果 A 在 B 上方，M 上升。</p>
+        </div>
+      </section>
+
+      <section id="lab" aria-labelledby="lab-title">
+        <div class="prose">
+          <h2 id="lab-title">自己調整 p、A、B</h2>
+          <p>拖動滑桿，觀察兩件事：圖中直線往哪個方向傾斜，以及右上方「p 再增加 0.10」那一格的正負號。數值由來源公式即時計算，是示意，不是量測。</p>
+        </div>
+        <noscript><p class="prose"><b>此瀏覽器未啟用 JavaScript，互動區無法運作。</b>可直接閱讀下方「三種情況」表格，內容涵蓋相同結論。</p></noscript>
+        <div class="lab js-only" id="labPanel">
+          <div class="controls">
+            <div class="control">
+              <label for="p">p：走路徑 A 的比例 <output id="pOut" for="p">0.50</output></label>
+              <input type="range" id="p" min="0" max="1" step="0.01" value="0.5">
+              <small class="muted">0 = 全走 B，1 = 全走 A</small>
+            </div>
+            <div class="control">
+              <label for="a">A：路徑 A 處理時間 <output id="aOut" for="a">20 ms</output></label>
+              <input type="range" id="a" min="0" max="100" step="1" value="20">
+            </div>
+            <div class="control">
+              <label for="b">B：路徑 B 處理時間 <output id="bOut" for="b">80 ms</output></label>
+              <input type="range" id="b" min="0" max="100" step="1" value="80">
+            </div>
+            <div class="control">
+              <span class="muted" style="font-size:.85rem;font-weight:600">快速情境</span>
+              <div class="presets">
+                <button type="button" data-a="20" data-b="80" data-p="0.5">起始：A 較快</button>
+                <button type="button" data-a="80" data-b="20" data-p="0.5">對調：A 較慢</button>
+                <button type="button" data-a="50" data-b="50" data-p="0.5">A = B</button>
+              </div>
+            </div>
+            <p class="caption" style="margin-top:4px">流量分配（第 <span id="barLabel">50%</span> 走 A）</p>
+            <div class="bar" aria-hidden="true"><div class="a" id="barA">A</div><div class="b" id="barB">B</div></div>
+          </div>
+          <div class="result">
+            <div class="readout" aria-live="polite">
+              <div><span>平均時間 M</span><strong id="mOut">50.0 ms</strong></div>
+              <div><span>斜率 A − B</span><strong id="slopeOut">−60</strong></div>
+              <div><span>p 再增加 0.10</span><strong id="deltaOut">−6.0 ms</strong></div>
+            </div>
+            <p class="verdict" id="verdict" aria-live="polite"></p>
+            <svg id="chart" viewBox="0 0 420 260" role="img" aria-labelledby="chartTitle chartDesc">
+              <title id="chartTitle">M 隨 p 變化的直線</title>
+              <desc id="chartDesc">橫軸是 p 從 0 到 1，縱軸是 M 從 0 到 100 毫秒。直線左端等於 B，右端等於 A，圓點標出目前的 p 與 M。</desc>
+              <g id="gridLayer"></g>
+              <line class="axis" x1="48" y1="220" x2="400" y2="220"/>
+              <line class="axis" x1="48" y1="20" x2="48" y2="220"/>
+              <line class="mline" id="mLine"/>
+              <circle class="end-b" id="endB" r="5"/>
+              <circle class="end-a" id="endA" r="5"/>
+              <text class="lbl-b" id="lblB" text-anchor="start"></text>
+              <text class="lbl-a" id="lblA" text-anchor="end"></text>
+              <line class="guide" id="guideV"/>
+              <line class="guide" id="guideH"/>
+              <circle class="dot" id="dot" r="7"/>
+              <text class="tick" x="224" y="252" text-anchor="middle">p（走路徑 A 的比例）</text>
+              <text class="tick" x="14" y="120" text-anchor="middle" transform="rotate(-90 14 120)">M（ms）</text>
+            </svg>
+            <p class="caption">直線左端（p = 0）等於 B，右端（p = 1）等於 A。圓點是目前的 p 與 M。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="cases" aria-labelledby="cases-title">
+        <div class="prose">
+          <h2 id="cases-title">三種情況：只看 A 和 B 誰大</h2>
+          <p>由於斜率 A − B 和 p 無關，同一組 A、B 下，不論 p 目前是 0.1 還是 0.9，p 增加的方向效果都一樣，大小也一樣（每 0.1 改變 0.1 × |A − B| 毫秒）。</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="三種情況比較表，可水平捲動" tabindex="0">
+          <table>
+            <caption>p 增加時 M 的變化方向（數值依來源公式計算）</caption>
+            <thead><tr><th scope="col">條件</th><th scope="col">斜率 A − B</th><th scope="col">p 增加時 M</th><th scope="col">例子：p 從 0.5 增為 0.6</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">A &lt; B（A 較快）</th><td>負</td><td>下降</td><td>A = 20、B = 80：M 從 50 降為 44 ms</td></tr>
+              <tr><th scope="row">A &gt; B（A 較慢）</th><td>正</td><td>上升</td><td>A = 80、B = 20：M 從 50 升為 56 ms</td></tr>
+              <tr><th scope="row">A = B</th><td>0</td><td>不變</td><td>A = B = 50：M 維持 50 ms</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="prose" style="margin-top:24px">
+          <p>邊界也要注意：p 的上限是 1。p 已經等於 1 時無法再增加，M 停在 A；互動區的「p 再增加 0.10」在接近上限時只計算到 p = 1 為止。</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="q-title">
+        <div class="question">
+          <h3 id="q-title">可選的預測題</h3>
+          <p>設 A = 30、B = 30，再把 B 慢慢調高到 60。在 B 改變之前與之後，提高 p 對 M 的影響分別是什麼？先猜，再用上面的滑桿驗證。</p>
+        </div>
+      </section>
+
+      <section id="sources" aria-labelledby="sources-title">
+        <div class="source-note">
+          <h2 id="sources-title">來源與限制</h2>
+          <p><b>來源事實</b>：變數定義、範圍（p 介於 0 與 1；A、B 為 0 到 100 毫秒）、公式 M = p·A + (1 − p)·B 與起始條件 p = 0.5、A = 20、B = 80，皆出自使用者提供的 <code>model.md</code>。該檔說明這是加權平均的示意，不是任何產品的量測數據。</p>
+          <p><b>推論</b>：改寫式 M = B + p·(A − B)、斜率 A − B 與三種情況的方向，是由來源公式代數推導而得。表格與互動區中的數值都是代入公式的計算結果。</p>
+          <p><b>模型未涵蓋</b>：來源把 A、B 視為固定值，沒有描述改變 p 是否會讓 A 或 B 本身改變（例如某條路徑負載變重而變慢）。若實際系統有這類交互影響，結論可能不同；本文不推測。</p>
+        </div>
+      </section>
+    </main>
+    <footer class="muted">示意模型解說 · 數值皆依 model.md 公式計算，非實測</footer>
+  </div>
+
+  <script>
+    (function () {
+      document.body.classList.add('has-js');
+      var pIn = document.getElementById('p');
+      var aIn = document.getElementById('a');
+      var bIn = document.getElementById('b');
+      var X0 = 48, X1 = 400, Y0 = 220, Y1 = 20;
+      function x(p) { return X0 + p * (X1 - X0); }
+      function y(m) { return Y0 - (m / 100) * (Y0 - Y1); }
+      function fmt(n, d) { var s = n.toFixed(d); return (n < 0 ? s.replace('-', '−') : s); }
+      function signed(n, d) { return (n > 0 ? '+' : '') + fmt(n, d); }
+      function set(el, attrs) { for (var k in attrs) el.setAttribute(k, attrs[k]); }
+
+      var grid = document.getElementById('gridLayer');
+      var ns = 'http://www.w3.org/2000/svg';
+      [0, 25, 50, 75, 100].forEach(function (m) {
+        var l = document.createElementNS(ns, 'line');
+        set(l, { x1: X0, x2: X1, y1: y(m), y2: y(m), 'class': 'grid' });
+        grid.appendChild(l);
+        var t = document.createElementNS(ns, 'text');
+        set(t, { x: X0 - 6, y: y(m) + 4, 'class': 'tick', 'text-anchor': 'end' });
+        t.textContent = m;
+        grid.appendChild(t);
+      });
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (p) {
+        var t = document.createElementNS(ns, 'text');
+        set(t, { x: x(p), y: Y0 + 16, 'class': 'tick', 'text-anchor': 'middle' });
+        t.textContent = p;
+        grid.appendChild(t);
+      });
+
+      function update() {
+        var p = parseFloat(pIn.value), A = parseFloat(aIn.value), B = parseFloat(bIn.value);
+        var M = p * A + (1 - p) * B;
+        var slope = A - B;
+        var p2 = Math.min(1, p + 0.1);
+        var M2 = p2 * A + (1 - p2) * B;
+        var delta = M2 - M;
+
+        document.getElementById('pOut').textContent = p.toFixed(2);
+        document.getElementById('aOut').textContent = A + ' ms';
+        document.getElementById('bOut').textContent = B + ' ms';
+        document.getElementById('mOut').textContent = M.toFixed(1) + ' ms';
+        document.getElementById('slopeOut').textContent = signed(slope, 0);
+        document.getElementById('deltaOut').textContent = p >= 1 ? '已達上限' : signed(delta, 1) + ' ms';
+
+        var pct = Math.round(p * 100);
+        document.getElementById('barLabel').textContent = pct + '%';
+        var barA = document.getElementById('barA'), barB = document.getElementById('barB');
+        barA.style.width = pct + '%'; barB.style.width = (100 - pct) + '%';
+        barA.textContent = pct >= 12 ? 'A ' + pct + '%' : '';
+        barB.textContent = (100 - pct) >= 12 ? 'B ' + (100 - pct) + '%' : '';
+
+        var v;
+        if (slope < 0) {
+          v = '目前 <b>A（' + A + ' ms）比 B（' + B + ' ms）快</b>，斜率為負：提高 p 讓更多工作改走較快的路徑，<b>M 下降</b>。';
+        } else if (slope > 0) {
+          v = '目前 <b>A（' + A + ' ms）比 B（' + B + ' ms）慢</b>，斜率為正：提高 p 讓更多工作改走較慢的路徑，<b>M 上升</b>。';
+        } else {
+          v = '目前 <b>A = B = ' + A + ' ms</b>，斜率為 0：兩條路徑一樣快，不論 p 是多少，<b>M 都不變</b>。';
+        }
+        if (p >= 1) v += ' p 已經等於 1，無法再增加。';
+        document.getElementById('verdict').innerHTML = v;
+
+        set(document.getElementById('mLine'), { x1: x(0), y1: y(B), x2: x(1), y2: y(A) });
+        set(document.getElementById('endB'), { cx: x(0), cy: y(B) });
+        set(document.getElementById('endA'), { cx: x(1), cy: y(A) });
+        var lb = document.getElementById('lblB');
+        var bBelow = (B < A && B > 12) || B > 88;
+        set(lb, { x: x(0) + 10, y: bBelow ? y(B) + 18 : y(B) - 10 });
+        lb.textContent = 'p=0：M=B=' + B;
+        var la = document.getElementById('lblA');
+        var aBelow = (A < B && A > 12) || A > 88;
+        set(la, { x: x(1) - 10, y: aBelow ? y(A) + 18 : y(A) - 10 });
+        la.textContent = 'p=1：M=A=' + A;
+        set(document.getElementById('dot'), { cx: x(p), cy: y(M) });
+        set(document.getElementById('guideV'), { x1: x(p), x2: x(p), y1: Y0, y2: y(M) });
+        set(document.getElementById('guideH'), { x1: X0, x2: x(p), y1: y(M), y2: y(M) });
+      }
+
+      [pIn, aIn, bIn].forEach(function (el) { el.addEventListener('input', update); });
+      Array.prototype.forEach.call(document.querySelectorAll('.presets button'), function (btn) {
+        btn.addEventListener('click', function () {
+          aIn.value = btn.dataset.a; bIn.value = btn.dataset.b; pIn.value = btn.dataset.p;
+          update();
+        });
+      });
+      update();
+    })();
+  </script>
+</body>
+</html>
