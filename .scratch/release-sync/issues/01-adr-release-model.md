@@ -6,8 +6,12 @@
 
 **Status:** ready-for-agent
 
-- [ ] ADR 依 `docs/adr/` 既有格式與編號接續，狀態為已接受
-- [ ] 寫明依據：skills CLI 未指定 ref 時抓預設分支，並以技能資料夾的 tree hash 判斷更新（註明查證來源為 vercel-labs/skills 原始碼）
-- [ ] 列出被否決的三個替代方案與否決理由：固定 ref 安裝、release 分支作預設分支、網站只在 release 時部署
-- [ ] 以 `**Falsified if:**` 段落收尾，條件可檢查，且以反引號標出依賴的檔案（README 與網站部署 workflow）
-- [ ] 快速檢查通過
+- [x] ADR 依 `docs/adr/` 既有格式與編號接續，狀態為已接受
+- [x] 寫明依據：skills CLI 未指定 ref 時抓預設分支，並以技能資料夾的 tree hash 判斷更新（註明查證來源為 vercel-labs/skills 原始碼）
+- [x] 列出被否決的三個替代方案與否決理由：固定 ref 安裝、release 分支作預設分支、網站只在 release 時部署
+- [x] 以 `**Falsified if:**` 段落收尾，條件可檢查，且以反引號標出依賴的檔案（README 與網站部署 workflow）
+- [x] 快速檢查通過
+
+## Comments
+
+- 2026-10-05：已新增 [ADR 0006](../../../docs/adr/0006-master-is-the-release-channel.md)，狀態 accepted；推翻條件以反引號標出 `README.md` 與 `.github/workflows/pages.yml`。快速檢查通過。
