@@ -18,9 +18,9 @@ RESOURCE_ATTRIBUTES = frozenset({
 })
 LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
 EXAMPLE_VERSION_MARKER = re.compile(r"由 answer-me (v\d+\.\d+\.\d+) 產生")
-# 只在同一行內比對：冒號後的空白（含全形）不得吃掉換行去借下一行的文字。
 TECHNIQUE_FOLDER = "skills/answer-me/"
 USER_DOCS = frozenset({"README.md", "site/index.html"})
+# 只在同一行內比對：冒號後的空白（含全形）不得吃掉換行去借下一行的文字。
 NOTES_LINE = re.compile(r"^文件與網站：[^\S\n]*\S", re.M)
 LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://[^\s<>\"')]|/Users/|/home/)")
 CSS_EXTERNAL = re.compile(r"""url\(\s*["']?\s*((?:https?:)?//[^)"'\s]+)|@import\s+["']((?:https?:)?//[^"']+)""", re.I)
