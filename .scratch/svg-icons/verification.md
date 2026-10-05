@@ -20,3 +20,24 @@
 - 無障礙屬性（`aria-hidden`、不可聚焦）只確認於 HTML 原始碼，未以螢幕閱讀器或 Tab 鍵實測。
 - 連結文字的可見內容僅少了「→」，以 grep 確認，未做自動比對。
 - 截圖未提交。
+
+## 02 類別圖示：用途卡與能力邊界
+
+### 改動
+
+- `site/index.html` 既有 sprite 新增 `book-open`、`git-compare`、`languages`、`video-off`、`file-code`、`target` 六個 symbol（取自同一 Lucide commit）；不另建 sprite。
+- 「概念學習」「成果審視」h3 與限制 `dl` 的四個 `dt`（language、media、html、scope）前各加圖示，`aria-hidden="true"`、`focusable="false"`，文字不變。
+- 新增一條 CSS：`.mode h3 .ico, .limits dt .ico { margin-right: .45em; }`，其餘沿用 `.ico`（1em、線寬 1.75）。
+- 授權註解：`target` 屬 Feather 衍生清單，註解有列舉圖示，已把 `target` 加進 MIT 段的列舉；其餘五個僅需 ISC。
+
+### 已實測
+
+- `python3 scripts/check.py`：通過。
+- `node tests/answer-me/browser/verify-site.mjs site <暫存目錄>`：5 頁、0 失敗。
+- 人工目視 index 桌面與手機截圖（用途卡與限制區局部放大）：圖示與標題／mono 標籤同高、顏色跟隨文字（dt 為 accent 綠）、間距一致、無溢出；手機限制區 dd 換行正常。
+
+### 僅靜態確認
+
+- 無障礙屬性僅確認於 HTML 原始碼，未以螢幕閱讀器實測。
+- 文字內容不變僅以 diff 目視確認，未自動比對。
+- 截圖未提交。

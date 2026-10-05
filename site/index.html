@@ -52,6 +52,7 @@
     /* 圖示：sprite 內的 symbol 以 <use> 引用；顏色跟隨文字，線寬統一 */
     .ico { width: 1em; height: 1em; flex: none; vertical-align: -.125em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
     a .ico { margin-left: .25em; }
+    .mode h3 .ico, .limits dt .ico { margin-right: .45em; }
 
     /* 頁首 */
     .bar { display: flex; justify-content: space-between; align-items: center; height: 64px; font: .86rem var(--mono); }
@@ -207,7 +208,7 @@
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-    arrow-up-right、arrow-right 等圖示源自 Feather 專案（MIT License）：
+    arrow-up-right、arrow-right、target 等圖示源自 Feather 專案（MIT License）：
     Copyright (c) 2013-present Cole Bemis
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -228,6 +229,12 @@
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
     <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></symbol>
+    <symbol id="i-git-compare" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></symbol>
+    <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+    <symbol id="i-video-off" viewBox="0 0 24 24"><path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.248-3.062A.5.5 0 0 1 22 7.87v8.196"/><path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-file-code" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   </svg>
   <a class="skip" href="#content">跳到主要內容</a>
   <div class="wrap">
@@ -303,13 +310,13 @@
           <article class="mode">
             <img class="mode-art" src="assets/use-learn.webp" alt="" width="800" height="400" loading="lazy">
             <p class="kicker">陌生概念 · 文章 · 系統</p>
-            <h3>概念學習</h3>
+            <h3><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-book-open"/></svg>概念學習</h3>
             <p>沿一條實際流程追到負責的程式，建立用得上的理解，而不是目錄清單。</p>
           </article>
           <article class="mode">
             <img class="mode-art" src="assets/use-review.webp" alt="" width="800" height="400" loading="lazy">
             <p class="kicker">方案 · diff · 測試結果</p>
-            <h3>成果審視</h3>
+            <h3><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-git-compare"/></svg>成果審視</h3>
             <p>說清前後行為與取捨，核對關鍵主張；<strong>agent 自稱成功不算證據</strong>。</p>
           </article>
         </div>
@@ -363,10 +370,10 @@
         <h2 id="limits-title">能力邊界</h2>
         <p class="sec-sub">寫在前面，不寫在小字裡。</p>
         <dl class="limits">
-          <dt>language</dt><dd>繁體中文為主，保留必要英文術語；明確要求時可用其他語言。</dd>
-          <dt>media</dt><dd>不製作旁白影片；媒介限於文字、圖解與互動 HTML。</dd>
-          <dt>html</dt><dd>單檔、離線可開，內嵌所需的樣式、程式與資料，不需要伺服器。</dd>
-          <dt>scope</dt><dd>解說不是 code review；完整審查或修改程式屬於另外的任務。</dd>
+          <dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-languages"/></svg>language</dt><dd>繁體中文為主，保留必要英文術語；明確要求時可用其他語言。</dd>
+          <dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-video-off"/></svg>media</dt><dd>不製作旁白影片；媒介限於文字、圖解與互動 HTML。</dd>
+          <dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file-code"/></svg>html</dt><dd>單檔、離線可開，內嵌所需的樣式、程式與資料，不需要伺服器。</dd>
+          <dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-target"/></svg>scope</dt><dd>解說不是 code review；完整審查或修改程式屬於另外的任務。</dd>
         </dl>
       </section>
 
