@@ -193,6 +193,13 @@ class CheckTests(unittest.TestCase):
         self.write("site/examples/one.html", '<a href="file:///Users/carl/x">a</a>\n')
         self.assertIn("local path", self.check(valid=False).stderr)
 
+    def test_site_mentioning_file_scheme_without_path_passes(self):
+        self.write_site()
+        self.write("site/examples/one.html", '<p>開 <code>file://</code> 網址，或用 file:// 協定。</p>\n')
+        self.check()
+        self.write("site/examples/one.html", '<a href="file://localhost/etc/x">a</a>\n')
+        self.assertIn("local path", self.check(valid=False).stderr)
+
     def test_site_landing_fonts_only_on_link_tags(self):
         self.write_site()
         self.write("site/index.html", '<script src="https://fonts.googleapis.com/x.js"></script>\n')

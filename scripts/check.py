@@ -17,7 +17,7 @@ RESOURCE_ATTRIBUTES = frozenset({
     ("audio", "src"), ("embed", "src"), ("object", "data"),
 })
 LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
-LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://|/Users/|/home/)")
+LOCAL_PATH = re.compile(r"(?<![\w.:/-])(file://[^\s<>\"')]|/Users/|/home/)")
 CSS_EXTERNAL = re.compile(r"""url\(\s*["']?\s*((?:https?:)?//[^)"'\s]+)|@import\s+["']((?:https?:)?//[^"']+)""", re.I)
 
 
