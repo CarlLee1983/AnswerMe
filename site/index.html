@@ -209,7 +209,7 @@
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-    arrow-up-right、arrow-right、target、check 等圖示源自 Feather 專案（MIT License）：
+    arrow-up-right、arrow-right、target、check 四個圖示源自 Feather 專案（MIT License）：
     Copyright (c) 2013-present Cole Bemis
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -404,7 +404,9 @@
   <script>
     (() => {
       // 複製安裝指令；file:// 或權限被拒時退回選取文字，讓使用者自行複製
+      const RESET_MS = 3000;
       const status = document.querySelector('.sr-status');
+      let statusOwner; // 兩顆按鈕共用狀態區；只由最後寫入的按鈕清空
       document.querySelectorAll('[data-copy-target]').forEach(button => {
         const text = button.querySelector('.copy-text');
         const icon = button.querySelector('use');
@@ -426,13 +428,14 @@
           text.textContent = copied ? '已複製' : '已選取';
           icon.setAttribute('href', copied ? '#i-check' : '#i-copy');
           status.textContent = copied ? '已複製' : '已選取，請按 ⌘C／Ctrl+C';
+          statusOwner = button;
           // 連按時重設計時器，避免舊計時器提早還原
           clearTimeout(timer);
           timer = setTimeout(() => {
             text.textContent = label;
             icon.setAttribute('href', '#i-copy');
-            status.textContent = '';
-          }, 3000);
+            if (statusOwner === button) status.textContent = '';
+          }, RESET_MS);
         });
       });
 
