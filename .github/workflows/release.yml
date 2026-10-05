@@ -16,6 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          persist-credentials: false
           # 發布檢查要比對範例頁標示的版本是否為已存在的 tag，需要取回所有 tag。
           fetch-depth: 0
       - name: 還原 annotated tag 物件
