@@ -44,7 +44,7 @@ python3 scripts/check.py --release v0.1.4
 
 - tag 存在且為 annotated tag（輕量 tag 沒有訊息可作為 Release notes）。
 - tag 訊息中有一行以「文件與網站：」（全形冒號）開頭，且冒號後有內容。
-- 範例頁（`site/` 下 `index.html` 以外的 `.html`）中每個「由 answer-me vX.Y.Z 產生」標記的版本，都是 repository 中已存在的 tag；較舊但存在的版本通過。
+- 範例頁（`site/` 下 `index.html` 以外的 `.html`）中每個「由 answer-me vX.Y.Z 產生」標記的版本，都是 repository 中已存在的 tag；較舊但存在的版本通過。標記必須使用完全相同的字樣 `由 answer-me vX.Y.Z 產生`，其他寫法不會被辨識，會被靜默略過。
 - tag 指向的 commit 通過上述快速檢查。
 
 範例頁與快速檢查都以暫時 index 取出的 tag commit 內容為準（與 `--staged` 共用同一個快照程式），工作區的修改不影響結果。`--release` 與 `--staged` 不能併用。
