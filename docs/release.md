@@ -25,11 +25,13 @@ tag 必須是 annotated tag，訊息就是 Release notes，所以直接寫給讀
 ## 發布步驟
 
 1. 確認 master 上最近一次 CI 為綠燈，且工作區乾淨、位於要發布的 commit。
-2. 建立 annotated tag（以編輯器撰寫訊息，或用多個 `-m`）：
+2. 把 tag 訊息寫進一個檔案，再以它建立 annotated tag：
 
    ```sh
-   git tag -a v0.1.5 -m "Answer Me v0.1.5" -m "變更摘要…" -m "文件與網站：無需變更（理由）"
+   git tag -a v0.1.5 -F v0.1.5-tag.md --cleanup=whitespace
    ```
+
+   `--cleanup=whitespace` 不可省略：git 預設會把 `#` 開頭的行當成註解刪除，不論訊息來自 `-m`、`-F` 或編輯器，Markdown 標題會因此從 Release notes 消失。訊息檔放在 repository 之外，或用完即刪，不要提交。
 
 3. 推送前在本機執行發布模式，有錯會一次全部列出：
 
