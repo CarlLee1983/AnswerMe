@@ -2,6 +2,8 @@
 
 Answer Me 是協助理解概念與 agent 工作成果的解說技能，不限定特定 agent。它先理解需求，未指定格式時會詢問要 HTML、Markdown 文件或對話回答，再依問題組織文字、圖解與必要的互動，並在關鍵主張旁保留來源與驗證限制。預設使用繁體中文，保留必要的英文術語。
 
+網站：<https://carllee1983.github.io/AnswerMe/>，含介紹與技能實際產生的範例。
+
 ## 安裝 skill
 
 建議使用 [Skills CLI](https://github.com/vercel-labs/skills#install-a-skill)。準備 Node.js 22.20+（含 npm／npx）、Git，以及支援 Agent Skills 的 agent；後文的 Python 檢查環境是維護本 repository 時才需要的工具。
@@ -115,4 +117,5 @@ python3 scripts/check.py
 | [CONTEXT.md](CONTEXT.md) | 概念學習與成果審視的領域用語 |
 | [docs/checks.md](docs/checks.md) | 檢查依賴、命令、hook 與驗證範圍 |
 | [tests/answer-me/README.md](tests/answer-me/README.md) | 演練情境、語意驗收條件與瀏覽器檢查方式 |
+| [site/](site/) | GitHub Pages 網站：介紹頁與範例 |
 | [AGENTS.md](AGENTS.md) | 在此 repository 工作的 agent 指引 |

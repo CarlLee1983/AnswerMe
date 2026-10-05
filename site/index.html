@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Answer Me｜有依據的解說技能</title>
+  <meta name="description" content="Answer Me 協助理解陌生概念、repo 的運作，以及 agent 的方案、diff 與測試結果，並在關鍵主張旁保留來源。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600&amp;display=swap">
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: "Noto Serif TC", Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 16ch; margin: 0 0 24px; font-size: clamp(2.25rem, 6vw, 4rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 32px 0 0; }
+    .cards > div { min-width: 0; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .cards p { margin: 0; font-size: .95rem; line-height: 1.6; }
+    .cards .label { display: block; margin-bottom: 12px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    .placeholder { max-width: 72ch; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .placeholder p:last-child { margin-bottom: 0; }
+    .code-wrap { max-width: 100%; overflow-x: auto; margin: 0 0 24px; }
+    pre { width: max-content; min-width: 100%; margin: 0; padding: 24px; background: var(--code-bg); font: .85rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    ul.limits { max-width: 72ch; margin: 0; padding-left: 1.2em; }
+    ul.limits li { margin-bottom: 12px; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .cards { grid-template-columns: 1fr; }
+      .cards > div { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">ANSWER ME · AGENT 解說技能</p>
+        <h1>看懂陌生的東西，也看懂 agent 做了什麼</h1>
+        <p class="lead prose">Answer Me 是一個 agent 技能：它把陌生概念、repo 的運作，以及 agent 交出的方案、diff 與測試結果，整理成有依據的文字、圖解或可離線開啟的 HTML，並在關鍵主張旁附上來源。</p>
+        <nav aria-label="本頁段落">
+          <ul>
+            <li><a href="#uses">兩種用途</a></li>
+            <li><a href="#examples">範例</a></li>
+            <li><a href="#install">安裝</a></li>
+            <li><a href="#limits">能力邊界</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="uses" aria-labelledby="uses-title">
+        <div class="prose">
+          <h2 id="uses-title">兩種用途</h2>
+          <p>技能先判斷你卡在哪裡，再決定用文字、圖解或互動呈現。未指定輸出方式時，它會先問一次要 HTML、Markdown 文件，還是直接在對話中回答。</p>
+        </div>
+        <div class="cards">
+          <div>
+            <span class="label">概念學習</span>
+            <h3>理解陌生概念、文章或系統</h3>
+            <p>閱讀原文、程式與文件，沿一條實際流程追到負責的程式，幫你建立可運用的認識，而不是只給目錄清單。</p>
+          </div>
+          <div>
+            <span class="label">成果審視</span>
+            <h3>理解 agent 的方案、變更與執行結果</h3>
+            <p>對照 diff、受影響的流程與測試紀錄，說清前後行為與取捨，並核對關鍵主張的證據。agent 自稱成功不算驗證證據。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="examples" aria-labelledby="examples-title">
+        <h2 id="examples-title">範例</h2>
+        <div class="placeholder">
+          <p>範例頁整理中。每份範例都由技能實際產生，並在頁面上標明產生時的版本、日期與人工核對狀態。</p>
+        </div>
+      </section>
+
+      <section id="install" aria-labelledby="install-title">
+        <div class="prose">
+          <h2 id="install-title">安裝</h2>
+          <p>使用 <a href="https://github.com/vercel-labs/skills#install-a-skill">Skills CLI</a> 安裝到使用者層級：</p>
+        </div>
+        <div class="code-wrap" role="region" aria-label="安裝指令，可水平捲動" tabindex="0"><pre><code>npx skills@latest add CarlLee1983/AnswerMe --skill answer-me -g</code></pre></div>
+        <p class="prose">指定 agent、專案層級安裝、確認安裝與更新方式，見 README 的<a href="https://github.com/CarlLee1983/AnswerMe#%E5%AE%89%E8%A3%9D-skill">安裝說明</a>。</p>
+      </section>
+
+      <section id="limits" aria-labelledby="limits-title">
+        <h2 id="limits-title">能力邊界</h2>
+        <ul class="limits">
+          <li><strong>繁體中文為主</strong>：預設以繁體中文解說並保留必要英文術語；你明確要求其他語言時才改用該語言。</li>
+          <li><strong>不製作旁白影片</strong>：媒介限於文字、圖解與互動 HTML。要求影片時，會提供腳本或分鏡，並以實際形式交付。</li>
+          <li><strong>HTML 為單檔離線</strong>：產出的 HTML 內嵌所需的樣式、程式與資料，不需要伺服器或安裝套件；預設模板的網路字型只增強外觀，離線時改用本機字型。</li>
+          <li><strong>解說不是 code review</strong>：技能協助理解並核對關鍵證據；完整審查或修改程式屬於另外的任務。</li>
+        </ul>
+      </section>
+    </main>
+    <footer class="muted">原始碼與版本紀錄：<a href="https://github.com/CarlLee1983/AnswerMe">GitHub</a> · <a href="https://github.com/CarlLee1983/AnswerMe/releases">Releases</a></footer>
+  </div>
+</body>
+</html>
