@@ -188,8 +188,8 @@ def check_site(root):
     return errors
 
 
-def run_git(root, *args):
-    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, errors="replace")
+def run_git(root, *args, env=None):
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, errors="replace", env=env)
 
 
 def example_versions(site):
@@ -209,14 +209,11 @@ def export_snapshot(root, directory, commit=None):
     env = None
     if commit:
         env = dict(os.environ, GIT_INDEX_FILE=str(Path(directory).parent / f"{Path(directory).name}.index"))
-        read = subprocess.run(["git", "read-tree", commit], cwd=root, capture_output=True, text=True, errors="replace", env=env)
+        read = run_git(root, "read-tree", commit, env=env)
         if read.returncode:
             return f"cannot read commit {commit}: {read.stderr.strip()}"
     try:
-        result = subprocess.run(
-            ["git", "checkout-index", "--all", f"--prefix={directory}/"], cwd=root,
-            capture_output=True, text=True, errors="replace", env=env,
-        )
+        result = run_git(root, "checkout-index", "--all", f"--prefix={directory}/", env=env)
     finally:
         if env:
             Path(env["GIT_INDEX_FILE"]).unlink(missing_ok=True)
@@ -230,11 +227,13 @@ def docs_reminder(root):
     尚無 HEAD 的初始提交，`git diff --cached` 會以空 tree 為基準，所有 staged 路徑都算變更。"""
     result = run_git(root, "diff", "--cached", "--name-only", "--no-renames", "-z")
     if result.returncode:
+        print(f"警告：無法讀取 staged 變更，略過文件同步提醒：{result.stderr.strip()}", file=sys.stderr)
         return None
     paths = set(result.stdout.split("\0")) - {""}
     if any(path in USER_DOCS for path in paths) or not any(path.startswith(TECHNIQUE_FOLDER) for path in paths):
         return None
-    return "提醒：本次提交改動了 skills/answer-me/，請考慮是否同步更新 README.md 或 site/index.html。"
+    docs = " 或 ".join(sorted(USER_DOCS))
+    return f"提醒：本次提交改動了 {TECHNIQUE_FOLDER}，請考慮是否同步更新 {docs}。"
 
 
 def check_release(root, tag, validator):
@@ -286,7 +285,12 @@ def main():
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    suffix = f" (release {args.release})" if args.release is not None else " (staged snapshot)" if args.staged else ""
+    if args.release is not None:
+        suffix = f" (release {args.release})"
+    elif args.staged:
+        suffix = " (staged snapshot)"
+    else:
+        suffix = ""
     print("PASS: skill frontmatter, display metadata, relative documentation links, and site pages" + suffix)
     return 0
 
