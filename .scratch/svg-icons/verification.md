@@ -41,3 +41,23 @@
 - 無障礙屬性僅確認於 HTML 原始碼，未以螢幕閱讀器實測。
 - 文字內容不變僅以 diff 目視確認，未自動比對。
 - 截圖未提交。
+
+## 03 複製按鈕圖示與狀態
+
+### 改動
+
+- `site/index.html` sprite 新增 `copy`、`check` 兩個 symbol（同一 Lucide commit）；授權註解的 Feather 列舉加入 `check`（`copy` 僅 ISC）。
+- 兩個複製按鈕改為「`<svg class="ico">` + `<span class="copy-text">`」；`.copy` 改 `inline-flex`、`gap: .45em`，並以 `.copy .ico` 覆寫連結用的 margin 與 vertical-align。`aria-label` 與 `.sr-status` 不變。
+- 腳本只更新文字 span 與 `<use>` 的 href：成功 `copy` → `check` 並顯示「已複製」；剪貼簿被拒時維持 `copy`、文字「已選取」、狀態區宣告與選取行為照舊。還原延遲由 2 秒改為 3 秒，還原 `copy` 與原文字。
+- 計時器每顆按鈕一個；每次點擊先 `clearTimeout` 再重設，連按時以最後一次點擊起算 3 秒，不會被舊計時器提早還原。
+
+### 已實測
+
+- `python3 scripts/check.py`：通過。
+- `node tests/answer-me/browser/verify-site.mjs site <暫存目錄>`：5 頁、0 失敗。
+- 人工目視 index 桌面與手機截圖（hero 與 CTA 兩顆按鈕局部裁切）：預設狀態的 copy 圖示與文字同高、置中，按鈕尺寸合理，手機未溢出。
+
+### 待主 agent 以 Playwright 實測
+
+- 點擊後 `copy` → `check`、3 秒後還原、連按不提早還原、剪貼簿被拒時圖示維持 `copy`：尚未實測，僅經程式碼閱讀確認。
+- 無障礙屬性僅確認於 HTML 原始碼。截圖未提交。

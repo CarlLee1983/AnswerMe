@@ -73,8 +73,9 @@
     .install code { font: .88rem/1.6 var(--mono); }
     .install code span { display: inline-block; white-space: nowrap; }
     .install code::before { content: "$ "; color: var(--accent); }
-    .copy { border: 0; border-radius: 6px; padding: 8px 14px; background: var(--accent); color: var(--bg); font: 700 .82rem var(--mono); white-space: nowrap; cursor: pointer; transition: transform .15s var(--ease); }
+    .copy { display: inline-flex; align-items: center; gap: .45em; border: 0; border-radius: 6px; padding: 8px 14px; background: var(--accent); color: var(--bg); font: 700 .82rem var(--mono); white-space: nowrap; cursor: pointer; transition: transform .15s var(--ease); }
     .copy:active { transform: scale(.97); }
+    .copy .ico { margin: 0; vertical-align: 0; }
     .cta { position: relative; isolation: isolate; margin-top: 96px; padding: 72px 32px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
     .cta::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to right, var(--bg) 52%, rgba(12, 14, 17, .6) 70%, rgba(12, 14, 17, .15)), url("assets/cta.webp") right center / cover no-repeat; }
     .cta h2 { margin-top: 0; text-wrap: balance; }
@@ -208,7 +209,7 @@
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-    arrow-up-right、arrow-right、target 等圖示源自 Feather 專案（MIT License）：
+    arrow-up-right、arrow-right、target、check 等圖示源自 Feather 專案（MIT License）：
     Copyright (c) 2013-present Cole Bemis
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -234,6 +235,8 @@
     <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
     <symbol id="i-video-off" viewBox="0 0 24 24"><path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.248-3.062A.5.5 0 0 1 22 7.87v8.196"/><path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><path d="m2 2 20 20"/></symbol>
     <symbol id="i-file-code" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   </svg>
   <a class="skip" href="#content">跳到主要內容</a>
@@ -256,7 +259,7 @@
         <p class="lead">給 Claude Code、Codex 等 agent 的技能：把概念、repo 與 agent 的成果，變成附來源的解說。</p>
         <div class="install">
           <code id="install-cmd"><span>npx skills@latest add</span> <span>CarlLee1983/AnswerMe</span> <span>--skill answer-me -g</span></code>
-          <button class="copy" type="button" data-copy-target="install-cmd" aria-label="複製安裝指令">複製</button>
+          <button class="copy" type="button" data-copy-target="install-cmd" aria-label="複製安裝指令"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg><span class="copy-text">複製</span></button>
         </div>
         <p class="sr-only sr-status" role="status" aria-live="polite"></p>
         <p class="hero-links"><a href="https://github.com/CarlLee1983/AnswerMe">github.com/CarlLee1983/AnswerMe<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a></p>
@@ -382,7 +385,7 @@
         <p class="sec-sub">一行指令安裝，在 agent 裡說「使用 answer-me」。</p>
         <div class="install">
           <code id="install-cmd-2"><span>npx skills@latest add</span> <span>CarlLee1983/AnswerMe</span> <span>--skill answer-me -g</span></code>
-          <button class="copy" type="button" data-copy-target="install-cmd-2" aria-label="複製安裝指令">複製</button>
+          <button class="copy" type="button" data-copy-target="install-cmd-2" aria-label="複製安裝指令"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg><span class="copy-text">複製</span></button>
         </div>
         <p class="cta-links"><a href="#examples">先看範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a></p>
       </section>
@@ -403,24 +406,33 @@
       // 複製安裝指令；file:// 或權限被拒時退回選取文字，讓使用者自行複製
       const status = document.querySelector('.sr-status');
       document.querySelectorAll('[data-copy-target]').forEach(button => {
-        const label = button.textContent;
+        const text = button.querySelector('.copy-text');
+        const icon = button.querySelector('use');
+        const label = text.textContent;
+        let timer;
         button.addEventListener('click', async () => {
           const code = document.getElementById(button.dataset.copyTarget);
-          const text = code.textContent;
-          let message = '已複製';
+          let copied = true;
           try {
-            await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(code.textContent);
           } catch {
+            copied = false;
             const range = document.createRange();
             range.selectNodeContents(code);
             const selection = getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
-            message = '已選取，請按 ⌘C／Ctrl+C';
           }
-          button.textContent = message === '已複製' ? '已複製' : '已選取';
-          status.textContent = message;
-          setTimeout(() => { button.textContent = label; status.textContent = ''; }, 2000);
+          text.textContent = copied ? '已複製' : '已選取';
+          icon.setAttribute('href', copied ? '#i-check' : '#i-copy');
+          status.textContent = copied ? '已複製' : '已選取，請按 ⌘C／Ctrl+C';
+          // 連按時重設計時器，避免舊計時器提早還原
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            text.textContent = label;
+            icon.setAttribute('href', '#i-copy');
+            status.textContent = '';
+          }, 3000);
         });
       });
 
