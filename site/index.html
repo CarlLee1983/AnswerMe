@@ -49,6 +49,10 @@
     .skip { position: absolute; left: 16px; top: -48px; z-index: 10; padding: 8px 14px; border-radius: 6px; background: var(--accent); color: var(--bg); font-weight: 700; }
     .skip:focus { top: 12px; }
 
+    /* 圖示：sprite 內的 symbol 以 <use> 引用；顏色跟隨文字，線寬統一 */
+    .ico { width: 1em; height: 1em; flex: none; vertical-align: -.125em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    a .ico { margin-left: .25em; }
+
     /* 頁首 */
     .bar { display: flex; justify-content: space-between; align-items: center; height: 64px; font: .86rem var(--mono); }
     .brand { display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; font-weight: 700; }
@@ -186,6 +190,45 @@
   </style>
 </head>
 <body>
+  <!--
+    圖示取自 Lucide（https://github.com/lucide-icons/lucide），固定於 commit 500620a2e8123f8d1db191538886dc0c223f69a9。
+    只擷取用到的圖示 path；描邊屬性由 .ico 樣式統一設定。
+
+    Lucide 授權（ISC License）
+    Copyright (c) 2026 Lucide Icons and Contributors
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+    arrow-up-right、arrow-right 等圖示源自 Feather 專案（MIT License）：
+    Copyright (c) 2013-present Cole Bemis
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+  -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  </svg>
   <a class="skip" href="#content">跳到主要內容</a>
   <div class="wrap">
     <header class="bar">
@@ -195,7 +238,7 @@
           <li><a href="#compare">對照</a></li>
           <li><a href="#examples">範例</a></li>
           <li><a href="#limits">邊界</a></li>
-          <li><a href="https://github.com/CarlLee1983/AnswerMe">GitHub</a></li>
+          <li><a href="https://github.com/CarlLee1983/AnswerMe">GitHub<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </nav>
     </header>
@@ -209,7 +252,7 @@
           <button class="copy" type="button" data-copy-target="install-cmd" aria-label="複製安裝指令">複製</button>
         </div>
         <p class="sr-only sr-status" role="status" aria-live="polite"></p>
-        <p class="hero-links"><a href="https://github.com/CarlLee1983/AnswerMe">github.com/CarlLee1983/AnswerMe →</a></p>
+        <p class="hero-links"><a href="https://github.com/CarlLee1983/AnswerMe">github.com/CarlLee1983/AnswerMe<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a></p>
 
         <figure class="term" aria-label="範例：一句請求與它的產出">
           <div class="term-head" aria-hidden="true"><i></i><i></i><i></i><span>agent session · ticket_api</span></div>
@@ -283,7 +326,7 @@
               <ul class="tags" aria-label="分類"><li>概念學習</li><li>文章式</li><li>互動</li></ul>
               <h3 id="ex-model-article-title">互動模型：p 增加時 M 往哪走</h3>
               <p>調整 p、A、B，看平均時間 M 為什麼可能增加也可能減少；數值皆為示意模型，不是實測。</p>
-              <a class="open" href="examples/model-article.html">打開範例 →</a>
+              <a class="open" href="examples/model-article.html">打開範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a>
             </div>
           </article>
           <article class="example" id="ex-model-slides" data-tab="model-slides" aria-labelledby="ex-model-slides-title">
@@ -292,7 +335,7 @@
               <ul class="tags" aria-label="分類"><li>概念學習</li><li>簡報式</li><li>互動</li></ul>
               <h3 id="ex-model-slides-title">同一個模型的逐頁講解</h3>
               <p>同一份素材做成適合讀書會講述的簡報，其中一頁可即時調整參數。</p>
-              <a class="open" href="examples/model-slides.html">打開範例 →</a>
+              <a class="open" href="examples/model-slides.html">打開範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a>
             </div>
           </article>
           <article class="example" id="ex-ticket" data-tab="ticket" aria-labelledby="ex-ticket-title">
@@ -301,7 +344,7 @@
               <ul class="tags" aria-label="分類"><li>成果審視</li><li>文章式</li><li>時序圖</li></ul>
               <h3 id="ex-ticket-title">程式碼走讀：TicketService 與 FakeRepo</h3>
               <p>誰先呼叫誰、首次與再次讀取的差別、找不到票時怎麼回覆；並指出 README 說快取 60 秒過期，程式卻沒有過期邏輯。</p>
-              <a class="open" href="examples/ticket.html">打開範例 →</a>
+              <a class="open" href="examples/ticket.html">打開範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a>
             </div>
           </article>
           <article class="example" id="ex-project" data-tab="project" aria-labelledby="ex-project-title">
@@ -310,7 +353,7 @@
               <ul class="tags" aria-label="分類"><li>概念學習</li><li>文章式</li></ul>
               <h3 id="ex-project-title">這個專案是什麼、實際怎麼運作</h3>
               <p>以 Answer Me 自己的 v0.1.3 repository 為素材，沿一次請求走過技能的步驟，並說明檢查與決策紀錄各管什麼。</p>
-              <a class="open" href="examples/project.html">打開範例 →</a>
+              <a class="open" href="examples/project.html">打開範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a>
             </div>
           </article>
         </div>
@@ -334,17 +377,17 @@
           <code id="install-cmd-2"><span>npx skills@latest add</span> <span>CarlLee1983/AnswerMe</span> <span>--skill answer-me -g</span></code>
           <button class="copy" type="button" data-copy-target="install-cmd-2" aria-label="複製安裝指令">複製</button>
         </div>
-        <p class="cta-links"><a href="#examples">先看範例 →</a></p>
+        <p class="cta-links"><a href="#examples">先看範例<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></a></p>
       </section>
     </main>
 
     <footer class="foot">
       <span>answer-me</span>
       <ul>
-        <li><a href="https://github.com/CarlLee1983/AnswerMe">GitHub</a></li>
-        <li><a href="https://github.com/CarlLee1983/AnswerMe/releases">Releases</a></li>
+        <li><a href="https://github.com/CarlLee1983/AnswerMe">GitHub<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a></li>
+        <li><a href="https://github.com/CarlLee1983/AnswerMe/releases">Releases<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a></li>
       </ul>
-      <p>指定 agent、專案層級安裝與更新方式，見 README 的<a href="https://github.com/CarlLee1983/AnswerMe#%E5%AE%89%E8%A3%9D-skill">安裝說明</a>（使用 <a href="https://github.com/vercel-labs/skills#install-a-skill">Skills CLI</a>）。</p>
+      <p>指定 agent、專案層級安裝與更新方式，見 README 的<a href="https://github.com/CarlLee1983/AnswerMe#%E5%AE%89%E8%A3%9D-skill">安裝說明<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a>（使用 <a href="https://github.com/vercel-labs/skills#install-a-skill">Skills CLI<svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg></a>）。</p>
     </footer>
   </div>
 
