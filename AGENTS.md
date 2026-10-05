@@ -18,4 +18,4 @@ Before changing skills, checks, or hooks, read [docs/checks.md](docs/checks.md) 
 
 ### Releases
 
-Before drafting a release or tag message, read [docs/release.md](docs/release.md). The maintainer pushes tags; agents draft the tag message and run the release check.
+Before drafting a release or tag message, read [docs/release.md](docs/release.md). Agents draft the tag message and run the release check; only the maintainer pushes tags or creates GitHub Releases.

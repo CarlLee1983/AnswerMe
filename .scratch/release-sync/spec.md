@@ -66,7 +66,7 @@ Status: ready-for-agent
   - 網站範例頁中「由 answer-me vX.Y.Z 產生」標記的每個版本都是 repo 中已存在的 tag；範例頁的檢查以該 tag 指向的 commit 內容為準，而不是工作區
   - 該 commit 的快速檢查本身通過
 - **CI 檢查 workflow**：在推送到 master 時觸發（不限路徑），步驟為取得 validator、安裝檢查依賴、執行快速檢查、執行網站瀏覽器檢查，並把瀏覽器檢查的輸出目錄上傳為 workflow artifact。Node 版本需符合瀏覽器檢查的 22+ 要求，瀏覽器使用 runner 內建的 Chrome。
-- **validator 取得方式**：從 openai/codex repo 的 skill-creator 範例資料夾，以固定 commit SHA 下載 `quick_validate.py`（Apache-2.0；內容已確認與本機 Codex 安裝的版本一致，而 openai/skills 上的版本較舊）。以既有的 `SKILL_VALIDATOR` 環境變數指給檢查器。pin 的 SHA 寫在 workflow 中；本機與 CI 結果出現分歧時手動更新。
+- **validator 取得方式**：從 openai/codex repo 的 skill-creator 範例資料夾，以固定 commit SHA 下載 `quick_validate.py`（Apache-2.0；內容已確認與本機 Codex 安裝的版本一致，而 openai/skills 上的版本較舊）。以既有的 `SKILL_VALIDATOR` 環境變數指給檢查器。pin 的 SHA 只寫在一支共用的下載腳本中，CI 與 release 兩個 workflow 都呼叫它；本機與 CI 結果出現分歧時手動更新。
 - **release workflow**：在推送符合 `v*` 的 tag 時觸發。執行發布模式檢查，通過後以 tag 訊息為 notes 建立 GitHub Release，標題沿用既有慣例「Answer Me vX.Y.Z」。需要 `contents: write` 權限。release workflow 不重跑瀏覽器檢查，以 master 的 CI 結果為準。
 - **網站部署 workflow 不變**。
 - **發布文件**：放在 docs 下，涵蓋發布模型摘要（連結 ADR，不重述取捨）、tag 訊息格式與「文件與網站」一行的寫法、本機先跑發布模式、推送 tag、檢查失敗後刪除並重推 tag 的步驟。`docs/checks.md` 補上新提醒與發布模式的說明。
