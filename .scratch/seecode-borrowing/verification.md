@@ -24,3 +24,9 @@
 ## 邊界與回復
 
 本次改動技能入口、README、[行為演練說明](../../tests/answer-me/README.md)，並新增 `tests/answer-me/delta/input/`；沒有修改 HTML 模板、檢查程式、hooks 或 ADR，未新增依賴，也未提交或發布。回復時反向套用上述差異並移除 `delta/` 與本紀錄。
+
+## 後續：圖的規模上限
+
+使用者同意加入第三點。[樣式指引](../../skills/answer-me/references/html-style.md)的「流程或關係圖」元件補上：一張圖以約 9 個節點、12 條連線為上限，重點節點 1 到 2 個，超過時依子問題拆圖或先畫概覽再分區展開。寫成閱讀建議，不加檢查器，理由與 [ADR 0004](../../docs/adr/0004-borrow-ste-without-compliance.md) 拒絕機械門檻相同。README 的借鑑段同步。
+
+只做靜態核對：`check.py` 與 `git diff --check` 通過；上方 Structural change 成品約 9 個節點、9 條連線，已在上限內。沒有用超過上限的素材重跑行為演練，因此未驗證 agent 會因這條建議而拆圖。
