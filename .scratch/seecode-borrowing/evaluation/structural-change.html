@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TicketCache 抽出變更解說</title>
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+      --new: #2f6b45;
+      --removed: #a3352a;
+      --modified: #8a5a12;
+      --same: #8a8178;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 system-ui, -apple-system, BlinkMacSystemFont, "PingFang TC", "Heiti TC", "Microsoft JhengHei", "Noto Sans CJK TC", "Segoe UI", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
+    h1 { max-width: 20ch; margin: 0 0 24px; font-size: clamp(2rem, 5.5vw, 3.4rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 24px 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    ul.plain { margin: 0 0 24px; padding-left: 1.2em; }
+    ul.plain li { margin-bottom: 8px; }
+    .lead { font-size: 1.15rem; line-height: 1.7; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    .table-wrap, .code-wrap, .figure-wrap { max-width: 100%; overflow-x: auto; }
+    .figure-wrap { margin: 24px 0 8px; background: var(--surface); border: 1px solid var(--line); }
+    .figure-wrap svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .scroll-hint { display: none; font-size: .85rem; color: var(--muted); margin: 0 0 8px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 16px 0 24px; padding: 0; list-style: none; font-size: .88rem; }
+    .legend li { display: flex; align-items: center; gap: 8px; }
+    .sw { display: inline-block; width: 28px; height: 0; border-top: 3px solid; }
+    .sw.new { border-color: var(--new); }
+    .sw.removed { border-color: var(--removed); border-top-style: dashed; }
+    .sw.modified { border-color: var(--modified); }
+    .sw.same { border-color: var(--same); border-top-width: 2px; }
+    .sw.infer { border-color: var(--muted); border-top-style: dotted; }
+    table { width: 100%; min-width: 620px; border-collapse: collapse; background: var(--surface); font-size: .9rem; line-height: 1.6; }
+    caption { padding: 0 0 12px; text-align: left; color: var(--muted); font-size: .85rem; }
+    th, td { padding: 12px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; }
+    td code, p code, li code { font-size: .88em; background: var(--code-bg); padding: 0 4px; }
+    pre { width: max-content; min-width: 100%; margin: 0; padding: 24px; background: var(--code-bg); font: .85rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .tag { display: inline-block; padding: 0 8px; font-size: .78rem; font-weight: 700; border: 1px solid; border-radius: 2px; white-space: nowrap; }
+    .tag.ok { color: var(--new); }
+    .tag.part { color: var(--modified); }
+    .tag.gap { color: var(--removed); }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child, .source-note ul:last-child { margin-bottom: 0; }
+    .src { font-size: .85rem; color: var(--muted); }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .scroll-hint { display: block; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav, .scroll-hint { display: none; }
+      section { padding-top: 20pt; }
+      .summary, .source-note, .figure-wrap { break-inside: avoid; }
+      .table-wrap, .code-wrap, .figure-wrap { overflow: visible; }
+      .figure-wrap svg { min-width: 0; }
+      table { min-width: 0; font-size: 9pt; }
+      th, td { padding: 6pt; overflow-wrap: anywhere; }
+      pre { width: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">變更解說 · extract-cache.diff</p>
+        <h1>快取從 dict 換成有 TTL 的 TicketCache</h1>
+        <p class="lead prose">這次變更新增 <code>cache.py</code> 的 <code>TicketCache</code>，讓 <code>TicketService</code> 不再直接讀寫自己的 dict，而是呼叫 <code>cache.get</code>／<code>cache.put</code>。快取項目因此有了預設 60 秒的有效期限；<code>handle_get</code> 與 <code>FakeRepo.find</code> 的呼叫方式不變。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">核心結論</h2>
+          <p>程式碼支持 agent 的前兩點：快取確實抽到新模組，預設 TTL 是 60 秒，README 的「60 秒後過期」在預設設定下與程式一致。第三點「既有測試仍通過」只得到部分支持：<code>test-output.txt</code> 沒有交代測的是哪一版程式，而且兩個既有測試都不涉及過期，所以它們無法證明 TTL 有效。</p>
+          <p>我另外在暫存副本套用 diff 重跑測試，並用可控時鐘做了一次過期探測：2 個測試通過，第 60.0 秒時確實重新讀 repo。過期是「讀到時才刪」，從未再被讀取的項目會一直留在記憶體。</p>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#diagram">前後差異圖</a></li>
+            <li><a href="#behavior">行為比較</a></li>
+            <li><a href="#claims">agent 說法核對</a></li>
+            <li><a href="#gaps">缺口與限制</a></li>
+            <li><a href="#more">可再追加</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="diagram" aria-labelledby="diagram-title">
+        <div class="prose">
+          <h2 id="diagram-title">哪些元件與呼叫路徑改了</h2>
+          <p>圖中只畫變更處和相鄰一層。<code>get_ticket</code> 原本直接查 dict；現在依序呼叫 <code>cache.get</code>，未命中時呼叫 <code>repo.find</code>，再呼叫 <code>cache.put</code>。粗綠線是新的主線，紅色虛線是被移除的舊路徑。</p>
+        </div>
+        <p class="scroll-hint">圖較寬，可在框內左右捲動。</p>
+        <div class="figure-wrap" role="region" aria-label="前後差異圖，可水平捲動" tabindex="0">
+          <svg viewBox="0 0 960 520" role="img" aria-labelledby="svg-title svg-desc" font-family="system-ui, -apple-system, 'PingFang TC', sans-serif">
+            <title id="svg-title">TicketService 快取呼叫路徑的前後差異</title>
+            <desc id="svg-desc">handle_get 呼叫 get_ticket（未變）。get_ticket 移除了直接讀寫 self.cache dict 的路徑，新增呼叫 TicketCache.get 與 TicketCache.put；未命中時仍呼叫 FakeRepo.find。TicketCache 的 get 與 put 都讀取 clock，預設為 time.monotonic。TicketService.__init__ 改為接受 cache 參數，未提供時建立 TicketCache，不再建立 dict。</desc>
+            <defs>
+              <marker id="ah-new" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2f6b45"/></marker>
+              <marker id="ah-rm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#a3352a"/></marker>
+              <marker id="ah-same" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8a8178"/></marker>
+            </defs>
+            <rect width="960" height="520" fill="#fcfaf6"/>
+
+            <!-- Edges -->
+            <!-- handle_get -> get_ticket (unchanged) -->
+            <line x1="150" y1="130" x2="150" y2="226" stroke="#8a8178" stroke-width="2" marker-end="url(#ah-same)"/>
+            <text x="160" y="184" font-size="13" fill="#6b6259">呼叫（未變）</text>
+            <!-- get_ticket -> dict (removed) -->
+            <path d="M260 238 C 320 200, 330 90, 376 80" fill="none" stroke="#a3352a" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah-rm)"/>
+            <text x="350" y="134" font-size="12.5" fill="#a3352a">移除：in / 索引讀寫</text>
+            <!-- get_ticket -> TicketCache.get (new main) -->
+            <line x1="260" y1="252" x2="396" y2="224" stroke="#2f6b45" stroke-width="4" marker-end="url(#ah-new)"/>
+            <text x="276" y="226" font-size="13" font-weight="700" fill="#2f6b45">① get(id)</text>
+            <!-- get_ticket -> FakeRepo.find (unchanged) -->
+            <path d="M260 304 C 310 360, 320 440, 376 450" fill="none" stroke="#8a8178" stroke-width="2" marker-end="url(#ah-same)"/>
+            <text x="190" y="420" font-size="12.5" fill="#6b6259">② 未命中：find(id)</text>
+            <text x="190" y="438" font-size="12.5" fill="#6b6259">（未變）</text>
+            <!-- get_ticket -> TicketCache.put (new) -->
+            <line x1="260" y1="284" x2="396" y2="318" stroke="#2f6b45" stroke-width="4" marker-end="url(#ah-new)"/>
+            <text x="284" y="279" font-size="13" font-weight="700" fill="#2f6b45">③ put(id, v)</text>
+            <!-- get/put -> clock (new) -->
+            <line x1="620" y1="222" x2="716" y2="248" stroke="#2f6b45" stroke-width="2.5" marker-end="url(#ah-new)"/>
+            <line x1="620" y1="320" x2="716" y2="290" stroke="#2f6b45" stroke-width="2.5" marker-end="url(#ah-new)"/>
+            <text x="648" y="275" font-size="12.5" fill="#2f6b45">讀時間</text>
+            <!-- __init__ -> dict (removed) -->
+            <line x1="716" y1="72" x2="644" y2="72" stroke="#a3352a" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah-rm)"/>
+            <text x="652" y="62" font-size="12" fill="#a3352a">移除</text>
+            <!-- __init__ -> TicketCache (new default) -->
+            <line x1="760" y1="122" x2="644" y2="162" stroke="#2f6b45" stroke-width="2.5" marker-end="url(#ah-new)"/>
+            <text x="676" y="160" font-size="12" fill="#2f6b45">未傳 cache 時建立</text>
+
+            <!-- Nodes -->
+            <!-- handle_get unchanged -->
+            <rect x="40" y="60" width="220" height="70" fill="#fcfaf6" stroke="#8a8178" stroke-width="1.5"/>
+            <text x="56" y="88" font-size="15" font-weight="700" fill="#302b26">handle_get(id)</text>
+            <text x="56" y="112" font-size="12.5" fill="#6b6259">未變 · 200／404 包裝</text>
+
+            <!-- get_ticket modified -->
+            <rect x="40" y="228" width="220" height="90" fill="#f7efe1" stroke="#8a5a12" stroke-width="2.5"/>
+            <text x="56" y="256" font-size="15" font-weight="700" fill="#302b26">get_ticket(id)</text>
+            <text x="56" y="280" font-size="12.5" fill="#8a5a12" font-weight="700">修改 · 改用 get／put</text>
+            <text x="56" y="302" font-size="12.5" fill="#6b6259">TicketService</text>
+
+            <!-- removed dict -->
+            <rect x="380" y="40" width="260" height="70" fill="#fbeeea" stroke="#a3352a" stroke-width="2" stroke-dasharray="7 5"/>
+            <text x="396" y="68" font-size="15" font-weight="700" fill="#302b26" text-decoration="line-through">self.cache = {}</text>
+            <text x="396" y="92" font-size="12.5" fill="#a3352a" font-weight="700">移除 · 無期限的 dict</text>
+
+            <!-- TicketCache group -->
+            <rect x="380" y="146" width="260" height="226" fill="#edf4ee" stroke="#2f6b45" stroke-width="2"/>
+            <text x="396" y="172" font-size="14" font-weight="700" fill="#2f6b45">新增 · TicketCache（cache.py）</text>
+            <rect x="398" y="190" width="222" height="66" fill="#fcfaf6" stroke="#2f6b45" stroke-width="1.5"/>
+            <text x="412" y="214" font-size="14.5" font-weight="700" fill="#302b26">get(id)</text>
+            <text x="412" y="236" font-size="12" fill="#6b6259">已滿 ttl 秒：刪除並回 None</text>
+            <rect x="398" y="286" width="222" height="66" fill="#fcfaf6" stroke="#2f6b45" stroke-width="1.5"/>
+            <text x="412" y="310" font-size="14.5" font-weight="700" fill="#302b26">put(id, value)</text>
+            <text x="412" y="332" font-size="12" fill="#6b6259">存 (value, clock())</text>
+
+            <!-- FakeRepo.find unchanged -->
+            <rect x="380" y="420" width="260" height="62" fill="#fcfaf6" stroke="#8a8178" stroke-width="1.5"/>
+            <text x="396" y="446" font-size="15" font-weight="700" fill="#302b26">FakeRepo.find(id)</text>
+            <text x="396" y="468" font-size="12.5" fill="#6b6259">未變 · reads += 1</text>
+
+            <!-- __init__ modified -->
+            <rect x="720" y="40" width="210" height="82" fill="#f7efe1" stroke="#8a5a12" stroke-width="2.5"/>
+            <text x="734" y="66" font-size="14" font-weight="700" fill="#302b26">__init__(repo,</text>
+            <text x="734" y="86" font-size="14" font-weight="700" fill="#302b26">  cache=None)</text>
+            <text x="734" y="108" font-size="12.5" fill="#8a5a12" font-weight="700">修改 · 可注入 cache</text>
+
+            <!-- clock new -->
+            <rect x="720" y="228" width="210" height="82" fill="#edf4ee" stroke="#2f6b45" stroke-width="2"/>
+            <text x="734" y="254" font-size="14.5" font-weight="700" fill="#302b26">clock()</text>
+            <text x="734" y="276" font-size="12.5" fill="#2f6b45" font-weight="700">新增 · 預設</text>
+            <text x="734" y="296" font-size="12.5" fill="#6b6259">time.monotonic</text>
+          </svg>
+        </div>
+        <ul class="legend" aria-label="圖例">
+          <li><span class="sw new" aria-hidden="true"></span>新增（粗線為新主線）</li>
+          <li><span class="sw removed" aria-hidden="true"></span>移除</li>
+          <li><span class="sw modified" aria-hidden="true"></span>修改的節點</li>
+          <li><span class="sw same" aria-hidden="true"></span>未變（相鄰一層）</li>
+        </ul>
+        <p class="src prose">圖中每個節點與連線都直接出自 diff，沒有推論出的元件，所以沒有虛線的「未確認」部分；紅色虛線表示移除。行號對照如下表。</p>
+
+        <div class="table-wrap" role="region" aria-label="圖中元素的來源行號，可水平捲動" tabindex="0">
+          <table>
+            <caption>圖中元素的來源（<a href="../delta/input/extract-cache.diff">extract-cache.diff</a> 行號；舊版指 <a href="../delta/input/ticket_api/service.py">ticket_api/service.py</a>）</caption>
+            <thead><tr><th scope="col">圖中元素</th><th scope="col">狀態</th><th scope="col">來源</th></tr></thead>
+            <tbody>
+              <tr><td><code>handle_get</code> → <code>get_ticket</code></td><td>未變</td><td>diff L60–61（context）；舊版 L27–31</td></tr>
+              <tr><td><code>get_ticket</code> → dict（<code>in</code>、<code>self.cache[id]</code>）</td><td>移除</td><td>diff L46–47、L54–55；舊版 L19–20、L24–25</td></tr>
+              <tr><td><code>get_ticket</code> → <code>TicketCache.get</code></td><td>新增</td><td>diff L48–50</td></tr>
+              <tr><td><code>get_ticket</code> → <code>FakeRepo.find</code></td><td>未變</td><td>diff L51；舊版 L21</td></tr>
+              <tr><td><code>get_ticket</code> → <code>TicketCache.put</code></td><td>新增</td><td>diff L56–58</td></tr>
+              <tr><td><code>TicketCache.get</code>／<code>put</code> → <code>clock()</code></td><td>新增</td><td>diff L19、L25；預設值 L9</td></tr>
+              <tr><td><code>__init__</code> → <code>self.cache = {}</code></td><td>移除</td><td>diff L42；舊版 L16</td></tr>
+              <tr><td><code>__init__</code> → <code>cache or TicketCache()</code></td><td>新增</td><td>diff L40、L43；import 在 L30</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="behavior" aria-labelledby="behavior-title">
+        <div class="prose">
+          <h2 id="behavior-title">行為前後比較</h2>
+          <p>對外介面 <code>handle_get</code> 的回傳形狀沒有改變。差異集中在快取項目能活多久，以及快取物件從哪裡來。</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="行為比較表，可水平捲動" tabindex="0">
+          <table>
+            <caption>相同面向的前後對照</caption>
+            <thead><tr><th scope="col">面向</th><th scope="col">變更前</th><th scope="col">變更後</th><th scope="col">依據</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">快取存放</th><td><code>TicketService</code> 內的 dict</td><td>獨立的 <code>TicketCache.entries</code>，值存成 <code>(value, stored_at)</code></td><td>diff L12、L25、L42–43</td></tr>
+              <tr><th scope="row">有效期限</th><td>無；行程存活期間一直命中</td><td>預設 60 秒；<code>clock() - stored_at &gt;= ttl</code> 時視為過期，所以剛好第 60 秒就不再命中</td><td>diff L9、L19</td></tr>
+              <tr><th scope="row">何時移除過期項目</th><td>不適用</td><td>只在 <code>get</code> 讀到它時刪除；沒有背景清理，也沒有容量上限</td><td>diff L14–22（沒有其他刪除路徑）</td></tr>
+              <tr><th scope="row">命中判斷</th><td><code>ticket_id in self.cache</code></td><td><code>cache.get(id)</code> 回傳值 <code>is not None</code></td><td>diff L46–50</td></tr>
+              <tr><th scope="row">查無資料</th><td>拋出 <code>NotFound</code>，不寫入快取，回 404</td><td>相同</td><td>diff L52–53；舊版 L22–23、L30–31</td></tr>
+              <tr><th scope="row">快取來源</th><td>固定在建構子建立</td><td>可由呼叫端注入 <code>cache</code>；<code>TicketCache</code> 也可注入 <code>clock</code>，方便用假時鐘測試</td><td>diff L9、L40、L43</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="claims" aria-labelledby="claims-title">
+        <div class="prose">
+          <h2 id="claims-title">agent 報告的三個說法</h2>
+          <p><a href="../delta/input/agent-report.md">agent-report.md</a> 提出三點。agent 的成功宣告本身不算證據，下表逐點對照 diff 與測試紀錄。</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="agent 說法核對表，可水平捲動" tabindex="0">
+          <table>
+            <caption>說法、證據與判斷</caption>
+            <thead><tr><th scope="col">agent 說法</th><th scope="col">判斷</th><th scope="col">依據</th></tr></thead>
+            <tbody>
+              <tr><td>把快取從 <code>TicketService</code> 移到新的 <code>TicketCache</code> 模組</td><td><span class="tag ok">diff 支持</span></td><td>新檔 <code>cache.py</code>（diff L1–25），<code>service.py</code> 改用它（L30、L43、L48、L57）。</td></tr>
+              <tr><td>TTL 60 秒，所以 README 的過期說法「現在成立」</td><td><span class="tag part">程式支持，測試未涵蓋</span></td><td>預設 <code>ttl=60</code>（diff L9）與 <a href="../delta/input/ticket_api/README.md">README</a> L3 一致。但 <a href="../delta/input/ticket_api/test_service.py">test_service.py</a> 只有 <code>test_repeat_hit</code> 與 <code>test_missing</code>，沒有任何測試推進時間。README 說「60 秒後過期」，實作是讀取時才判定並刪除；就「不會再回傳舊值」而言一致。</td></tr>
+              <tr><td>既有測試仍通過</td><td><span class="tag part">紀錄不足以證明</span></td><td><a href="../delta/input/test-output.txt">test-output.txt</a> 顯示 2 個測試 OK，但沒有說明測的是套用 diff 前還是後的程式；提供的 <code>ticket_api/service.py</code> 是變更前版本。這兩個測試在變更前也會通過，所以就算測的是新版，也只證明命中與 404 行為沒壞，不能證明 TTL。</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>我實際重跑的結果（本次觀測）</h3>
+        <div class="prose">
+          <p>2026-10-12 在本機 Python 3.14.7，把 <code>ticket_api</code> 複製到暫存目錄後以 <code>git apply</code> 套用 diff（兩個檔案都乾淨套用），之後刪除暫存目錄。結果如下：</p>
+          <ul class="plain">
+            <li>變更前與變更後執行 <code>python3 -m unittest -v</code>，兩者都是 <code>Ran 2 tests … OK</code>。</li>
+            <li>用可控時鐘探測過期：第 0 秒讀取、第 59.9 秒再讀時 <code>repo.reads</code> 仍為 1（命中）；第 60.0 秒再讀變成 2（過期、重新查 repo）。</li>
+            <li>未傳 <code>cache</code> 時，<code>TicketService</code> 的預設快取 <code>ttl</code> 為 60。</li>
+            <li>第 0 秒存入 A、第 100 秒存入 B 且不讀 A，A 仍留在 <code>entries</code> 中。</li>
+          </ul>
+          <p class="src">這些是一次性的手動探測，不是 repo 內的測試，所以之後改動程式時不會自動防止 TTL 失效。</p>
+        </div>
+      </section>
+
+      <section id="gaps" aria-labelledby="gaps-title">
+        <div class="source-note">
+          <h2 id="gaps-title">缺口與限制</h2>
+          <ul class="plain">
+            <li><strong>沒有過期測試</strong>（事實）：repo 中的測試不會偵測 TTL 被改壞。<code>clock</code> 已可注入，加一個推進假時鐘的測試是直接的補法；這是建議，本次未修改任何程式。</li>
+            <li><strong>過期項目可能累積</strong>（推論，已用上面的探測確認單一情境）：只有被再次讀取的過期項目會被刪除。若大量不同 ticket 只被讀一次，<code>entries</code> 會一直成長。實際影響取決於流量型態，來源沒有相關資料。</li>
+            <li><strong><code>cache or TicketCache()</code> 依真假值判斷</strong>（推論）：若呼叫端注入的快取物件在空的時候被視為 false（例如自訂了 <code>__len__</code>），建構子會悄悄改用新的 <code>TicketCache</code>。<code>TicketCache</code> 本身沒有定義 <code>__len__</code>，目前不受影響；寫成 <code>cache if cache is not None else …</code> 才不依賴這點。</li>
+            <li><strong>測試紀錄的條件不明</strong>：<code>test-output.txt</code> 沒有 Python 版本、執行目錄或對應 commit；本頁的重跑結果是另一次執行，不能回推原紀錄的條件。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="more" aria-labelledby="more-title">
+        <div class="prose">
+          <h2 id="more-title">可再追加</h2>
+          <p>需要時可以再加：命中、未命中與過期三種情境的時序圖；可拖動時間軸、觀察何時命中或重新查 repo 的互動示意模型；或「鎖與鑰匙」式的具體實物示意。</p>
+          <p class="muted">想一想：如果有人把 <code>&gt;=</code> 改成 <code>&gt;</code>，現有的兩個測試會發現嗎？第 60.0 秒的讀取結果又會變成什麼？</p>
+        </div>
+      </section>
+    </main>
+    <footer class="muted">依據：delta/input 下的 extract-cache.diff、ticket_api/、agent-report.md、test-output.txt，以及 2026-10-12 的本機重跑。</footer>
+  </div>
+</body>
+</html>
