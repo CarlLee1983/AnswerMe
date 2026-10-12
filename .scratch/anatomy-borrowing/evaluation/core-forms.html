@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>p 如何影響平均耗時 M</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600&amp;display=swap">
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: "Noto Serif TC", Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 16ch; margin: 0 0 24px; font-size: clamp(2.25rem, 6vw, 4rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    p { margin: 0 0 24px; }
+    ul.prose { margin: 0 0 24px; padding-left: 1.2em; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); padding: 0 .25em; }
+    .formula { max-width: 72ch; margin: 0 0 24px; padding: 16px 24px; background: var(--code-bg); font: 1rem/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; }
+    figure { max-width: 760px; margin: 32px 0; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .chart-scroll { overflow-x: auto; }
+    figure svg { display: block; width: 100%; min-width: 560px; height: auto; }
+    figcaption { margin-top: 16px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .axis { stroke: var(--ink); stroke-width: 1.5; }
+    .grid { stroke: var(--line); stroke-width: 1; }
+    .tick { fill: var(--muted); font-size: 13px; font-family: inherit; }
+    .label { fill: var(--ink); font-size: 14px; font-family: inherit; }
+    .series { stroke: var(--accent); stroke-width: 3; fill: none; }
+    .dot { fill: var(--accent); }
+    .dot-start { fill: var(--surface); stroke: var(--accent); stroke-width: 3; }
+    .guide { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4; }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child { margin-bottom: 0; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      figure { padding: 12px; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav { display: none; }
+      section { padding-top: 20pt; }
+      figure, .summary, .source-note { break-inside: avoid; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">示意模型 · 加權平均</p>
+        <h1>p 如何影響平均耗時 M</h1>
+        <p class="lead prose">M 是 A 與 B 的加權平均，p 決定權重偏向哪一邊。p 從 0 增加到 1 時，M 沿一條直線從 B 移到 A。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">核心答案</h2>
+          <p>p 每增加 0.1，M 就改變 0.1 × (A − B) 毫秒。方向取決於哪條路徑較快：A 比 B 快時，M 隨 p 增加而下降；A 比 B 慢時，M 隨 p 增加而上升；A 等於 B 時，p 不影響 M。</p>
+          <p>在起始條件 A = 20、B = 80 下，A 較快，所以 p 越大，M 越小：p = 0.5 時 M = 50 毫秒，p 每加 0.1，M 少 6 毫秒。</p>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#formula">公式怎麼讀</a></li>
+            <li><a href="#chart">M 隨 p 的變化</a></li>
+            <li><a href="#direction">方向何時反轉</a></li>
+            <li><a href="#sources">來源與限制</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="formula" aria-labelledby="formula-title">
+        <div class="prose">
+          <h2 id="formula-title">公式怎麼讀</h2>
+          <p>來源定義了四個變數：p 是採用路徑 A 的比例（0 到 1），A 與 B 是兩條路徑各自的處理時間（各 0 到 100 毫秒），M 是平均時間。</p>
+        </div>
+        <p class="formula">M = p × A + (1 − p) × B</p>
+        <div class="prose">
+          <p>比例 p 的工作走路徑 A，其餘 1 − p 走路徑 B，M 就是兩者依比例混合後的平均。把公式整理一下，p 的作用會更清楚（這一步是代數改寫，不是來源原文）：</p>
+        </div>
+        <p class="formula">M = B + p × (A − B)</p>
+        <div class="prose">
+          <p>這個寫法說明三件事。第一，p = 0 時 M = B，所有工作都走 B。第二，p = 1 時 M = A，所有工作都走 A。第三，p 前面的係數 A − B 是固定的，所以 M 對 p 的變化是一條直線，每一段等量的 p 變化帶來等量的 M 變化，沒有加速或趨緩。</p>
+        </div>
+      </section>
+
+      <section id="chart" aria-labelledby="chart-title">
+        <div class="prose">
+          <h2 id="chart-title">M 隨 p 的變化（起始條件）</h2>
+          <p>下圖固定 A = 20、B = 80 毫秒，只改變 p。直線左端是 B，右端是 A；空心點是來源的起始條件 p = 0.5。</p>
+        </div>
+        <figure>
+          <div class="chart-scroll" role="region" aria-label="圖表，可水平捲動" tabindex="0"><svg viewBox="0 0 640 360" role="img" aria-labelledby="chart-svg-title chart-svg-desc">
+            <title id="chart-svg-title">起始條件下 M 對 p 的折線圖</title>
+            <desc id="chart-svg-desc">橫軸為 p，從 0 到 1；縱軸為 M，從 0 到 100 毫秒。A 等於 20、B 等於 80 時，M 從 p 等於 0 的 80 毫秒直線下降到 p 等於 1 的 20 毫秒；p 等於 0.5 時 M 等於 50 毫秒。</desc>
+            <!-- 網格：M = 0, 20, 40, 60, 80, 100 → y = 304 − 2.8M -->
+            <g class="grid">
+              <line x1="64" y1="248" x2="600" y2="248"/>
+              <line x1="64" y1="192" x2="600" y2="192"/>
+              <line x1="64" y1="136" x2="600" y2="136"/>
+              <line x1="64" y1="80" x2="600" y2="80"/>
+              <line x1="64" y1="24" x2="600" y2="24"/>
+            </g>
+            <g class="tick" text-anchor="end">
+              <text x="56" y="308">0</text>
+              <text x="56" y="252">20</text>
+              <text x="56" y="196">40</text>
+              <text x="56" y="140">60</text>
+              <text x="56" y="84">80</text>
+              <text x="56" y="28">100</text>
+            </g>
+            <!-- p 刻度：x = 64 + 536p -->
+            <g class="tick" text-anchor="middle">
+              <text x="64" y="324">0</text>
+              <text x="198" y="324">0.25</text>
+              <text x="332" y="324">0.5</text>
+              <text x="466" y="324">0.75</text>
+              <text x="600" y="324">1</text>
+            </g>
+            <line class="axis" x1="64" y1="304" x2="600" y2="304"/>
+            <line class="axis" x1="64" y1="24" x2="64" y2="304"/>
+            <text class="label" x="332" y="350" text-anchor="middle">p（採用路徑 A 的比例）</text>
+            <text class="label" x="16" y="164" text-anchor="middle" transform="rotate(-90 16 164)">M（毫秒）</text>
+            <!-- 起始點輔助線 -->
+            <line class="guide" x1="332" y1="164" x2="332" y2="304"/>
+            <line class="guide" x1="64" y1="164" x2="332" y2="164"/>
+            <!-- M = B + p(A − B)，A = 20、B = 80 -->
+            <line class="series" x1="64" y1="80" x2="600" y2="248"/>
+            <circle class="dot" cx="64" cy="80" r="6"/>
+            <circle class="dot" cx="600" cy="248" r="6"/>
+            <circle class="dot-start" cx="332" cy="164" r="7"/>
+            <text class="label" x="76" y="70">p = 0：M = B = 80</text>
+            <text class="label" x="596" y="280" text-anchor="end">p = 1：M = A = 20</text>
+            <text class="label" x="344" y="156">起始 p = 0.5：M = 50</text>
+          </svg></div>
+          <figcaption>示意模型，不是量測數據。直線斜率為 A − B = −60，代表 p 每增加 0.1，M 減少 6 毫秒。圖中數值由公式 M = p × A + (1 − p) × B 代入起始條件計算。</figcaption>
+        </figure>
+      </section>
+
+      <section id="direction" aria-labelledby="direction-title">
+        <div class="prose">
+          <h2 id="direction-title">方向何時反轉</h2>
+          <p>「增加 p 會讓 M 變小」只在 A &lt; B 時成立。A 與 B 都可以在 0 到 100 毫秒之間調整，所以在可調範圍內，這個結論可能反轉：</p>
+          <ul class="prose">
+            <li>A &lt; B（起始條件）：p 越大，M 越小。</li>
+            <li>A &gt; B：p 越大，M 越大。例如 A = 80、B = 20 時，p = 0.5 的 M 仍是 50，但 p = 0.6 的 M 變成 56。</li>
+            <li>A = B：無論 p 是多少，M 都等於 A。</li>
+          </ul>
+          <p>p 能造成的影響也有上限。M 永遠落在 A 與 B 之間，p 只決定位置；A 與 B 的差距越小，p 的影響越小。在可調範圍內，p 每增加 0.1，M 最多改變 10 毫秒（A 與 B 一個是 0、一個是 100 時）。</p>
+        </div>
+      </section>
+
+      <section id="sources" aria-labelledby="sources-title">
+        <div class="source-note">
+          <h2 id="sources-title">來源與限制</h2>
+          <p>變數定義、公式、可調範圍與起始條件全部來自 <a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md"><code>tests/answer-me/conditions/input/model.md</code></a>。來源說明這是加權平均的示意，不是任何產品的量測數據。</p>
+          <p>以下內容是由公式推導而來，不是來源原文：改寫式 M = B + p × (A − B)、斜率 A − B、方向反轉的條件，以及 A = 80、B = 20 這組反例數字。來源沒有說明 A、B 是否會隨 p 改變；本頁假設它們彼此獨立、固定不變。</p>
+        </div>
+      </section>
+    </main>
+    <footer class="muted">示意模型 · 數值由公式計算，不是量測結果</footer>
+  </div>
+</body>
+</html>
