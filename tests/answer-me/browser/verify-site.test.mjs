@@ -14,7 +14,7 @@ const page = (head, body) => `<!doctype html><html><head><meta charset="utf-8"><
 const landing = page(fontsLink, '<h1>AnswerMe</h1><p>intro</p>');
 
 // 以 { 相對路徑: 內容 } 建立暫時網站目錄，執行檢查腳本並讀回 results.json。
-async function check(t, files) {
+async function check(t, files, env = process.env) {
   const root = await mkdtemp(join(tmpdir(), 'answer-me-site-fixture-'));
   const artifacts = await mkdtemp(join(tmpdir(), 'answer-me-site-artifacts-'));
   t.after(() => Promise.all([root, artifacts].map(dir => rm(dir, { recursive: true, force: true }))));
@@ -22,7 +22,7 @@ async function check(t, files) {
     await mkdir(dirname(join(root, name)), { recursive: true });
     await writeFile(join(root, name), content);
   }
-  const run = spawnSync(process.execPath, [script, root, artifacts], { encoding: 'utf8', timeout: 120000 });
+  const run = spawnSync(process.execPath, [script, root, artifacts], { encoding: 'utf8', timeout: 120000, env });
   const resultsFile = join(artifacts, 'results.json');
   const results = existsSync(resultsFile) ? JSON.parse(await readFile(resultsFile, 'utf8')) : undefined;
   return { ...run, artifacts, results };
@@ -146,4 +146,19 @@ test('screenshots of x/y.html and x-y.html do not collide', async t => {
   const run = await check(t, { 'index.html': landing, 'x/y.html': page('', '<h1>y</h1>'), 'x-y.html': page('', '<h1>xy</h1>') });
   assert.equal(run.status, 0, run.stdout + run.stderr);
   for (const name of ['x__y-desktop.png', 'x__y-mobile.png', 'x-y-desktop.png', 'x-y-mobile.png']) assert.ok(existsSync(join(run.artifacts, name)), name);
+});
+
+// CI runner 偶爾要 10 秒以上才啟動 Chrome；以包裝腳本讓第一次啟動延遲 12 秒，檢查仍須通過。
+test('slow Chrome startup within the limit still passes', async t => {
+  const realChrome = process.env.CHROME_BIN || [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser',
+  ].find(existsSync);
+  if (!realChrome) return t.skip('Chrome not found');
+  const dir = await mkdtemp(join(tmpdir(), 'answer-me-slow-chrome-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const wrapper = join(dir, 'chrome');
+  await writeFile(wrapper, `#!/bin/sh\nif [ ! -e "${join(dir, 'started')}" ]; then : > "${join(dir, 'started')}"; sleep 12; fi\nexec "${realChrome}" "$@"\n`, { mode: 0o755 });
+  const run = await check(t, { 'index.html': landing }, { ...process.env, CHROME_BIN: wrapper });
+  assert.equal(run.status, 0, run.stdout + run.stderr);
 });

@@ -6,6 +6,8 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// GitHub Actions runner 上的 Chrome 偶爾要 10 秒以上才寫出 DevToolsActivePort。
+const startupTimeoutMs = 30000;
 function chromeExecutable() {
   if (process.env.CHROME_BIN) return process.env.CHROME_BIN;
   const paths = [
@@ -35,7 +37,7 @@ export async function withOfflinePage(filename, action) {
   let socket;
   try {
     let port;
-    for (let i = 0; i < 100; i++) {
+    for (const deadline = Date.now() + startupTimeoutMs; Date.now() < deadline;) {
       try { port = (await readFile(join(profile, 'DevToolsActivePort'), 'utf8')).split('\n')[0]; break; }
       catch { if (launchError) throw launchError; if (closed) throw new Error(log); await sleep(100); }
     }
