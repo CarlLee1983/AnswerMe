@@ -38,3 +38,12 @@
 - 修正題目後重跑（1.8 分鐘）：[成果](evaluation/core-forms.html)無 input、button、select，只有一張主圖；交付回覆列出可追加的互動版；三種 A/B 情況與示意標示俱在。主 agent 以 `verify-site.mjs` 複查：無執行錯誤，1200 與 390 px 無水平溢出；唯一失敗是 Google Fonts 請求，此為網站範例頁規則，技能允許預設模板載入並在離線時退回本機字型。
 
 各為單一樣本，耗時也受題目大小影響，不能證明所有請求都會變快。
+
+## 後續：網站說明與實物示意範例
+
+發布 v0.1.5 後，使用者指出網站只改了兩句文案。介紹頁因此新增「怎麼選呈現方式」區塊（理解需求對應形式的清單、未指定時的預設、anatomy 出處），並加入第五個範例。
+
+- 產生方式比照 `.scratch/github-pages/verification.md`：以 `git archive v0.1.5` 匯出 `skills/answer-me` 與 `tests/answer-me/conditions/input` 到隔離目錄，獨立 agent 只能讀該目錄。請求：「使用 answer-me，根據 tests/answer-me/conditions/input/model.md，用一個具體的實物幫我理解 p 改變時 M 怎麼移動，做成可離線開啟的靜態 HTML，文章式。完成後只給連結，不要自動開啟。」另要求不得有外部請求、不用 Google Fonts。
+- 成品以尺上兩塊砝碼的平衡支點對應 M，沒有控制項。主 agent 人工核對：p = 0.2、0.5、0.8 對應 68、50、32 ms，p = 0.25、0.75 對應 65、35 ms，反轉例 A = 80、B = 20、p = 0.8 時 M = 68；三處類比不成立與示意標示俱在。通過。
+- 發布時只在 `<body>` 開頭加入外框標示（v0.1.5、2026-10-12、素材連結固定於 v0.1.5），內文未改。首屏截圖 `site/assets/concrete-object.webp` 由 headless Chrome 1280×800 截圖再以 `cwebp -q 80` 轉檔。
+- 網站檢查：`check.py` 通過；`verify-site.mjs` 6 頁、0 失敗；介紹頁新區塊的桌面與 390 px 截圖、手機分頁列、範例頁首屏皆已檢視。列印版面未實測。
