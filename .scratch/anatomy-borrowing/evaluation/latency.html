@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>快取命中率與平均讀取延遲</title>
+  <!-- 為了零網路請求，移除模板的 Google Fonts stylesheet，改用本機字型 fallback。 -->
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #fcfaf6;
+      --ink: #302b26;
+      --muted: #6b6259;
+      --accent: #9a5038;
+      --line: #ded6cb;
+      --soft: #eee6db;
+      --code-bg: #eee9e1;
+      --hit: #5f7a6a;
+      --miss: #9a5038;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.8 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif; overflow-wrap: break-word; word-break: break-word; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .page { width: min(100% - 32px, 1120px); margin: 0 auto; padding: 48px 0 96px; }
+    main { min-width: 0; }
+    .prose { max-width: 72ch; }
+    .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", "Songti TC", "Noto Serif CJK TC", "PMingLiU", serif; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+    h1 { max-width: 18ch; margin: 0 0 24px; font-size: clamp(2.1rem, 6vw, 3.6rem); }
+    h2 { margin: 0 0 16px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    p { margin: 0 0 24px; }
+    .lead { font-size: 1.2rem; line-height: 1.65; }
+    .muted, small { color: var(--muted); }
+    .intro { padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+    .summary { max-width: 72ch; margin-top: 32px; padding: 24px; background: var(--soft); border-left: 3px solid var(--accent); }
+    .summary p:last-child { margin-bottom: 0; }
+    nav { margin-top: 24px; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+    section { padding-top: 56px; }
+    pre { width: max-content; min-width: 100%; margin: 0; padding: 24px; background: var(--code-bg); font: .9rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .code-wrap { max-width: 100%; overflow-x: auto; margin-bottom: 24px; }
+    .source-note { max-width: 72ch; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .source-note p:last-child { margin-bottom: 0; }
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; }
+
+    .lab { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; margin-top: 24px; }
+    .panel { min-width: 0; padding: 24px; background: var(--surface); border: 1px solid var(--line); }
+    .control { margin-bottom: 24px; }
+    .control:last-of-type { margin-bottom: 8px; }
+    .control label { display: block; font-weight: 600; font-size: .95rem; line-height: 1.5; }
+    .control .hint { display: block; color: var(--muted); font-size: .8rem; line-height: 1.5; margin-bottom: 8px; }
+    .control .row { display: flex; align-items: center; gap: 12px; }
+    .control input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .control input[type=number] { width: 88px; padding: 4px 8px; font: inherit; font-size: .95rem; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+    button { font: inherit; font-size: .85rem; padding: 6px 12px; border: 1px solid var(--line); background: var(--soft); color: var(--ink); cursor: pointer; }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .readout-main { margin: 0 0 4px; font-size: .85rem; color: var(--muted); }
+    .big { font-size: 2.6rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .big small { font-size: 1rem; font-weight: 400; }
+    .subst { margin: 8px 0 16px; font: .85rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--muted); }
+    .parts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .parts div { padding: 12px; background: var(--soft); font-size: .85rem; line-height: 1.5; }
+    .parts b { display: block; font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+    .swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: baseline; }
+    .verdict { padding: 12px 16px; border-left: 3px solid var(--accent); background: var(--soft); font-size: .9rem; line-height: 1.6; margin-bottom: 16px; }
+    .verdict.reversed { border-left-color: #8a3a1e; background: #f3e1d8; }
+    svg { display: block; width: 100%; height: auto; }
+    svg text { font-family: system-ui, -apple-system, sans-serif; fill: var(--muted); }
+    .chart-caption { font-size: .8rem; color: var(--muted); line-height: 1.5; margin: 8px 0 0; }
+    .tag { display: inline-block; padding: 0 8px; margin-left: 8px; font-size: .72rem; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); vertical-align: middle; letter-spacing: .04em; }
+    noscript p { padding: 16px; background: var(--soft); }
+
+    @media (max-width: 800px) {
+      .lab { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .page { padding-top: 32px; }
+      section { padding-top: 40px; }
+      .panel { padding: 16px; }
+      .big { font-size: 2.2rem; }
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; font-size: 11pt; line-height: 1.55; }
+      .page { width: 100%; padding: 0; }
+      nav, button { display: none; }
+      section { padding-top: 20pt; }
+      .panel, .summary, .source-note { break-inside: avoid; }
+      pre { width: auto; white-space: pre-wrap; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main id="content">
+      <header class="intro">
+        <p class="eyebrow">互動示意模型 · 非實測</p>
+        <h1>快取命中率如何決定平均讀取延遲</h1>
+        <p class="lead prose">每次讀取只走兩條路之一：命中走快路徑，花 <code>C</code> 毫秒；未命中走慢路徑，花 <code>D</code> 毫秒。平均延遲 <code>L</code> 就是兩條路徑依命中率 <code>h</code> 加權的平均。</p>
+        <div class="summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">核心說明</h2>
+          <p><code>L = h × C + (1 − h) × D</code>。<code>L</code> 對 <code>h</code> 是一條直線，兩端分別是 <code>D</code>（全部未命中）與 <code>C</code>（全部命中）；<code>h</code> 每增加 0.01，<code>L</code> 改變 <code>(C − D) / 100</code> 毫秒。</p>
+          <p>因此，只有在 <code>C &lt; D</code> 時，提高命中率才會降低平均延遲；<code>C &gt; D</code> 時結論反轉，<code>C = D</code> 時命中率完全不影響 <code>L</code>。在來源的初始值下，未命中只占 25% 的讀取，卻貢獻了絕大部分的平均延遲。</p>
+        </div>
+        <nav aria-label="本文段落">
+          <ul>
+            <li><a href="#lab">調整參數</a></li>
+            <li><a href="#reading">怎麼讀結果</a></li>
+            <li><a href="#limits">來源與限制</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section id="lab" aria-labelledby="lab-title">
+        <div class="prose">
+          <h2 id="lab-title">調整參數，觀察平均延遲<span class="tag">示意模型</span></h2>
+          <p>拖動滑桿或輸入數值。右側的讀數、兩條路徑的貢獻與圖表，全部由同一個公式即時計算。圖中的直線是目前 <code>C</code>、<code>D</code> 下所有命中率對應的 <code>L</code>，圓點是目前選定的 <code>h</code>。</p>
+        </div>
+        <noscript><p>此頁的互動部分需要 JavaScript。未啟用時仍可閱讀公式與說明：初始值 h = 0.75、C = 4 ms、D = 120 ms。</p></noscript>
+        <div class="lab">
+          <form class="panel" id="controls" aria-label="模型參數" onsubmit="return false">
+            <div class="control">
+              <label for="h-range">命中率 h</label>
+              <span class="hint">讀取命中快取的比例，0 到 1</span>
+              <div class="row">
+                <input type="range" id="h-range" min="0" max="1" step="0.01">
+                <input type="number" id="h-num" min="0" max="1" step="0.01" aria-label="命中率 h 數值">
+              </div>
+            </div>
+            <div class="control">
+              <label for="c-range">命中延遲 C（ms）</label>
+              <span class="hint">命中時一次讀取的耗時</span>
+              <div class="row">
+                <input type="range" id="c-range" min="0" max="200" step="1">
+                <input type="number" id="c-num" min="0" max="200" step="1" aria-label="命中延遲 C 數值（毫秒）">
+              </div>
+            </div>
+            <div class="control">
+              <label for="d-range">未命中延遲 D（ms）</label>
+              <span class="hint">未命中時整條路徑的耗時，已包含所有未命中路徑上的工作</span>
+              <div class="row">
+                <input type="range" id="d-range" min="0" max="200" step="1">
+                <input type="number" id="d-num" min="0" max="200" step="1" aria-label="未命中延遲 D 數值（毫秒）">
+              </div>
+            </div>
+            <button type="button" id="reset">回到來源初始值</button>
+          </form>
+
+          <div class="panel" aria-labelledby="result-title">
+            <h3 id="result-title" class="readout-main">平均讀取延遲 L</h3>
+            <div class="big" id="out-L" aria-live="polite">—</div>
+            <p class="subst" id="out-subst"></p>
+            <div class="parts">
+              <div><span class="swatch" style="background:var(--hit)"></span>命中路徑貢獻 h × C<b id="out-hit">—</b><span id="out-hit-share"></span></div>
+              <div><span class="swatch" style="background:var(--miss)"></span>未命中路徑貢獻 (1 − h) × D<b id="out-miss">—</b><span id="out-miss-share"></span></div>
+            </div>
+            <p class="verdict" id="out-verdict"></p>
+            <svg id="chart" viewBox="0 0 420 280" role="img" aria-labelledby="chart-desc">
+              <desc id="chart-desc">平均延遲 L 隨命中率 h 變化的直線圖，標出目前的 h。</desc>
+            </svg>
+            <p class="chart-caption">橫軸：命中率 h（0 到 1）。縱軸：平均延遲 L（ms），刻度隨 C、D 調整。直線上每一點都由同一個模型函式算出。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="reading" aria-labelledby="reading-title">
+        <div class="prose">
+          <h2 id="reading-title">怎麼讀這些結果</h2>
+          <p><strong>直線的斜率是 <code>C − D</code>。</strong>把公式展開成 <code>L = D + h × (C − D)</code> 就能看出：<code>h</code> 從 0 走到 1，<code>L</code> 從 <code>D</code> 等速移到 <code>C</code>。命中率提升的效益大小，取決於兩條路徑的延遲差，而不是命中率本身的高低。</p>
+          <p><strong>慢路徑主導平均值。</strong>當 <code>D</code> 遠大於 <code>C</code>，即使未命中比例很小，<code>(1 − h) × D</code> 仍占平均延遲的大部分。試著先把 <code>C</code> 調到 0，再改回來、把 <code>h</code> 從 0.75 調到 0.9：在初始值下，後者讓 <code>L</code> 下降得更多，因為減少未命中次數比加快命中路徑更有效。</p>
+          <p><strong>結論何時反轉。</strong>本頁允許 <code>C</code> 調到大於 <code>D</code>。這時直線往右上升，提高命中率反而讓平均延遲變長；這在真實快取中不常見，但能說明「提高命中率一定更快」只在 <code>C &lt; D</code> 時成立。</p>
+          <p><strong>不要重複計入 C。</strong>來源指定 <code>D</code> 已包含未命中路徑上的全部工作，例如先查快取失敗再讀後端的時間。因此未命中的耗時是 <code>D</code>，不是 <code>C + D</code>；若你手上的量測只計後端讀取，需先把查快取的時間加進 <code>D</code> 再套用本模型。</p>
+          <div class="code-wrap" role="region" aria-label="模型公式，可水平捲動" tabindex="0"><pre><code>L = h × C + (1 − h) × D
+  = D + h × (C − D)
+
+h：命中率，0 到 1
+C：命中延遲（ms），初始 4
+D：未命中延遲（ms），初始 120，已含未命中路徑全部工作
+初始 h = 0.75</code></pre></div>
+        </div>
+      </section>
+
+      <section id="limits" aria-labelledby="limits-title">
+        <div class="source-note">
+          <h2 id="limits-title">來源與限制</h2>
+          <p><strong>來源：</strong>公式、變數定義、初始值（h = 0.75、C = 4 ms、D = 120 ms），以及「D 已包含未命中路徑全部工作」的規定，全部取自 <code>tests/answer-me/interactive/input/model.txt</code>。</p>
+          <p><strong>性質：</strong>來源說明這是示意用、確定性的雙路徑模型，不是正式環境的量測。頁面上的數字都是模型計算值，不是實測延遲。</p>
+          <p><strong>本頁的推論與設定：</strong>斜率 <code>C − D</code>、反轉條件與各路徑占比，是由公式推導而來。滑桿範圍（C、D 為 0 到 200 ms）是本頁為了能展示反轉情境所選的範圍，來源沒有規定。</p>
+          <p><strong>模型沒有涵蓋的部分：</strong>平均值不反映尾端延遲（例如 p99）；真實系統中 C、D 會隨負載波動，命中率也可能與快取大小、存取模式、逐出策略互相影響。這些都不在來源模型內。</p>
+        </div>
+      </section>
+    </main>
+    <footer class="muted">示意模型 · 數值為公式計算結果，非實測</footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // 來源 model.txt 的初始值
+      var INITIAL = Object.freeze({ h: 0.75, C: 4, D: 120 });
+
+      // 唯一的模型函式：讀數、占比、判讀文字與圖表都由它計算
+      function model(h, C, D) {
+        var hit = h * C;
+        var miss = (1 - h) * D;
+        return { L: hit + miss, hit: hit, miss: miss };
+      }
+
+      var els = {
+        h: [document.getElementById('h-range'), document.getElementById('h-num')],
+        C: [document.getElementById('c-range'), document.getElementById('c-num')],
+        D: [document.getElementById('d-range'), document.getElementById('d-num')],
+        L: document.getElementById('out-L'),
+        subst: document.getElementById('out-subst'),
+        hit: document.getElementById('out-hit'),
+        miss: document.getElementById('out-miss'),
+        hitShare: document.getElementById('out-hit-share'),
+        missShare: document.getElementById('out-miss-share'),
+        verdict: document.getElementById('out-verdict'),
+        chart: document.getElementById('chart'),
+        reset: document.getElementById('reset')
+      };
+
+      var state = Object.assign({}, INITIAL);
+
+      function fmt(x, digits) {
+        return Number(x.toFixed(digits)).toString();
+      }
+
+      function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+      function syncInputs() {
+        ['h', 'C', 'D'].forEach(function (k) {
+          els[k].forEach(function (input) { input.value = state[k]; });
+        });
+      }
+
+      function renderReadout(r) {
+        els.L.innerHTML = fmt(r.L, 2) + ' <small>ms</small>';
+        els.subst.textContent = 'L = ' + fmt(state.h, 2) + ' × ' + state.C + ' + ' + fmt(1 - state.h, 2) + ' × ' + state.D + ' = ' + fmt(r.L, 2) + ' ms';
+        els.hit.textContent = fmt(r.hit, 2) + ' ms';
+        els.miss.textContent = fmt(r.miss, 2) + ' ms';
+        var hitShare = r.L > 0 ? r.hit / r.L * 100 : 0;
+        var missShare = r.L > 0 ? r.miss / r.L * 100 : 0;
+        els.hitShare.textContent = r.L > 0 ? '占 L 的 ' + fmt(hitShare, 1) + '%' : '';
+        els.missShare.textContent = r.L > 0 ? '占 L 的 ' + fmt(missShare, 1) + '%' : '';
+
+        // 斜率由模型兩端點計算，不另寫公式
+        var slopePer01 = (model(1, state.C, state.D).L - model(0, state.C, state.D).L) / 100;
+        var text;
+        els.verdict.classList.remove('reversed');
+        if (slopePer01 < 0) {
+          text = '目前 C < D：h 每提高 0.01，L 減少 ' + fmt(-slopePer01, 3) + ' ms。提高命中率會降低平均延遲。';
+        } else if (slopePer01 > 0) {
+          text = '目前 C > D：h 每提高 0.01，L 增加 ' + fmt(slopePer01, 3) + ' ms。結論反轉，提高命中率反而變慢。';
+          els.verdict.classList.add('reversed');
+        } else {
+          text = '目前 C = D：兩條路徑一樣快，命中率不影響 L。';
+        }
+        els.verdict.textContent = text;
+      }
+
+      var SVGNS = 'http://www.w3.org/2000/svg';
+      function el(name, attrs, text) {
+        var node = document.createElementNS(SVGNS, name);
+        Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function niceMax(v) {
+        if (v <= 0) return 10;
+        var pow = Math.pow(10, Math.floor(Math.log10(v)));
+        var steps = [1, 2, 2.5, 5, 10];
+        for (var i = 0; i < steps.length; i++) {
+          if (steps[i] * pow >= v) return steps[i] * pow;
+        }
+        return 10 * pow;
+      }
+
+      function renderChart(r) {
+        var svg = els.chart;
+        while (svg.lastChild && svg.lastChild.nodeName !== 'desc') svg.removeChild(svg.lastChild);
+
+        var W = 420, H = 280, m = { l: 52, r: 16, t: 24, b: 48 };
+        var pw = W - m.l - m.r, ph = H - m.t - m.b;
+        var SAMPLES = 50;
+        var points = [];
+        for (var i = 0; i <= SAMPLES; i++) {
+          var hh = i / SAMPLES;
+          points.push({ h: hh, L: model(hh, state.C, state.D).L });
+        }
+        var yMax = niceMax(Math.max.apply(null, points.map(function (p) { return p.L; })));
+        function x(h) { return m.l + h * pw; }
+        function y(L) { return m.t + ph - (L / yMax) * ph; }
+
+        var g = el('g', {});
+        for (var t = 0; t <= 4; t++) {
+          var v = yMax * t / 4;
+          g.appendChild(el('line', { x1: m.l, x2: m.l + pw, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+          g.appendChild(el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 14 }, fmt(v, 1)));
+        }
+        for (var s = 0; s <= 4; s++) {
+          var hv = s / 4;
+          g.appendChild(el('text', { x: x(hv), y: m.t + ph + 20, 'text-anchor': 'middle', 'font-size': 14 }, fmt(hv, 2)));
+        }
+        g.appendChild(el('text', { x: m.l + pw / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 14 }, '命中率 h'));
+        g.appendChild(el('text', { x: 16, y: m.t + ph / 2, 'text-anchor': 'middle', 'font-size': 14, transform: 'rotate(-90 16 ' + (m.t + ph / 2) + ')' }, 'L（ms）'));
+        g.appendChild(el('line', { x1: m.l, x2: m.l, y1: m.t, y2: m.t + ph, stroke: 'var(--muted)', 'stroke-width': 1 }));
+        g.appendChild(el('line', { x1: m.l, x2: m.l + pw, y1: m.t + ph, y2: m.t + ph, stroke: 'var(--muted)', 'stroke-width': 1 }));
+
+        // 目前 h 處，L 拆成命中貢獻（下段）與未命中貢獻（上段）
+        var cx = x(state.h);
+        g.appendChild(el('line', { x1: cx, x2: cx, y1: y(0), y2: y(r.hit), stroke: 'var(--hit)', 'stroke-width': 6, opacity: 0.55, 'data-part': 'hit' }));
+        g.appendChild(el('line', { x1: cx, x2: cx, y1: y(r.hit), y2: y(r.L), stroke: 'var(--miss)', 'stroke-width': 6, opacity: 0.55, 'data-part': 'miss' }));
+
+        var d = points.map(function (p, idx) { return (idx ? 'L' : 'M') + x(p.h).toFixed(2) + ' ' + y(p.L).toFixed(2); }).join(' ');
+        g.appendChild(el('path', { d: d, fill: 'none', stroke: 'var(--ink)', 'stroke-width': 2, id: 'curve' }));
+
+        g.appendChild(el('circle', { cx: cx, cy: y(r.L), r: 6, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 2, id: 'marker' }));
+        // 標籤放在直線遠離的一側，避免與直線重疊
+        var slope = points[SAMPLES].L - points[0].L;
+        var above = slope === 0 || (slope < 0 ? state.h <= 0.7 : state.h >= 0.3);
+        var labelRight = slope < 0 ? above : (slope > 0 ? !above : state.h < 0.7);
+        var ly = Math.min(m.t + ph - 8, Math.max(m.t + 12, y(r.L) + (above ? -14 : 26)));
+        g.appendChild(el('text', { x: cx + (labelRight ? 10 : -10), y: ly, 'text-anchor': labelRight ? 'start' : 'end', 'font-size': 15, style: 'fill: var(--ink); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round', id: 'marker-label' }, 'L = ' + fmt(r.L, 2) + ' ms'));
+        svg.appendChild(g);
+      }
+
+      function render() {
+        var r = model(state.h, state.C, state.D);
+        renderReadout(r);
+        renderChart(r);
+      }
+
+      var RANGES = { h: [0, 1], C: [0, 200], D: [0, 200] };
+      ['h', 'C', 'D'].forEach(function (k) {
+        els[k].forEach(function (input) {
+          input.addEventListener('input', function () {
+            var v = parseFloat(input.value);
+            if (!isFinite(v)) return;
+            state = Object.assign({}, state, (function () { var o = {}; o[k] = clamp(v, RANGES[k][0], RANGES[k][1]); return o; })());
+            els[k].forEach(function (other) { if (other !== input) other.value = state[k]; });
+            render();
+          });
+          input.addEventListener('change', syncInputs);
+        });
+      });
+
+      els.reset.addEventListener('click', function () {
+        state = Object.assign({}, INITIAL);
+        syncInputs();
+        render();
+      });
+
+      syncInputs();
+      render();
+    })();
+  </script>
+</body>
+</html>

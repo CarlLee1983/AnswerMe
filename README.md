@@ -104,7 +104,7 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 - [`references/html-style.md`](skills/answer-me/references/html-style.md)：HTML 預設樣式、版型選擇與調整方式。
 - [`assets/article.html`](skills/answer-me/assets/article.html)、[`assets/slides.html`](skills/answer-me/assets/slides.html)：可獨立開啟的文章式與簡報式起始模板。
 
-`show-me`、`archify`、`visualize` 是環境中可選的製作能力，並非必要依賴。互動 HTML 使用內嵌資源，閱讀與操作不依賴 CDN、套件安裝、本機伺服器或執行期網路請求。
+`show-me`、`archify`、`visualize`、`anatomy` 是環境中可選的製作能力，並非必要依賴。互動 HTML 使用內嵌資源，閱讀與操作不依賴 CDN、套件安裝、本機伺服器或執行期網路請求。
 
 ## 檢查與演練
 
