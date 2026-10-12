@@ -95,6 +95,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 
 製作時先整理核心答案與子問題，再依關係選用流程圖、時序圖、樹狀圖、時間線或比較表，並重用模板的排版與導覽。局部追問需要更新文件時，聚焦相關內容及受影響的結論。這些做法借鑑 [QingYunA/answer-me-with-html 的內容稿、資訊形狀選型與局部修訂流程](https://github.com/QingYunA/answer-me-with-html/blob/8a50e9b6da20edb8d9e11748264a30b3b5c75aec/skills/answer-me-with-html/SKILL.md)；此專案沿用自己的模板，未引入其 CLI。
 
+抽象機制用方塊與箭頭仍難以想像時，可改用運作方式能一一對應的具體實物示意，例如鎖的銷子全部對齊才能轉動，對應快取鍵完全相符才略過重算；示意會標明是示意，並指出對應不成立之處。互動頁的讀數、圖形與動態由同一個模型計算。這兩點借鑑 [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy/blob/689dcf966e63d92be10a5d593c6e19e10acd4422/SKILL.md#L27-L46)；需要精細的等角實物圖時，可選用該技能製作，本專案未內建其 kit。
+
 ## 技能內容
 
 技能位於 [`skills/answer-me/`](skills/answer-me/SKILL.md)，包含：
