@@ -1,0 +1,74 @@
+{
+  "file": "cache-latency.html",
+  "method": "Headless Chrome opened local file with network emulation offline; slider input, reset, and 390 px layout checked.",
+  "states": [
+    {
+      "name": "initial",
+      "value": "75",
+      "rate": "75%",
+      "latency": "33 ms",
+      "equation": "L = 0.75 × 4 + 0.25 × 120 = 33 ms",
+      "caption": "目前：75% → 33 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。",
+      "markerX": 512.5,
+      "markerY": 206.2,
+      "guideX": 512.5,
+      "guideY": 206.2
+    },
+    {
+      "name": "50%",
+      "value": "50",
+      "rate": "50%",
+      "latency": "62 ms",
+      "equation": "L = 0.50 × 4 + 0.50 × 120 = 62 ms",
+      "caption": "目前：50% → 62 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。",
+      "markerX": 365,
+      "markerY": 150.13333333333333,
+      "guideX": 365,
+      "guideY": 150.13333333333333
+    },
+    {
+      "name": "0%",
+      "value": "0",
+      "rate": "0%",
+      "latency": "120 ms",
+      "equation": "L = 0.00 × 4 + 1.00 × 120 = 120 ms",
+      "caption": "目前：0% → 120 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。",
+      "markerX": 70,
+      "markerY": 38,
+      "guideX": 70,
+      "guideY": 38
+    },
+    {
+      "name": "100%",
+      "value": "100",
+      "rate": "100%",
+      "latency": "4 ms",
+      "equation": "L = 1.00 × 4 + 0.00 × 120 = 4 ms",
+      "caption": "目前：100% → 4 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。",
+      "markerX": 660,
+      "markerY": 262.26666666666665,
+      "guideX": 660,
+      "guideY": 262.26666666666665
+    },
+    {
+      "name": "reset",
+      "value": "75",
+      "rate": "75%",
+      "latency": "33 ms",
+      "equation": "L = 0.75 × 4 + 0.25 × 120 = 33 ms",
+      "caption": "目前：75% → 33 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。",
+      "markerX": 512.5,
+      "markerY": 206.2,
+      "guideX": 512.5,
+      "guideY": 206.2
+    }
+  ],
+  "mobile": {
+    "viewport": 390,
+    "scroll": 390,
+    "body": 390,
+    "rangeWidth": 316
+  },
+  "runtimeErrors": [],
+  "remoteRequests": []
+}

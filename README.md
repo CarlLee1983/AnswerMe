@@ -97,6 +97,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 
 抽象機制用方塊與箭頭仍難以想像時，可改用運作方式能一一對應的具體實物示意，例如鎖的銷子全部對齊才能轉動，對應快取鍵完全相符才略過重算；示意會標明是示意，並指出對應不成立之處。互動頁的讀數、圖形與動態由同一個模型計算。這兩點借鑑 [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy/blob/689dcf966e63d92be10a5d593c6e19e10acd4422/SKILL.md#L27-L46)；需要精細的等角實物圖時，可選用該技能製作，本專案未內建其 kit。
 
+互動解說會突出主要輸入與觀察結果；有來源案例時核對計算或程式行為，並在有助理解時沿一個邊界或失效情境解釋後果。互動成果依相關狀態檢查讀數、圖形與文字是否一致。這些做法借鑑 [AirsupHQ/machine-skill 的研究、solver 與審圖流程](https://github.com/AirsupHQ/machine-skill/blob/537bb665ab03f29ad4f4124b8af76cbfda47a6c9/SKILL.md)，沿用 Answer Me 的來源與離線要求，未引入其 3D runtime、影片流程、固定審查輪數或通用誤差門檻。
+
 審視改動元件與呼叫路徑的變更時，可用一張前後差異圖標出新增、移除與修改的部分，只畫變更處及相鄰一層。依據程式畫的圖，每個節點與連線都附檔案與行號，推論而未直接看到的部分以虛線區分。一張圖以約 9 個節點、12 條連線為上限，超過就拆圖。這三點借鑑 [Aryanutkarsh/SeeCode 的 architecture-delta、repo-evidence 與圖的規模預算](https://github.com/Aryanutkarsh/SeeCode/tree/82c33b68be60578aeb21f429de5662a7d892a99f/skills/seecode/references)；本專案未引入其 CLI 與渲染腳本。
 
 ## 技能內容

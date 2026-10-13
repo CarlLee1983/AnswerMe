@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>快取命中率如何改變平均延遲｜互動解說</title>
+  <style>
+    :root { --bg:#f5f2eb; --surface:#fcfaf6; --ink:#302b26; --muted:#6b6259; --accent:#9a5038; --line:#ded6cb; --soft:#eee6db; --code-bg:#eee9e1; --hit:#50736b; --miss:#9a5038; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.8 system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif; overflow-wrap:break-word; }
+    .page { width:min(100% - 32px,1120px); margin:auto; padding:48px 0 88px; }
+    .prose { max-width:72ch; }
+    .eyebrow { margin:0 0 16px; color:var(--accent); font-size:.78rem; font-weight:700; letter-spacing:.08em; }
+    h1,h2,h3 { font-family:Georgia,"Songti TC","Noto Serif CJK TC",serif; font-weight:600; line-height:1.25; letter-spacing:-.025em; }
+    h1 { max-width:17ch; margin:0 0 24px; font-size:clamp(2.25rem,6vw,4rem); }
+    h2 { margin:0 0 16px; font-size:clamp(1.5rem,3vw,2rem); }
+    h3 { margin:0 0 8px; font-size:1.12rem; }
+    p { margin:0 0 20px; }
+    .lead { font-size:1.2rem; line-height:1.65; }
+    .muted,small { color:var(--muted); }
+    .intro { padding-bottom:32px; border-bottom:1px solid var(--line); }
+    .summary { max-width:72ch; margin-top:32px; padding:24px; background:var(--soft); border-left:3px solid var(--accent); }
+    .summary p:last-child { margin:0; }
+    nav { margin-top:24px; }
+    nav ul { display:flex; flex-wrap:wrap; gap:8px 24px; margin:0; padding:0; list-style:none; font-size:.9rem; }
+    a { color:var(--accent); text-underline-offset:.2em; }
+    :is(a,button,input):focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    section { padding-top:56px; }
+    .panel { background:var(--surface); border:1px solid var(--line); padding:clamp(20px,4vw,40px); }
+    .control-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:12px; }
+    label { font-weight:700; }
+    .control-value { color:var(--accent); font-size:clamp(2rem,6vw,3.5rem); font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; }
+    input[type="range"] { display:block; width:100%; margin:26px 0 6px; accent-color:var(--accent); cursor:pointer; }
+    .scale { display:flex; justify-content:space-between; color:var(--muted); font-size:.83rem; }
+    .result { margin:32px 0 0; padding:24px; background:var(--soft); }
+    .result .number { display:block; color:var(--accent); font-size:clamp(2.5rem,8vw,5rem); line-height:1.1; font-variant-numeric:tabular-nums; font-weight:700; }
+    .result p { margin:8px 0 0; }
+    .equation { margin:24px 0 0; padding:16px; background:var(--code-bg); font:clamp(.9rem,2.8vw,1.08rem)/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; overflow-x:auto; white-space:nowrap; }
+    .plot-wrap { margin-top:32px; }
+    .plot-title { margin-bottom:6px; }
+    .plot-note { font-size:.9rem; color:var(--muted); }
+    svg { display:block; width:100%; height:auto; max-width:720px; overflow:visible; }
+    .axis { stroke:#8f857a; stroke-width:1.5; }
+    .grid { stroke:var(--line); stroke-width:1; }
+    .trend { stroke:var(--accent); stroke-width:4; fill:none; }
+    .marker { fill:var(--accent); stroke:var(--surface); stroke-width:3; }
+    .tick { fill:var(--muted); font:14px system-ui,-apple-system,sans-serif; }
+    .caption { margin-top:16px; font-size:.9rem; color:var(--muted); }
+    .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:24px 0; }
+    .card { min-width:0; padding:24px; background:var(--surface); border:1px solid var(--line); }
+    .card strong { font-size:1.45rem; font-variant-numeric:tabular-nums; }
+    .card p { margin:8px 0 0; }
+    .swatch { display:inline-block; width:.7em; height:.7em; border-radius:50%; margin-right:.35em; }
+    .swatch.hit { background:var(--hit); } .swatch.miss { background:var(--miss); }
+    .source-note { max-width:72ch; padding:24px; background:var(--surface); border:1px solid var(--line); }
+    .source-note p:last-child { margin:0; }
+    button { margin-top:22px; border:1px solid var(--accent); background:var(--surface); color:var(--accent); padding:10px 18px; font:inherit; font-size:.9rem; font-weight:700; cursor:pointer; }
+    button:hover { background:var(--soft); }
+    footer { margin-top:64px; padding-top:16px; border-top:1px solid var(--line); font-size:.85rem; }
+    @media(max-width:700px) { body { font-size:17px; } .page { padding-top:32px; } section { padding-top:40px; } .cards { grid-template-columns:1fr; } }
+    @media print { body { print-color-adjust:exact; -webkit-print-color-adjust:exact; font-size:11pt; line-height:1.55; } .page { width:100%; padding:0; } nav,button { display:none; } section { padding-top:20pt; } .panel,.card,.source-note,.summary { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <div class="page"><main>
+    <header class="intro">
+      <p class="eyebrow">離線互動解說 · 教學示意模型</p>
+      <h1>快取命中率如何改變平均延遲</h1>
+      <p class="lead prose">每次請求只走「命中」或「未命中」其中一條路徑。調整命中率，平均延遲就會按兩條路徑所佔比例改變。</p>
+      <div class="summary"><h2>先看結論</h2><p>命中率起始為 75% 時，平均延遲是 <strong>33 ms</strong>。來源中的「31 ms」圖說草稿與給定公式不符，不能當作此模型的結果。</p></div>
+      <nav aria-label="本文段落"><ul><li><a href="#try">調整命中率</a></li><li><a href="#why">看懂計算</a></li><li><a href="#source">來源與限制</a></li></ul></nav>
+    </header>
+    <section id="try" aria-labelledby="try-title">
+      <div class="prose"><h2 id="try-title">動手調整：命中率變了，平均延遲怎麼變？</h2><p>拖動滑桿設定命中率 <code>h</code>，範圍是 0% 到 100%。下方的讀數、公式與圖上標記會一起更新。</p></div>
+      <div class="panel">
+        <div class="control-head"><label for="hit-rate">快取命中率 h</label><output class="control-value" id="rate-value" for="hit-rate">75%</output></div>
+        <input id="hit-rate" type="range" min="0" max="100" step="1" value="75" aria-describedby="rate-help">
+        <div class="scale" aria-hidden="true"><span>0% · 全部未命中</span><span>100% · 全部命中</span></div>
+        <p id="rate-help" class="caption">比例代表很多次請求中，走命中路徑的份額；不是單次請求的延遲。</p>
+        <div class="result" aria-live="polite" aria-atomic="true"><span>平均延遲 L</span><strong class="number" id="latency">33 ms</strong><p id="result-text">75% 的請求走 4 ms 命中路徑；25% 走 120 ms 未命中路徑。</p></div>
+        <div class="equation" id="equation">L = 0.75 × 4 + 0.25 × 120 = 33 ms</div>
+        <div class="plot-wrap"><h3 class="plot-title">從 0% 到 100% 的整條關係</h3><p class="plot-note">橫軸是命中率；縱軸是模型算出的平均延遲，單位 ms。圓點代表目前設定。</p>
+          <svg viewBox="0 0 720 330" role="img" aria-labelledby="chart-title chart-desc">
+            <title id="chart-title">命中率與平均延遲的線性關係</title><desc id="chart-desc">命中率 75% 時平均延遲 33 ms；命中率從 0% 到 100%，平均延遲從 120 ms 降到 4 ms。</desc>
+            <line class="grid" x1="70" y1="38" x2="660" y2="38"/><line class="grid" x1="70" y1="134" x2="660" y2="134"/><line class="grid" x1="70" y1="230" x2="660" y2="230"/>
+            <line class="axis" x1="70" y1="38" x2="70" y2="270"/><line class="axis" x1="70" y1="270" x2="660" y2="270"/>
+            <text class="tick" x="59" y="43" text-anchor="end">120</text><text class="tick" x="59" y="139" text-anchor="end">70</text><text class="tick" x="59" y="235" text-anchor="end">20</text>
+            <text class="tick" x="70" y="295" text-anchor="middle">0%</text><text class="tick" x="365" y="295" text-anchor="middle">50%</text><text class="tick" x="660" y="295" text-anchor="middle">100%</text>
+            <path class="trend" d="M70 38 L660 262.27"/><line id="guide-x" class="grid" x1="512.5" y1="206.2" x2="512.5" y2="270" stroke-dasharray="4 4"/><line id="guide-y" class="grid" x1="70" y1="206.2" x2="512.5" y2="206.2" stroke-dasharray="4 4"/><circle id="marker" class="marker" cx="512.5" cy="206.2" r="9"/>
+          </svg><p class="caption" id="chart-caption">目前：75% → 33 ms。每增加 10 個百分點，平均延遲降低 11.6 ms。</p>
+        </div>
+        <button type="button" id="reset">回到 75%</button>
+      </div>
+    </section>
+    <section id="why" aria-labelledby="why-title"><div class="prose"><h2 id="why-title">為什麼是加權平均？</h2><p>模型把命中路徑延遲固定為 <code>C = 4 ms</code>，未命中路徑的<strong>完整</strong>延遲固定為 <code>D = 120 ms</code>。未命中的 120 ms 已包含該路徑全部工作，不再額外加上命中路徑的 4 ms。</p></div>
+      <div class="cards"><div class="card"><h3><span class="swatch hit" aria-hidden="true"></span>命中路徑</h3><strong>h × 4 ms</strong><p>命中率越高，這條較短路徑佔的份額越大。</p></div><div class="card"><h3><span class="swatch miss" aria-hidden="true"></span>未命中路徑</h3><strong>(1 − h) × 120 ms</strong><p>剩下的請求走完整的未命中路徑。</p></div></div>
+      <div class="prose"><p>所以 <code>L = h × C + (1 − h) × D</code>。例如來源給出的手算案例：<code>h = 0.5</code> 時，<code>L = 0.5 × 4 + 0.5 × 120 = 62 ms</code>。在此模型的固定路徑延遲下，命中率每增加 10 個百分點，平均延遲都降低 <code>0.1 × (120 − 4) = 11.6 ms</code>。</p></div>
+    </section>
+    <section id="source" aria-labelledby="source-title"><div class="source-note"><h2 id="source-title">來源與適用範圍</h2><p>公式、起始值、路徑延遲及 50% 手算案例均來自<a href="input/model.md">input/model.md</a>。這些數字是<strong>教學示意</strong>，不是產品量測。75% 的 33 ms 與每 10 個百分點降低 11.6 ms，則是依來源公式推導。</p><p>模型只含兩條固定延遲路徑。它沒有排隊、容量上限、故障狀態或真實系統的量測基準。因此圖上的直線只代表這些條件下的結果，不能直接拿來預測實際服務。</p></div></section>
+  </main><footer class="muted">快取命中率與平均延遲 · 離線閱讀與操作</footer></div>
+  <script>
+    const slider = document.getElementById('hit-rate');
+    const rateValue = document.getElementById('rate-value');
+    const latency = document.getElementById('latency');
+    const resultText = document.getElementById('result-text');
+    const equation = document.getElementById('equation');
+    const marker = document.getElementById('marker');
+    const guideX = document.getElementById('guide-x');
+    const guideY = document.getElementById('guide-y');
+    const chartCaption = document.getElementById('chart-caption');
+    const chartDesc = document.getElementById('chart-desc');
+    const C = 4, D = 120;
+    function render() {
+      const percent = Number(slider.value);
+      const h = percent / 100;
+      const L = h * C + (1 - h) * D;
+      const shown = Number(L.toFixed(2));
+      const x = 70 + 590 * h;
+      const y = 38 + 232 * (D - L) / D;
+      rateValue.value = `${percent}%`;
+      rateValue.textContent = `${percent}%`;
+      latency.textContent = `${shown} ms`;
+      resultText.textContent = `${percent}% 的請求走 4 ms 命中路徑；${100-percent}% 走 120 ms 未命中路徑。`;
+      equation.textContent = `L = ${h.toFixed(2)} × 4 + ${(1-h).toFixed(2)} × 120 = ${shown} ms`;
+      marker.setAttribute('cx', x); marker.setAttribute('cy', y);
+      guideX.setAttribute('x1', x); guideX.setAttribute('x2', x); guideX.setAttribute('y1', y);
+      guideY.setAttribute('x2', x); guideY.setAttribute('y1', y); guideY.setAttribute('y2', y);
+      chartCaption.textContent = `目前：${percent}% → ${shown} ms。每增加 10 個百分點，平均延遲降低 11.6 ms。`;
+      chartDesc.textContent = `命中率 ${percent}% 時平均延遲 ${shown} ms；命中率從 0% 到 100%，平均延遲從 120 ms 降到 4 ms。`;
+    }
+    slider.addEventListener('input', render);
+    document.getElementById('reset').addEventListener('click', () => { slider.value = '75'; render(); });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+增加 `p`，就是提高走路徑 A 的比例、降低走路徑 B 的比例。平均時間依 `M = p × A + (1 − p) × B` 計算，所以每增加 0.1，`M` 會改變 `0.1 × (A − B)` 毫秒。**A 比 B 快時，平均時間下降；A 比 B 慢時，上升；兩者相同時不變。**`p` 的範圍是 0 到 1，且 A、B 都可調整，因此不能說增加 `p` 一定會加速。（[conditions.md](/var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answerme-machine-eval-apm58us9/text/input/conditions.md:3)）
+
+用文件的起始條件作推導例子：A = 20 ms、B = 80 ms、`p = 0.5` 時，`M = 0.5 × 20 + 0.5 × 80 = 50 ms`。若只把 `p` 增至 0.75，`M = 0.75 × 20 + 0.25 × 80 = 35 ms`，因為更多工作走較快的 A。若把 A、B 對調為 80 ms、20 ms，同樣從 `p = 0.5` 增至 0.75，平均時間則從 50 ms 增至 65 ms。這些都是公式推導的示意值，並非產品實測；起始條件與模型限制見 [conditions.md](/var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answerme-machine-eval-apm58us9/text/input/conditions.md:6)。
