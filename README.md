@@ -133,3 +133,7 @@ python3 scripts/check.py
 | [tests/answer-me/README.md](tests/answer-me/README.md) | 演練情境、語意驗收條件與瀏覽器檢查方式 |
 | [site/](site/) | GitHub Pages 網站：介紹頁與範例 |
 | [AGENTS.md](AGENTS.md) | 在此 repository 工作的 agent 指引 |
+
+## 授權
+
+以 [MIT License](LICENSE) 釋出。

@@ -49,6 +49,6 @@ Part of: [把 Karpathy 的解說概念轉成可重用 skill](../map.md)
 
 - **名稱**：`answer-me`，可明確以 `$answer-me` 呼叫；自動選用情境依既有選型決策。
 - **首版目標環境**：Codex。
-- **唯一原始檔位置**：本專案的 `skills/answer-me/`，即 `/Users/carl/Dev/CMG/AnswerMe/skills/answer-me/`。
+- **唯一原始檔位置**：本專案的 `skills/answer-me/`。
 - **後續安裝方式**：讓 `~/.codex/skills/answer-me` 連結至上述來源目錄，維持一份來源。本輪只記錄設計，不建立技能檔案或安裝連結。
 - **最小檔案集合**：`SKILL.md` 與 Codex 顯示資訊 `agents/openai.yaml`。只有確實需要較長的媒介指引或範例時才增加參考檔；目前沒有已確認的需求要增加 scripts 或 assets。

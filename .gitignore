@@ -1,2 +1,5 @@
 # graft's local graph cache — regenerable, not committed (run `graft build`).
 graft/
+
+# 範本列印檢查的輸出，內含本機路徑
+.scratch/default-html-style/evaluation/*-print.pdf

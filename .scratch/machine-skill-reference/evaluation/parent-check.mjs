@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
-import { withOfflinePage } from '/Users/carl/Dev/CMG/AnswerMe/tests/answer-me/browser/cdp.mjs';
+import { withOfflinePage } from '../../../tests/answer-me/browser/cdp.mjs';
 const base = '/var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answerme-machine-eval-apm58us9/';
 const results = await withOfflinePage(base+'html/cache-latency.html',async ({evaluate,send})=>{
   const rows=[];

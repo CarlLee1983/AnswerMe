@@ -6,7 +6,7 @@
       "m": "50.0",
       "bodyWidth": 1200,
       "viewport": 1200,
-      "source": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md"
+      "source": "tests/answer-me/conditions/input/model.md"
     },
     "lower": {
       "m": "20.0",
@@ -39,7 +39,7 @@
       "m": "50.0",
       "bodyWidth": 1200,
       "viewport": 1200,
-      "source": "file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md"
+      "source": "tests/answer-me/conditions/input/model.md"
     },
     "lower": {
       "m": "20.0",

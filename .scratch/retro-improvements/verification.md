@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 演練材料只在 `/tmp` | [tests/answer-me](../../tests/answer-me/README.md) | 保存合成輸入、代表輸出與原 JSON；瀏覽器路徑可設定，結果另存，跨目錄可執行。 |
 | 沒有自動檢查入口 | [scripts/check.py](../../scripts/check.py)、[pre-commit](../../.githooks/pre-commit)、[checks](../../docs/checks.md) | 技能結構、顯示 YAML、文件行內相對檔案連結有統一入口；提交檢查讀取 index 快照。 |
-| 決策之間多一次續行回覆 | 安裝中的 `/Users/carl/.agents/skills/wayfinder/SKILL.md` | 整張地圖請求會接續下一張票的實質問題；保留 HITL、單票、暫停及完成的範圍邊界。 |
+| 決策之間多一次續行回覆 | 安裝中的 `~/.agents/skills/wayfinder/SKILL.md` | 整張地圖請求會接續下一張票的實質問題；保留 HITL、單票、暫停及完成的範圍邊界。 |
 | 過大的指令檔／配置搜尋 | 本次工具參數 | 只讀目前目錄及祖先的指令檔、需要的配置欄位與角色；沿用既有 scout 發現，沒有新增全域規則。 |
 
 ## 專案驗證
@@ -32,7 +32,7 @@
 
 本機 validator 不接受 wayfinder **原本就有**的 `disable-model-invocation` 欄位。直接驗證回報此相容性限制；在暫存副本移除該欄位後，其餘 frontmatter 與本文驗證通過，並另外確認安裝版本的欄位仍為 `true`。未為通過 validator 改變呼叫方式。
 
-校準證據：`/Users/carl/.codex/calibration/evidence/wayfinder-continuation-20261004.json`。原檔備份：`/Users/carl/.codex/backups/wayfinder-continuation-20261004-bsw8zm8k/SKILL.md`。安裝版本 SHA-256：`03dbef3b674fb5f412a793b46a2c3dfc1b188ca2de8f1d017bae38ac37bf4502`。
+校準證據：`~/.codex/calibration/evidence/wayfinder-continuation-20261004.json`。原檔備份：`~/.codex/backups/wayfinder-continuation-20261004-bsw8zm8k/SKILL.md`。安裝版本 SHA-256：`03dbef3b674fb5f412a793b46a2c3dfc1b188ca2de8f1d017bae38ac37bf4502`。
 
 ## 限制與回復
 

@@ -81,7 +81,7 @@
           <text class="note" x="481" y="524" text-anchor="middle">同一實例再讀：步驟 2 直接命中 cache，跳過步驟 3–4，也不再寫入 cache</text>
         </svg>
       </div>
-      <p class="legend">依據：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 18–31 行；圖示依程式控制流程整理。</p>
+      <p class="legend">依據：<a href="../../../tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 18–31 行；圖示依程式控制流程整理。</p>
     </section>
 
     <section id="compare" aria-labelledby="compare-title">
@@ -91,7 +91,7 @@
         <tr><th scope="row"><code>FakeRepo.find</code></th><td>呼叫一次；<code>reads</code> 加 1</td><td>不呼叫；<code>reads</code> 不變</td></tr>
         <tr><th scope="row">資料與回覆</th><td>把 <code>dict(row)</code> 存入 cache，回覆 <code>200</code> 與資料</td><td>直接回傳 cache 中的資料，回覆 <code>200</code> 與資料</td></tr>
       </tbody></table></div>
-      <p class="prose muted">程式位置：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 14–25、27–29 行。<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 5–10 行也檢查兩次回覆為 <code>200</code>、repo 讀取計數為 1；測試沒有比較兩次回覆的資料內容。</p>
+      <p class="prose muted">程式位置：<a href="../../../tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 14–25、27–29 行。<a href="../../../tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 5–10 行也檢查兩次回覆為 <code>200</code>、repo 讀取計數為 1；測試沒有比較兩次回覆的資料內容。</p>
       <p id="reader-note">讀者筆記：比較首次與再次讀取時，我只看同一個 TicketService 實例。</p>
     </section>
 
@@ -102,13 +102,13 @@
         <p><code>find</code> 回傳 <code>None</code> → 第 22 行的條件成立 → 第 23 行執行 <code>raise NotFound</code>。<strong>這一刻 <code>get_ticket</code> 就中斷了</strong>，所以排在後面的第 24 行 <code>self.cache[ticket_id] = dict(row)</code> 根本不會執行。</p>
         <p><code>handle_get</code> 接住例外後只組成 404 回覆，沒有寫入 cache 的程式。因此同一實例下次再查這個 ID，仍是 cache 未命中，會重新呼叫 <code>FakeRepo.find</code>。這是目前程式流程的結果；材料沒有另外實作「找不到也快取」的邏輯。</p>
       </div>
-      <p class="muted prose">依據：<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 9–11、18–31 行；單次 404 測試見 <a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 12–14 行。</p>
+      <p class="muted prose">依據：<a href="../../../tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 第 9–11、18–31 行；單次 404 測試見 <a href="../../../tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 第 12–14 行。</p>
     </section>
 
     <section id="evidence" aria-labelledby="evidence-title">
       <div class="source-note"><h2 id="evidence-title">來源與邊界</h2><ul>
-        <li><a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 是本文執行路徑的依據；<a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 提供兩項行為檢查。從該目錄執行 <code>python3 -m unittest -v</code>，兩項測試通過。</li>
-        <li><a href="file:///Users/carl/Dev/CMG/AnswerMe/tests/answer-me/evidence/input/ticket_api/README.md">README.md</a> 說 cache 會在 60 秒後過期；目前 <code>service.py</code> 只有字典查詢與寫入，沒有時間欄位或過期判斷。本文按程式實際路徑解釋，不能把 60 秒過期視為已實作。</li>
+        <li><a href="../../../tests/answer-me/evidence/input/ticket_api/service.py">service.py</a> 是本文執行路徑的依據；<a href="../../../tests/answer-me/evidence/input/ticket_api/test_service.py">test_service.py</a> 提供兩項行為檢查。從該目錄執行 <code>python3 -m unittest -v</code>，兩項測試通過。</li>
+        <li><a href="../../../tests/answer-me/evidence/input/ticket_api/README.md">README.md</a> 說 cache 會在 60 秒後過期；目前 <code>service.py</code> 只有字典查詢與寫入，沒有時間欄位或過期判斷。本文按程式實際路徑解釋，不能把 60 秒過期視為已實作。</li>
         <li>repo 是 <code>FakeRepo</code>，其 <code>find</code> 只從記憶體中的 <code>rows</code> 查找；本文不推論真實資料庫或 HTTP 框架的行為。</li>
       </ul></div>
     </section>

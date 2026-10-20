@@ -4,10 +4,10 @@
 
 | 能力來源 | 指引已涵蓋 | 不能由此推定 |
 | --- | --- | --- |
-| [show-me](/Users/carl/.agents/skills/show-me/SKILL.md) | 精簡說明搭配 pseudocode、呼叫樹、檔案／元件樹、Mermaid、diff、聚焦的 HTML 解說頁或短簡報；選最小而有用的視圖。 | 包含完整影片產製流程，或任何主題都需要 HTML。 |
-| [visualize](/Users/carl/.codex/plugins/cache/openai-bundled/visualize/1.0.45/skills/visualize/SKILL.md) | 互動解說、模擬、比較；少量控制項、一個主要視覺、對話內 HTML，以及現有視覺成果的匯出。 | 每個 agent 環境都有同一呈現工具，或互動必然增加理解。 |
-| [archify](/Users/carl/.agents/skills/archify/SKILL.md) | 架構、流程、時序、資料流及生命週期圖；standalone HTML、inline SVG、可選 trace motion，以及 PNG／JPEG／WebP／SVG／WebM 匯出。 | 動畫圖的 WebM 匯出等於完整客製旁白解說影片。 |
-| [imagegen](/Users/carl/.codex/skills/.system/imagegen/SKILL.md) | 點陣圖的生成與編輯，包括資訊圖像；簡單圖解可交由 HTML、SVG、CSS 或 canvas 等方式處理。 | 同時提供精確資料圖表、互動模型或影片／旁白管線。 |
+| show-me（`~/.agents/skills/show-me/SKILL.md`） | 精簡說明搭配 pseudocode、呼叫樹、檔案／元件樹、Mermaid、diff、聚焦的 HTML 解說頁或短簡報；選最小而有用的視圖。 | 包含完整影片產製流程，或任何主題都需要 HTML。 |
+| visualize（`~/.codex/plugins/cache/openai-bundled/visualize/1.0.45/skills/visualize/SKILL.md`） | 互動解說、模擬、比較；少量控制項、一個主要視覺、對話內 HTML，以及現有視覺成果的匯出。 | 每個 agent 環境都有同一呈現工具，或互動必然增加理解。 |
+| archify（`~/.agents/skills/archify/SKILL.md`） | 架構、流程、時序、資料流及生命週期圖；standalone HTML、inline SVG、可選 trace motion，以及 PNG／JPEG／WebP／SVG／WebM 匯出。 | 動畫圖的 WebM 匯出等於完整客製旁白解說影片。 |
+| imagegen（`~/.codex/skills/.system/imagegen/SKILL.md`） | 點陣圖的生成與編輯，包括資訊圖像；簡單圖解可交由 HTML、SVG、CSS 或 canvas 等方式處理。 | 同時提供精確資料圖表、互動模型或影片／旁白管線。 |
 
 ## 可支持的結論
 

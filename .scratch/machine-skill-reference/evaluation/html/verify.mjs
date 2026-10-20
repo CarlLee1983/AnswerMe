@@ -1,4 +1,4 @@
-import { withOfflinePage } from '/Users/carl/Dev/CMG/AnswerMe/tests/answer-me/browser/cdp.mjs';
+import { withOfflinePage } from '../../../../tests/answer-me/browser/cdp.mjs';
 import { writeFile } from 'node:fs/promises';
 const base = '/var/folders/mp/2hbmdcp15qjfn3fhgctttgl40000gn/T/answerme-machine-eval-apm58us9/html/';
 const result = await withOfflinePage(base + 'cache-latency.html', async ({send,evaluate,screenshot}) => {

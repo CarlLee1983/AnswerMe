@@ -10,6 +10,6 @@
 
 `M = pA + (1-p)B`，所以 p 增加時，M 的變化方向取決於 A 與 B 哪個較快。
 
-在 [model.md](/Users/carl/Dev/CMG/AnswerMe/tests/answer-me/conditions/input/model.md) 的起始條件中，A = 20 毫秒、B = 80 毫秒，因此 **p 越大，M 越小**：`M = 80 − 60p`。例如 p 從 0.5 增至 0.6，M 就從 50 降至 44 毫秒。
+在 [model.md](../../../tests/answer-me/conditions/input/model.md) 的起始條件中，A = 20 毫秒、B = 80 毫秒，因此 **p 越大，M 越小**：`M = 80 − 60p`。例如 p 從 0.5 增至 0.6，M 就從 50 降至 44 毫秒。
 
 若調整為 A 比 B 慢，p 增加會使 M 上升；若 A 與 B 一樣快，M 不變。這是加權平均示意，並非產品實測數據。

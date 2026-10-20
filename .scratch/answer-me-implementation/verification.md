@@ -6,7 +6,7 @@
 
 - [SKILL.md](../../skills/answer-me/SKILL.md)：理解目標、媒介選型、來源依據、可選能力、離線 HTML 及驗收與回饋。
 - [agents/openai.yaml](../../skills/answer-me/agents/openai.yaml)：Codex 顯示名稱與簡述；保留自動選用，沒有必要工具依賴。
-- 安裝連結：`/Users/carl/.codex/skills/answer-me` → `/Users/carl/Dev/CMG/AnswerMe/skills/answer-me`。已核對連結目標及入口內容；技能原始檔只有一份。
+- 安裝連結：`~/.codex/skills/answer-me` → `skills/answer-me`。已核對連結目標及入口內容；技能原始檔只有一份。
 - 沒有新增套件、scripts、assets 或額外參考檔。技能主體足以承載目前需求。
 
 ## 結構與獨立審查
