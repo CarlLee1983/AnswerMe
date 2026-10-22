@@ -1,0 +1,37 @@
+diff --git a/service.py b/service.py
+--- a/service.py
++++ b/service.py
+@@ -17,15 +17,15 @@ class TicketService:
+ 
+     def get_ticket(self, ticket_id):
+         if ticket_id in self.cache:
+-            return self.cache[ticket_id]
++            return dict(self.cache[ticket_id])
+         row = self.repo.find(ticket_id)
+         if row is None:
+             raise NotFound(ticket_id)
+         self.cache[ticket_id] = dict(row)
+-        return self.cache[ticket_id]
++        return dict(self.cache[ticket_id])
+ 
+     def handle_get(self, ticket_id):
+         try:
+             return 200, self.get_ticket(ticket_id)
+         except NotFound:
+-            return 404, {"error": "not found"}
++            return 404, {"error": "ticket not found", "id": ticket_id}
+diff --git a/test_service.py b/test_service.py
+--- a/test_service.py
++++ b/test_service.py
+@@ -13,5 +13,11 @@ class TicketTests(unittest.TestCase):
+         service = TicketService(FakeRepo({}))
+         self.assertEqual(service.handle_get("missing"), (404, {"error": "not found"}))
+ 
++    def test_returns_copy(self):
++        service = TicketService(FakeRepo({"T1": {"title": "hello"}}))
++        first = service.get_ticket("T1")
++        first["title"] = "changed"
++        self.assertEqual(service.get_ticket("T1")["title"], "hello")
++
+ if __name__ == "__main__":
+     unittest.main()

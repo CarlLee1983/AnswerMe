@@ -1,0 +1,25 @@
+Command: python3 -m unittest -v
+test_missing (test_service.TicketTests.test_missing) ... FAIL
+test_repeat_hit (test_service.TicketTests.test_repeat_hit) ... ok
+test_returns_copy (test_service.TicketTests.test_returns_copy) ... ok
+
+======================================================================
+FAIL: test_missing (test_service.TicketTests.test_missing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_service.py", line 14, in test_missing
+    self.assertEqual(service.handle_get("missing"), (404, {"error": "not found"}))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (404, {'error': 'ticket not found', 'id': 'missing'}) != (404, {'error': 'not found'})
+
+First differing element 1:
+{'error': 'ticket not found', 'id': 'missing'}
+{'error': 'not found'}
+
+- (404, {'error': 'ticket not found', 'id': 'missing'})
++ (404, {'error': 'not found'})
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+FAILED (failures=1)

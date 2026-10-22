@@ -81,6 +81,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 
 這些做法參考 [hai-simplified-technical](https://github.com/hylarucoder/hai-stack/blob/d83d58d8699884d3cbda0c36b3541357d79478bb/skills/hai-simplified-technical/SKILL.zh_CN.md)，並依 Answer Me 的解說用途調整。完整執行規則見[寫清楚技術解說](skills/answer-me/SKILL.md#寫清楚技術解說)。本專案不要求固定句長、禁詞比例或 STE 符合度，也不依賴該專案的檢查器。
 
+審視 agent 成果時，行為與檢查結果標成已驗證、未驗證、失敗或未確認，並附檢查方法、結果與範圍；讀程式或 diff 只能支持內容寫了什麼，不代表執行時如此。超出原始要求的改動會單獨標出，交給使用者決定是否保留。這兩點借鑑 [dualface/ste-zht 的 R20 與結果回報範例](https://github.com/dualface/ste-zht/blob/dd3ff6b8d3fb74bc08a129e64e356ec7f92a7e41/SKILL.md#L84)；未採用其句長上限、固定情態詞、狀態詞禁換表與回報模板。
+
 ## HTML 預設呈現
 
 未指定外觀時採用共用的淺色閱讀樣式，不額外詢問。自行閱讀預設使用[文章式模板](skills/answer-me/assets/article.html)；明確要求簡報或逐頁講述時，使用[簡報式模板](skills/answer-me/assets/slides.html)。兩者都可離線開啟，模板中的內容是示例，產生成品時須換成本次解說與來源。
