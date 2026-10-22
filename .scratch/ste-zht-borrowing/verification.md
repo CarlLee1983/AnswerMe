@@ -24,3 +24,9 @@
 ## 邊界與回復
 
 本次改動技能入口、README、[行為演練說明](../../tests/answer-me/README.md)，並新增 `tests/answer-me/scope/input/`；沒有修改 HTML 模板、檢查程式、hooks、網站或 ADR，未新增依賴，也未提交或發布。回復時反向套用上述差異並移除 `scope/` 與本紀錄。
+
+## 回顧
+
+- 順利：動手前先依 ADR 0004 篩掉句長、禁詞與固定模板，只讓使用者在相容的候選中選擇；演練素材以實際執行測試產生，獨立演練的引用逐行核對。
+- 不順：evidence 回歸演練在沒有原始需求時，把缺少證據的說法標成「未驗證」而非「未確認」；既有素材 `tests/answer-me/evidence/input/change.diff` 的 hunk header 與行數不符。
+- 建議（未採行，待維護者決定）：evidence 情境的驗收欄加一條「缺少執行證據的說法標未確認，已知未執行才標未驗證」；另修正該 diff 的 hunk header。
