@@ -11,7 +11,6 @@ const outputRoot = resolve(process.argv[3] ?? await mkdtemp(join(tmpdir(), 'answ
 await mkdir(outputRoot, { recursive: true });
 const tokens = ['--bg', '--surface', '--ink', '--muted', '--accent', '--line', '--soft', '--code-bg'];
 const results = {};
-const fontStylesheet = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&family=Noto+Serif+TC:wght@600&display=swap';
 const visibleSlides = `Array.from(document.querySelectorAll('.slide')).filter(el => getComputedStyle(el).display !== 'none')`;
 const activeSlide = `Array.from(document.querySelectorAll('.slide')).findIndex(el => getComputedStyle(el).display !== 'none')`;
 
@@ -25,10 +24,10 @@ for (const kind of ['article', 'slides']) {
   results[kind] = await withOfflinePage(join(templateRoot, `${kind}.html`), async ({ evaluate, send, screenshot }) => {
     const palette = await evaluate(`Object.fromEntries(${JSON.stringify(tokens)}.map(k => [k,getComputedStyle(document.documentElement).getPropertyValue(k).trim()]))`);
     for (const token of tokens) assert.match(palette[token], /^#[0-9a-f]{6}$/i, `${kind}: ${token}`);
-    assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('link[rel="stylesheet"]'), el => el.href)`), [fontStylesheet], `${kind}: Google Fonts stylesheet`);
+    assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('link[rel="stylesheet"]'), el => el.href)`), [], `${kind}: no external stylesheet`);
     const fonts = await evaluate(`({body:getComputedStyle(document.body).fontFamily,heading:getComputedStyle(document.querySelector('h1')).fontFamily})`);
-    assert.match(fonts.body, /^"?Noto Sans TC"?,.*system-ui/, `${kind}: body font and offline fallback`);
-    assert.match(fonts.heading, /^"?Noto Serif TC"?,.*Georgia/, `${kind}: heading font and offline fallback`);
+    assert.match(fonts.body, /^-apple-system, .*"PingFang TC", "Noto Sans TC",.*sans-serif$/, `${kind}: body uses the local system font stack`);
+    assert.equal(fonts.heading, fonts.body, `${kind}: headings share the body font`);
     const layout = await evaluate(`({width:innerWidth,scrollWidth:document.documentElement.scrollWidth})`);
     assert.ok(layout.scrollWidth <= layout.width, `${kind}: desktop overflow`);
     await screenshot(join(outputRoot, `${kind}-desktop.png`));
@@ -103,7 +102,7 @@ for (const kind of ['article', 'slides']) {
     return { fileProtocol: true, offline: true, fonts, palette, desktop: layout, mobile, navigation, print: { palette: printPalette, printedPages, customPalette: customPrint } };
   });
   assert.deepEqual(results[kind].runtimeErrors, [], `${kind} runtime errors`);
-  assert.deepEqual(results[kind].remoteRequests, [fontStylesheet], `${kind}: only optional Google Fonts request while offline`);
+  assert.deepEqual(results[kind].remoteRequests, [], `${kind}: no remote requests while offline`);
 }
 assert.deepEqual(results.article.palette, results.slides.palette, 'templates share default palette');
 
@@ -122,8 +121,7 @@ results.noScript = await withOfflinePage(join(templateRoot, 'slides.html'), asyn
   await screenshot(join(outputRoot, 'slides-no-script.png'));
   return { count, allVisible: true };
 });
-assert.ok(results.noScript.remoteRequests.length > 0);
-assert.ok(results.noScript.remoteRequests.every(url => url === fontStylesheet), 'no-JS: only optional Google Fonts request');
+assert.deepEqual(results.noScript.remoteRequests, [], 'no-JS: no remote requests');
 assert.deepEqual(results.noScript.runtimeErrors, []);
 await writeFile(join(outputRoot, 'verification.json'), JSON.stringify(results, null, 2));
 console.log(`Template browser checks passed. Artifacts: ${outputRoot}`);
