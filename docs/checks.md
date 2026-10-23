@@ -18,7 +18,7 @@ python3 -m venv "$HOME/.cache/answer-me/check-env"
 
 快速檢查涵蓋 skill frontmatter、`agents/openai.yaml` 必要顯示欄位，以及專案文件的行內相對檔案連結。外部網址、絕對路徑、頁內 anchor 及歷史演練產物中的來源連結不在連結檢查範圍；它不驗證解說語意或使用者理解。
 
-若 repository 根目錄有 `site/`，檢查器也會靜態掃描其中的檔案：不得含 `file://` 或 `/Users/`、`/home/` 形式的本機路徑；HTML 的 `href` / `src` 站內相對連結必須指向存在的檔案；範例頁（`site/index.html` 以外的 `.html`）不得以 `script`、`link`、`img`、`iframe` 等標記或 CSS 的 `url()` / `@import` 載入 http(s) 資源，介紹頁 `site/index.html` 只例外允許 `fonts.googleapis.com` 與 `fonts.gstatic.com`。站內連結必須留在 `site/` 內（只有該目錄會部署），指向目錄時該目錄需有 `index.html`，以 `/` 開頭的根絕對連結會被拒絕，因為專案網站部署在 `/AnswerMe/` 之下。介紹頁的例外只適用於 `<link>`。CSS 的 `url()` / `@import` 掃描只涵蓋 HTML 內嵌的 `<style>` 與 `style` 屬性，網站頁面是單檔，不含獨立 CSS。一般 `<a href>` 的外部網址不受限；這只是靜態掃描，不執行頁面，也不驗證內容語意。
+若 repository 根目錄有 `site/`，檢查器也會靜態掃描其中的檔案：不得含 `file://` 或 `/Users/`、`/home/` 形式的本機路徑；HTML 的 `href` / `src` 站內相對連結必須指向存在的檔案；所有 `.html`（介紹頁 `site/index.html` 與範例頁）都不得以 `script`、`link`、`img`、`iframe` 等標記或 CSS 的 `url()` / `@import` 載入 http(s) 資源。站內連結必須留在 `site/` 內（只有該目錄會部署），指向目錄時該目錄需有 `index.html`，以 `/` 開頭的根絕對連結會被拒絕，因為專案網站部署在 `/AnswerMe/` 之下。CSS 的 `url()` / `@import` 掃描只涵蓋 HTML 內嵌的 `<style>` 與 `style` 屬性，網站頁面是單檔，不含獨立 CSS。一般 `<a href>` 的外部網址不受限；這只是靜態掃描，不執行頁面，也不驗證內容語意。
 
 ## 提交檢查
 
@@ -77,7 +77,7 @@ node tests/answer-me/browser/verify.mjs
 node tests/answer-me/browser/verify-site.mjs [siteRoot] [artifactDir]
 ```
 
-檢查以 `file://` 與離線模式開啟 `site/` 下每個 `.html`（找不到任何頁面視為失敗），斷言沒有執行期例外、桌面（1200 px）與手機（390 px）寬度皆無水平溢出。範例頁不得有任何 http(s) 請求，介紹頁 `site/index.html` 只允許 `fonts.googleapis.com` 與 `fonts.gstatic.com`；載入後會先等 2 秒，讓延遲發出的請求被記錄，若有互動則在互動後再等 2 秒。自動操作的控制項只有 `input[type=range]`、`input[type=number]` 與 `select`：頁面若有，會把第一個控制項改成另一個合法值，並在最多 2 秒內輪詢頁面文字是否改變；按鈕驅動的互動（例如簡報換頁）仍須人工檢查。
+檢查以 `file://` 與離線模式開啟 `site/` 下每個 `.html`（找不到任何頁面視為失敗），斷言沒有執行期例外、桌面（1200 px）與手機（390 px）寬度皆無水平溢出。所有頁面都不得有任何 http(s) 請求；載入後會先等 2 秒，讓延遲發出的請求被記錄，若有互動則在互動後再等 2 秒。自動操作的控制項只有 `input[type=range]`、`input[type=number]` 與 `select`：頁面若有，會把第一個控制項改成另一個合法值，並在最多 2 秒內輪詢頁面文字是否改變；按鈕驅動的互動（例如簡報換頁）仍須人工檢查。
 
 單頁的例外（載入失敗、CDP 逾時、Chrome 30 秒內未啟動等）記為該頁的失敗，不會中斷其餘頁面；所有頁面的失敗都收集到 `results.json`，任一失敗則以非零狀態結束。截圖與 `results.json` 寫入新的暫存目錄並印出路徑，不寫入 repository。與其他瀏覽器檢查相同，需要 Node.js 22+ 與 Chrome 或 Chromium（可用 `CHROME_BIN` 指定），不接 pre-commit。它不驗證內容語意。檢查程式本身的測試：
 
