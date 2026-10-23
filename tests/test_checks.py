@@ -96,9 +96,7 @@ class CheckTests(unittest.TestCase):
         self.check("--staged")
 
     def write_site(self):
-        self.write("site/index.html", '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-                   '<link href="https://fonts.googleapis.com/css2?family=Lora" rel="stylesheet">\n'
-                   '<a href="examples/one.html">One</a>\n')
+        self.write("site/index.html", '<a href="examples/one.html">One</a>\n')
         self.write("site/examples/one.html", '<a href="../index.html#top">Home</a>\n'
                    '<a href="https://github.com/carl/AnswerMe">Repo</a>\n')
 
@@ -137,15 +135,17 @@ class CheckTests(unittest.TestCase):
         self.write("site/examples/a.png", "x")
         self.check()
 
-    def test_site_landing_allows_only_google_fonts(self):
+    def test_site_landing_loads_no_external_resources(self):
         self.write_site()
         self.check()
         self.write("site/index.html", '<link href="https://fonts.gstatic.com/s/x.woff2" rel="stylesheet">\n'
                    '<style>@import url(https://fonts.googleapis.com/css2?family=Lora);</style>\n'
                    '<script src="https://cdn.example.com/x.js"></script>\n')
         result = self.check(valid=False)
+        self.assertIn("site/index.html:1: loads external resource https://fonts.gstatic.com/s/x.woff2", result.stderr)
+        self.assertIn("site/index.html:2: loads external resource https://fonts.googleapis.com/css2?family=Lora", result.stderr)
         self.assertIn("site/index.html:3: loads external resource https://cdn.example.com/x.js", result.stderr)
-        self.assertEqual(result.stderr.count("loads external resource"), 1)
+        self.assertEqual(result.stderr.count("loads external resource"), 3)
         self.write("site/index.html", '<style>body { background: url(//cdn.example.com/a.png) }</style>\n')
         self.assertIn("site/index.html:1: loads external resource", self.check(valid=False).stderr)
 
@@ -202,11 +202,6 @@ class CheckTests(unittest.TestCase):
         self.check()
         self.write("site/examples/one.html", '<a href="file://localhost/etc/x">a</a>\n')
         self.assertIn("local path", self.check(valid=False).stderr)
-
-    def test_site_landing_fonts_only_on_link_tags(self):
-        self.write_site()
-        self.write("site/index.html", '<script src="https://fonts.googleapis.com/x.js"></script>\n')
-        self.assertIn("site/index.html:1: loads external resource", self.check(valid=False).stderr)
 
     def test_site_example_srcset_and_poster_fail(self):
         self.write_site()

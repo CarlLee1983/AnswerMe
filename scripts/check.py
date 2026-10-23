@@ -16,7 +16,6 @@ RESOURCE_ATTRIBUTES = frozenset({
     ("source", "src"), ("source", "srcset"), ("video", "src"), ("video", "poster"),
     ("audio", "src"), ("embed", "src"), ("object", "data"),
 })
-LANDING_HOSTS = frozenset({"fonts.googleapis.com", "fonts.gstatic.com"})
 EXAMPLE_VERSION_MARKER = re.compile(r"由 answer-me (v\d+\.\d+\.\d+) 產生")
 TECHNIQUE_FOLDER = "skills/answer-me/"
 USER_DOCS = frozenset({"README.md", "site/index.html"})
@@ -96,10 +95,6 @@ def is_external(value):
     return re.match(r"\s*(https?:)?//", value, re.I) is not None
 
 
-def is_forbidden(value, allowed_hosts):
-    return is_external(value) and urlsplit(value.strip()).hostname not in allowed_hosts
-
-
 def css_urls(text):
     return [(text.count("\n", 0, m.start()), m.group(1) or m.group(2)) for m in CSS_EXTERNAL.finditer(text)]
 
@@ -166,21 +161,18 @@ def check_site(root):
             continue
         parser = SiteParser()
         parser.feed(text)
-        landing = path == site / "index.html"
-        css_hosts = LANDING_HOSTS if landing else frozenset()
         errors.extend(
             f"{name}:{number}: loads external resource {url}"
-            for number, url in parser.css if is_forbidden(url, css_hosts)
+            for number, url in parser.css if is_external(url)
         )
         for number, tag, attribute, value in parser.attributes:
-            hosts = LANDING_HOSTS if landing and tag == "link" else frozenset()
             if (tag, attribute) not in RESOURCE_ATTRIBUTES:
                 urls = []
             elif attribute == "srcset":
                 urls = srcset_urls(value)
             else:
                 urls = [value]
-            errors.extend(f"{name}:{number}: loads external resource {url}" for url in urls if is_forbidden(url, hosts))
+            errors.extend(f"{name}:{number}: loads external resource {url}" for url in urls if is_external(url))
             if attribute in ("href", "src"):
                 reason = site_link_error(site, path, value)
                 if reason:

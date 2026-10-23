@@ -8,7 +8,6 @@ const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 const siteRoot = resolve(process.argv[2] ?? join(repo, 'site'));
 const outputRoot = resolve(process.argv[3] ?? await mkdtemp(join(tmpdir(), 'answer-me-site-')));
 await mkdir(outputRoot, { recursive: true });
-const landingHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
 const controlSelector = 'input[type=range], input[type=number], select';
 // 在頁面內把第一個控制項改成另一個合法值並送出 input/change；沒有可改的值時回傳 reason。
 const changeControl = `(() => {
@@ -82,7 +81,7 @@ async function checkPage(path) {
     if (row.scrollWidth > viewports[mode]) failures.push(`${mode} overflow: scrollWidth ${row.scrollWidth} > ${viewports[mode]}`);
   }
   for (const url of outcome.remoteRequests) {
-    if (kind === 'example' || !landingHosts.has(new URL(url).hostname)) failures.push(`remote request: ${url}`);
+    failures.push(`remote request: ${url}`);
   }
   for (const error of outcome.runtimeErrors) failures.push(`runtime error: ${error.exception?.description ?? error.text}`);
   if (outcome.interaction?.changed === false) {
