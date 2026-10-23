@@ -1,7 +1,7 @@
 diff --git a/service.py b/service.py
 --- a/service.py
 +++ b/service.py
-@@ -17,8 +17,11 @@ class TicketService:
+@@ -18,6 +18,8 @@ class TicketService:
      def get_ticket(self, ticket_id):
          if ticket_id in self.cache:
              return self.cache[ticket_id]
