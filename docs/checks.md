@@ -85,6 +85,12 @@ node tests/answer-me/browser/verify-site.mjs [siteRoot] [artifactDir]
 node --test tests/answer-me/browser/verify-site.test.mjs
 ```
 
+技能附的 `skills/answer-me/scripts/ua_graph.py`（讀取既有 Understand Anything 圖的可選腳本）改動時，執行它的測試；測試在暫存 Git repository 中建立圖，涵蓋缺檔、格式錯誤與惡意欄位、版本不相容、fresh／dirty／stale／unknown、子目錄根目錄、輸出截斷與跳脫，以及執行後 `.git/index` 不被改寫：
+
+```sh
+python3 -m unittest tests/test_ua_graph.py
+```
+
 檢查器或 hook 改動時，執行：
 
 ```sh

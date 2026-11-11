@@ -56,7 +56,7 @@ npx skills@latest update answer-me -g
 
 ### 手動安裝
 
-也可從 [GitHub Releases](https://github.com/CarlLee1983/AnswerMe/releases) 下載原始碼，將 `skills/answer-me/` 整個資料夾放入所用 agent 的技能目錄。保留 `SKILL.md`、`agents/`、`references/` 與 `assets/`，讓樣式指引與 HTML 模板一併可用。手動安裝的副本需自行更新；替換前保留自己的客製修改。
+也可從 [GitHub Releases](https://github.com/CarlLee1983/AnswerMe/releases) 下載原始碼，將 `skills/answer-me/` 整個資料夾放入所用 agent 的技能目錄。保留 `SKILL.md`、`agents/`、`references/`、`assets/` 與 `scripts/`，讓樣式指引、HTML 模板與可選的圖查詢腳本一併可用。手動安裝的副本需自行更新；替換前保留自己的客製修改。
 
 ## 適合的問題
 
@@ -105,6 +105,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 
 審視改動元件與呼叫路徑的變更時，可用一張前後差異圖標出新增、移除與修改的部分，只畫變更處及相鄰一層。依據程式畫的圖，每個節點與連線都附檔案與行號，推論而未直接看到的部分以虛線區分。一張圖以約 9 個節點、12 條連線為上限，超過就拆圖。這三點借鑑 [Aryanutkarsh/SeeCode 的 architecture-delta、repo-evidence 與圖的規模預算](https://github.com/Aryanutkarsh/SeeCode/tree/82c33b68be60578aeb21f429de5662a7d892a99f/skills/seecode/references)；本專案未引入其 CLI 與渲染腳本。
 
+跨越多個檔案的流程、架構或 diff 影響，會從問題定出起點與終點，只沿連接兩者的路徑逐跳追蹤，每一跳附檔案行號；結構關係、執行流程、業務流程與依命名推論的關係分開標示，多模組時依「入口 → 核心邏輯 → 資料存取 → 外部依賴 → 例外處理」排序。變更影響分成已確認的變更、靜態關係支持的潛在影響，以及需要執行才能確認的影響。單一函式的問題不會展開跨檔追蹤。專案已有 [Understand Anything](https://github.com/Egonex-AI/Understand-Anything/tree/532a2e97dc007104f9a1b8d11b6cc16ae7c8cd3a) 產生的 `.ua/knowledge-graph.json` 時，可用技能附的唯讀腳本檢查格式與是否過時，再把圖當成找起點的線索；圖中的呼叫關係一律回原始碼確認。這些做法借鑑該專案的 Guided Tour、diff impact 與 staleness 判斷；未引入其 tree-sitter 解析、多代理分析管線、MCP server 與 dashboard，也不會安裝或執行它。規則見[跨檔追蹤與變更影響](skills/answer-me/references/code-tracing.md)。
+
 ## 技能內容
 
 技能位於 [`skills/answer-me/`](skills/answer-me/SKILL.md)，包含：
@@ -112,6 +114,8 @@ HTML 完成驗證後，會在可用的本機桌面環境自動開啟供閱讀；
 - [`SKILL.md`](skills/answer-me/SKILL.md)：理解目標、形式選擇、來源核對與交付驗證規則。
 - [`agents/openai.yaml`](skills/answer-me/agents/openai.yaml)：技能的顯示名稱與簡介。
 - [`references/html-style.md`](skills/answer-me/references/html-style.md)：HTML 預設樣式、版型選擇與調整方式。
+- [`references/code-tracing.md`](skills/answer-me/references/code-tracing.md)：跨檔追蹤、四種關係、導覽順序與變更影響的分層。
+- [`scripts/ua_graph.py`](skills/answer-me/scripts/ua_graph.py)：可選的唯讀腳本，只用 Python 標準庫，檢查既有 Understand Anything 圖的格式與新舊並查詢節點。
 - [`assets/article.html`](skills/answer-me/assets/article.html)、[`assets/slides.html`](skills/answer-me/assets/slides.html)：可獨立開啟的文章式與簡報式起始模板。
 
 `show-me`、`archify`、`visualize`、`anatomy` 是環境中可選的製作能力，並非必要依賴。互動 HTML 使用內嵌資源，閱讀與操作不依賴 CDN、套件安裝、本機伺服器或執行期網路請求。
