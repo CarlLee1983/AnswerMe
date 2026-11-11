@@ -1,0 +1,8 @@
+test_declined_payment_releases_stock (tests.test_orders.OrderServiceTest.test_declined_payment_releases_stock) ... ok
+test_place_order_charges_total (tests.test_orders.OrderServiceTest.test_place_order_charges_total) ... ok
+test_total_includes_tax (tests.test_pricing.PricingTest.test_total_includes_tax) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+OK

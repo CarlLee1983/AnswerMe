@@ -1,0 +1,830 @@
+{
+ "version": "1.0.0",
+ "project": {
+  "name": "shop",
+  "languages": [
+   "python"
+  ],
+  "frameworks": [],
+  "description": "Teaching order service.",
+  "analyzedAt": "2026-11-01T09:00:00.000Z",
+  "gitCommitHash": "SET_BY_SETUP"
+ },
+ "nodes": [
+  {
+   "id": "file:shop/admin.py",
+   "type": "file",
+   "name": "admin.py",
+   "filePath": "shop/admin.py",
+   "lineRange": [
+    1,
+    2
+   ],
+   "summary": "Module shop/admin.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/admin.py:format_banner",
+   "type": "function",
+   "name": "format_banner",
+   "filePath": "shop/admin.py",
+   "lineRange": [
+    1,
+    2
+   ],
+   "summary": "format_banner in shop/admin.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/errors.py",
+   "type": "file",
+   "name": "errors.py",
+   "filePath": "shop/errors.py",
+   "lineRange": [
+    1,
+    10
+   ],
+   "summary": "Module shop/errors.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/errors.py:ValidationError",
+   "type": "class",
+   "name": "ValidationError",
+   "filePath": "shop/errors.py",
+   "lineRange": [
+    1,
+    2
+   ],
+   "summary": "ValidationError in shop/errors.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/errors.py:OutOfStock",
+   "type": "class",
+   "name": "OutOfStock",
+   "filePath": "shop/errors.py",
+   "lineRange": [
+    5,
+    6
+   ],
+   "summary": "OutOfStock in shop/errors.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/errors.py:PaymentDeclined",
+   "type": "class",
+   "name": "PaymentDeclined",
+   "filePath": "shop/errors.py",
+   "lineRange": [
+    9,
+    10
+   ],
+   "summary": "PaymentDeclined in shop/errors.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/events.py",
+   "type": "file",
+   "name": "events.py",
+   "filePath": "shop/events.py",
+   "lineRange": [
+    1,
+    10
+   ],
+   "summary": "Module shop/events.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/events.py:subscribe",
+   "type": "function",
+   "name": "subscribe",
+   "filePath": "shop/events.py",
+   "lineRange": [
+    4,
+    5
+   ],
+   "summary": "subscribe in shop/events.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/events.py:publish",
+   "type": "function",
+   "name": "publish",
+   "filePath": "shop/events.py",
+   "lineRange": [
+    8,
+    10
+   ],
+   "summary": "publish in shop/events.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/inventory/repo.py",
+   "type": "file",
+   "name": "repo.py",
+   "filePath": "shop/inventory/repo.py",
+   "lineRange": [
+    1,
+    18
+   ],
+   "summary": "Module shop/inventory/repo.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/inventory/repo.py:InventoryRepo",
+   "type": "class",
+   "name": "InventoryRepo",
+   "filePath": "shop/inventory/repo.py",
+   "lineRange": [
+    4,
+    18
+   ],
+   "summary": "InventoryRepo in shop/inventory/repo.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/notifications.py",
+   "type": "file",
+   "name": "notifications.py",
+   "filePath": "shop/notifications.py",
+   "lineRange": [
+    1,
+    5
+   ],
+   "summary": "Module shop/notifications.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/notifications.py:send_receipt",
+   "type": "function",
+   "name": "send_receipt",
+   "filePath": "shop/notifications.py",
+   "lineRange": [
+    4,
+    5
+   ],
+   "summary": "send_receipt in shop/notifications.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/orders/repo.py",
+   "type": "file",
+   "name": "repo.py",
+   "filePath": "shop/orders/repo.py",
+   "lineRange": [
+    1,
+    15
+   ],
+   "summary": "Module shop/orders/repo.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/orders/repo.py:OrderRepo",
+   "type": "class",
+   "name": "OrderRepo",
+   "filePath": "shop/orders/repo.py",
+   "lineRange": [
+    4,
+    15
+   ],
+   "summary": "OrderRepo in shop/orders/repo.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/orders/service.py",
+   "type": "file",
+   "name": "service.py",
+   "filePath": "shop/orders/service.py",
+   "lineRange": [
+    1,
+    24
+   ],
+   "summary": "Module shop/orders/service.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/orders/service.py:OrderService",
+   "type": "class",
+   "name": "OrderService",
+   "filePath": "shop/orders/service.py",
+   "lineRange": [
+    7,
+    24
+   ],
+   "summary": "OrderService in shop/orders/service.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/payments/gateway.py",
+   "type": "file",
+   "name": "gateway.py",
+   "filePath": "shop/payments/gateway.py",
+   "lineRange": [
+    1,
+    13
+   ],
+   "summary": "Module shop/payments/gateway.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:shop/payments/gateway.py:PaymentGateway",
+   "type": "class",
+   "name": "PaymentGateway",
+   "filePath": "shop/payments/gateway.py",
+   "lineRange": [
+    4,
+    13
+   ],
+   "summary": "PaymentGateway in shop/payments/gateway.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/pricing.py",
+   "type": "file",
+   "name": "pricing.py",
+   "filePath": "shop/pricing.py",
+   "lineRange": [
+    1,
+    10
+   ],
+   "summary": "Module shop/pricing.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/pricing.py:compute_total",
+   "type": "function",
+   "name": "compute_total",
+   "filePath": "shop/pricing.py",
+   "lineRange": [
+    6,
+    10
+   ],
+   "summary": "compute_total in shop/pricing.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/reports.py",
+   "type": "file",
+   "name": "reports.py",
+   "filePath": "shop/reports.py",
+   "lineRange": [
+    1,
+    5
+   ],
+   "summary": "Module shop/reports.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/reports.py:monthly_revenue",
+   "type": "function",
+   "name": "monthly_revenue",
+   "filePath": "shop/reports.py",
+   "lineRange": [
+    4,
+    5
+   ],
+   "summary": "monthly_revenue in shop/reports.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/routes.py",
+   "type": "file",
+   "name": "routes.py",
+   "filePath": "shop/routes.py",
+   "lineRange": [
+    1,
+    23
+   ],
+   "summary": "Module shop/routes.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/routes.py:post_order",
+   "type": "function",
+   "name": "post_order",
+   "filePath": "shop/routes.py",
+   "lineRange": [
+    5,
+    15
+   ],
+   "summary": "post_order in shop/routes.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/routes.py:get_order",
+   "type": "function",
+   "name": "get_order",
+   "filePath": "shop/routes.py",
+   "lineRange": [
+    18,
+    23
+   ],
+   "summary": "get_order in shop/routes.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/validation.py",
+   "type": "file",
+   "name": "validation.py",
+   "filePath": "shop/validation.py",
+   "lineRange": [
+    1,
+    12
+   ],
+   "summary": "Module shop/validation.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/validation.py:validate_items",
+   "type": "function",
+   "name": "validate_items",
+   "filePath": "shop/validation.py",
+   "lineRange": [
+    5,
+    12
+   ],
+   "summary": "validate_items in shop/validation.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:shop/wiring.py",
+   "type": "file",
+   "name": "wiring.py",
+   "filePath": "shop/wiring.py",
+   "lineRange": [
+    1,
+    14
+   ],
+   "summary": "Module shop/wiring.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:shop/wiring.py:build_order_service",
+   "type": "function",
+   "name": "build_order_service",
+   "filePath": "shop/wiring.py",
+   "lineRange": [
+    8,
+    14
+   ],
+   "summary": "build_order_service in shop/wiring.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_orders.py",
+   "type": "file",
+   "name": "test_orders.py",
+   "filePath": "tests/test_orders.py",
+   "lineRange": [
+    1,
+    34
+   ],
+   "summary": "Module tests/test_orders.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:tests/test_orders.py:FakePayments",
+   "type": "class",
+   "name": "FakePayments",
+   "filePath": "tests/test_orders.py",
+   "lineRange": [
+    9,
+    18
+   ],
+   "summary": "FakePayments in tests/test_orders.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:tests/test_orders.py:OrderServiceTest",
+   "type": "class",
+   "name": "OrderServiceTest",
+   "filePath": "tests/test_orders.py",
+   "lineRange": [
+    21,
+    34
+   ],
+   "summary": "OrderServiceTest in tests/test_orders.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:tests/test_pricing.py",
+   "type": "file",
+   "name": "test_pricing.py",
+   "filePath": "tests/test_pricing.py",
+   "lineRange": [
+    1,
+    8
+   ],
+   "summary": "Module tests/test_pricing.py.",
+   "tags": [],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:tests/test_pricing.py:PricingTest",
+   "type": "class",
+   "name": "PricingTest",
+   "filePath": "tests/test_pricing.py",
+   "lineRange": [
+    6,
+    8
+   ],
+   "summary": "PricingTest in tests/test_pricing.py.",
+   "tags": [],
+   "complexity": "simple"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:shop/admin.py",
+   "target": "function:shop/admin.py:format_banner",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/errors.py",
+   "target": "class:shop/errors.py:ValidationError",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/errors.py",
+   "target": "class:shop/errors.py:OutOfStock",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/errors.py",
+   "target": "class:shop/errors.py:PaymentDeclined",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/events.py",
+   "target": "function:shop/events.py:subscribe",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/events.py",
+   "target": "function:shop/events.py:publish",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/inventory/repo.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/inventory/repo.py",
+   "target": "class:shop/inventory/repo.py:InventoryRepo",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/notifications.py",
+   "target": "function:shop/notifications.py:send_receipt",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/orders/repo.py",
+   "target": "class:shop/orders/repo.py:OrderRepo",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/orders/service.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/orders/service.py",
+   "target": "file:shop/pricing.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/orders/service.py",
+   "target": "file:shop/validation.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/orders/service.py",
+   "target": "class:shop/orders/service.py:OrderService",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/payments/gateway.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/payments/gateway.py",
+   "target": "class:shop/payments/gateway.py:PaymentGateway",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/pricing.py",
+   "target": "function:shop/pricing.py:compute_total",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/reports.py",
+   "target": "file:shop/pricing.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/reports.py",
+   "target": "function:shop/reports.py:monthly_revenue",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/routes.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/routes.py",
+   "target": "file:shop/wiring.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/routes.py",
+   "target": "function:shop/routes.py:post_order",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/routes.py",
+   "target": "function:shop/routes.py:get_order",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/validation.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/validation.py",
+   "target": "file:shop/pricing.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/validation.py",
+   "target": "function:shop/validation.py:validate_items",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:shop/wiring.py",
+   "target": "file:shop/inventory/repo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/wiring.py",
+   "target": "file:shop/orders/repo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/wiring.py",
+   "target": "file:shop/orders/service.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/wiring.py",
+   "target": "file:shop/payments/gateway.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:shop/wiring.py",
+   "target": "function:shop/wiring.py:build_order_service",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "file:shop/errors.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "file:shop/inventory/repo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "file:shop/orders/repo.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "file:shop/orders/service.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "class:tests/test_orders.py:FakePayments",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:tests/test_orders.py",
+   "target": "class:tests/test_orders.py:OrderServiceTest",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "file:tests/test_pricing.py",
+   "target": "file:shop/pricing.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:tests/test_pricing.py",
+   "target": "class:tests/test_pricing.py:PricingTest",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1.0
+  },
+  {
+   "source": "function:shop/routes.py:post_order",
+   "target": "function:shop/wiring.py:build_order_service",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:shop/routes.py:post_order",
+   "target": "class:shop/orders/service.py:OrderService",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8,
+   "description": "Calls OrderService.place_order."
+  },
+  {
+   "source": "class:shop/orders/service.py:OrderService",
+   "target": "function:shop/validation.py:validate_items",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:shop/orders/service.py:OrderService",
+   "target": "function:shop/pricing.py:compute_total",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:shop/orders/service.py:OrderService",
+   "target": "class:shop/inventory/repo.py:InventoryRepo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:shop/orders/service.py:OrderService",
+   "target": "class:shop/payments/gateway.py:PaymentGateway",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:shop/orders/service.py:OrderService",
+   "target": "class:shop/orders/repo.py:OrderRepo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:shop/reports.py:monthly_revenue",
+   "target": "function:shop/pricing.py:compute_total",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:shop/routes.py:post_order",
+   "target": "function:shop/notifications.py:send_receipt",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8,
+   "description": "Sends the receipt after the order is placed."
+  }
+ ],
+ "layers": [
+  {
+   "id": "layer:api",
+   "name": "API",
+   "description": "HTTP handlers",
+   "nodeIds": [
+    "file:shop/routes.py"
+   ]
+  }
+ ],
+ "tour": [
+  {
+   "order": 1,
+   "title": "Start at routes",
+   "description": "post_order is the entry.",
+   "nodeIds": [
+    "function:shop/routes.py:post_order"
+   ]
+  }
+ ]
+}

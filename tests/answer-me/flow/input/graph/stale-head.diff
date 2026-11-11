@@ -1,0 +1,14 @@
+diff --git a/shop/reports.py b/shop/analytics.py
+similarity index 81%
+rename from shop/reports.py
+rename to shop/analytics.py
+index 1ff658e..1811701 100644
+--- a/shop/reports.py
++++ b/shop/analytics.py
+@@ -1,5 +1,5 @@
+ from shop.pricing import compute_total
+ 
+ 
+-def monthly_revenue(orders):
++def revenue_for(orders):
+     return sum(compute_total(order["items"], order.get("coupon")) for order in orders)
