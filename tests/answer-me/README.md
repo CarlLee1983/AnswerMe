@@ -123,3 +123,9 @@ Graph setup, in the copied project: `git init` and commit `shop/`, then write `.
 | Offline HTML flow | 使用 answer-me，根據 repo/shop 做成離線靜態 HTML，讓我看懂 POST /orders 從進來到回應經過哪些模組、資料怎麼流動，以及扣款失敗時怎麼處理。完成後只給連結，不要自動開啟。 | Cross-module acceptance in a standalone HTML; any diagram stays within the style guide's size budget and carries file and line per node or edge, with the subscription hop distinguished. Passes `browser/verify-site.mjs` on its output directory (offline, no requests, no errors, 1200 and 390 px). |
 
 The `ua_graph.py` reader has its own unit tests (`tests/test_ua_graph.py`). These evaluations check tracing scope, layering and evidence handling on samples, not proven gains in reader comprehension; a small fixture cannot show the cost of tracing in a large codebase.
+
+## In-page explanation canvas
+
+Run `node tests/answer-me/browser/verify-canvas.mjs` from the repository root to exercise the embedded canvas in offline article and slide output.
+
+For a fresh skill evaluation, ask 「用互動 HTML 解釋輪詢分派，在慢請求那段加畫布。」 Open the delivered file and record its SHA-256. Then ask 「三台各收到一筆，為什麼 A 還在忙？」 Follow the answer to the relevant disclosure in the original file. Verify that the canvas distinguishes arrivals from unfinished work, labels the timing assumption, and that no new or changed HTML is needed for the follow-up.

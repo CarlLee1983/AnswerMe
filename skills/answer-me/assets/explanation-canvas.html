@@ -1,0 +1,285 @@
+<!-- 整段貼在要補充的步驟旁。替換主題、步驟與來源。圖中的同一個對象在各步驟沿用同名標籤。 -->
+<details data-answerme-canvas>
+  <summary>看不懂這一步</summary>
+  <div data-canvas-body>
+    <p data-canvas-topic>伺服器現在還在處理哪些請求？</p>
+    <output data-canvas-caption hidden></output>
+    <canvas aria-hidden="true" hidden></canvas>
+    <div data-canvas-controls hidden>
+      <button type="button" data-canvas-prev disabled>上一步</button>
+      <button type="button" data-canvas-next>下一步</button>
+    </div>
+    <ol data-canvas-frames>
+      <li>
+        <strong>三台各收到一筆</strong>
+        <p>A、B、C 各收到一筆請求，此刻三筆都還在處理。</p>
+        <dl>
+          <dt>伺服器 A</dt><dd>處理中</dd>
+          <dt>伺服器 B</dt><dd>處理中</dd>
+          <dt>伺服器 C</dt><dd>處理中</dd>
+        </dl>
+      </li>
+      <li>
+        <strong>只剩 A 還在處理</strong>
+        <p>B、C 已完成，A 還在處理。處理中的請求從三筆變成一筆，每台累計收到的請求仍是一筆。</p>
+        <dl>
+          <dt>伺服器 A</dt><dd>處理中</dd>
+          <dt>伺服器 B</dt><dd>已完成</dd>
+          <dt>伺服器 C</dt><dd>已完成</dd>
+        </dl>
+      </li>
+    </ol>
+    <p data-canvas-sources><strong>來源與假設</strong>　自造教學示例。每台各收到一筆，兩次觀察之間沒有新請求。</p>
+  </div>
+  <style>
+    [data-answerme-canvas] {
+      --canvas-ink: #302b26;
+      --canvas-muted: #6b6259;
+      --canvas-accent: #86412b;
+      --canvas-line: #ded6cb;
+      --canvas-font: system-ui, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      box-sizing: border-box;
+      min-inline-size: 0;
+      max-inline-size: 44rem;
+      margin-block: 1rem;
+      border: 1px solid var(--canvas-line);
+      border-radius: .75rem;
+      background: #fcfaf6;
+      color: var(--canvas-ink);
+      font: 1rem/1.5 var(--canvas-font);
+      overflow-wrap: anywhere;
+    }
+    [data-answerme-canvas] > summary { padding: .65rem .875rem; cursor: pointer; font-weight: 650; }
+    [data-answerme-canvas] > [data-canvas-body] { padding: 0 .875rem .875rem; }
+    [data-answerme-canvas] > [data-canvas-body] p { margin: 0 0 .5rem; }
+    [data-answerme-canvas] > [data-canvas-body] [data-canvas-topic] { font-weight: 650; }
+    [data-answerme-canvas] > [data-canvas-body] [data-canvas-sources] {
+      margin: .65rem 0 0;
+      color: var(--canvas-muted);
+      font-size: .9em;
+    }
+    [data-answerme-canvas] > [data-canvas-body] [data-canvas-caption]:not([hidden]) {
+      display: block;
+      margin-bottom: .5rem;
+      color: var(--canvas-accent);
+      font-weight: 650;
+    }
+    [data-answerme-canvas] > [data-canvas-body] canvas:not([hidden]) { display: block; inline-size: 100%; }
+    [data-answerme-canvas] > [data-canvas-body] [data-canvas-controls]:not([hidden]) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-block: .625rem;
+    }
+    [data-answerme-canvas] > [data-canvas-body] button {
+      min-block-size: 44px;
+      padding: .375rem .75rem;
+      border: 1px solid currentColor;
+      border-radius: .5rem;
+      background: transparent;
+      color: var(--canvas-accent);
+      font: inherit;
+      cursor: pointer;
+    }
+    [data-answerme-canvas] > [data-canvas-body] button:disabled {
+      border-color: var(--canvas-line);
+      color: var(--canvas-muted);
+      cursor: default;
+    }
+    [data-answerme-canvas] > summary:focus-visible,
+    [data-answerme-canvas] > [data-canvas-body] button:focus-visible {
+      outline: 2px solid var(--canvas-accent);
+      outline-offset: 2px;
+    }
+    [data-answerme-canvas] > [data-canvas-body] > ol > li > dl {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: .125rem .75rem;
+      margin: .25rem 0 .75rem;
+    }
+    [data-answerme-canvas] > [data-canvas-body] > ol > li > dl > dd { margin: 0; }
+    [data-answerme-canvas][data-canvas-ready] > [data-canvas-body] [data-canvas-frames] {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    [data-answerme-canvas][data-canvas-ready] > [data-canvas-body] > ol > li > strong { display: none; }
+    [data-answerme-canvas][data-canvas-drawn] > [data-canvas-body] > ol > li > dl {
+      position: absolute;
+      clip-path: inset(50%);
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+  <script>
+    (() => {
+      const root = document.currentScript.parentElement;
+      const body = root.querySelector(':scope > [data-canvas-body]');
+      const canvas = body.querySelector('canvas');
+      const caption = body.querySelector('[data-canvas-caption]');
+      const controls = body.querySelector('[data-canvas-controls]');
+      const previous = controls.querySelector('[data-canvas-prev]');
+      const next = controls.querySelector('[data-canvas-next]');
+      const frames = [...body.querySelectorAll(':scope > [data-canvas-frames] > li')];
+      const snapshots = frames.map(frame => {
+        const title = frame.querySelector(':scope > strong')?.textContent.trim();
+        const entries = [...frame.querySelectorAll(':scope > dl > *')];
+        if (!title || !entries.length || entries.length % 2) return null;
+        const states = new Map();
+        for (let position = 0; position < entries.length; position += 2) {
+          const term = entries[position];
+          const description = entries[position + 1];
+          const label = term.textContent.trim();
+          const value = description.textContent.trim();
+          if (!term.matches('dt') || !description.matches('dd') || !label || !value || states.has(label)) return null;
+          states.set(label, value);
+        }
+        return { title, states };
+      });
+
+      // Let keys retain their native actions inside the disclosure without navigating the host slide.
+      root.addEventListener('keydown', event => {
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) event.stopPropagation();
+      });
+
+      if (snapshots.length < 2 || snapshots.some(snapshot => !snapshot)) return;
+      let context;
+      try {
+        context = canvas.getContext('2d');
+      } catch {
+        return;
+      }
+      if (!context) return;
+      let index = 0;
+      let observedWidth;
+
+      function wrap(text, width) {
+        const lines = [];
+        let line = '';
+        for (const word of text.split(/\s+/u)) {
+          const nextLine = line ? `${line} ${word}` : word;
+          if (context.measureText(nextLine).width <= width) {
+            line = nextLine;
+            continue;
+          }
+          if (line) lines.push(line);
+          line = '';
+          // A technical token can be wider than a row even with no spaces.
+          for (const character of word) {
+            if (line && context.measureText(line + character).width > width) {
+              lines.push(line);
+              line = '';
+            }
+            line += character;
+          }
+        }
+        if (line) lines.push(line);
+        return lines;
+      }
+
+      function draw(width) {
+        if (width < 48 || context.isContextLost?.()) return false;
+        const current = snapshots[index].states;
+        const earlier = snapshots[index - 1]?.states;
+        const font = `600 15px ${getComputedStyle(root).getPropertyValue('--canvas-font')}`;
+        const lineHeight = 20;
+        const padding = 10;
+        const gap = 5;
+        const scale = Math.min(window.devicePixelRatio || 1, 2);
+        let height = 0;
+        const rows = [];
+        context.font = font;
+        for (const [label, value] of current) {
+          const before = earlier?.get(label);
+          const changed = before !== undefined && before !== value;
+          const transition = changed ? `${before} → ${value}` : value;
+          if (label.length + transition.length > 512) return false;
+          const stacked = context.measureText(label).width + context.measureText(transition).width + 32 > width;
+          const row = {
+            changed,
+            stacked,
+            labelLines: stacked ? wrap(label, width - 2 * padding) : [label],
+            valueLines: stacked ? wrap(transition, width - 2 * padding) : [transition],
+            y: height
+          };
+          row.height = stacked ? 2 * padding + lineHeight * (row.labelLines.length + row.valueLines.length) : 36;
+          height += row.height + gap;
+          if (height * scale > 4096 || width * scale > 4096) return false;
+          rows.push(row);
+        }
+        height -= gap;
+        canvas.width = Math.ceil(width * scale);
+        canvas.height = Math.ceil(height * scale);
+        canvas.style.blockSize = `${height}px`;
+        context.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
+        context.font = font;
+        context.textBaseline = 'middle';
+
+        for (const row of rows) {
+          context.beginPath();
+          context.roundRect(.5, row.y + .5, width - 1, row.height - 1, 8);
+          context.fillStyle = row.changed ? '#f7e3d8' : '#f1ede5';
+          context.fill();
+          context.strokeStyle = row.changed ? '#b36a51' : '#ded6cb';
+          context.stroke();
+
+          const firstLine = row.y + (row.stacked ? padding + lineHeight / 2 : row.height / 2);
+          context.fillStyle = '#302b26';
+          context.textAlign = 'left';
+          row.labelLines.forEach((line, index) => context.fillText(line, padding, firstLine + index * lineHeight));
+          context.fillStyle = row.changed ? '#86412b' : '#302b26';
+          context.textAlign = row.stacked ? 'left' : 'right';
+          const valueX = row.stacked ? padding : width - padding;
+          const valueY = firstLine + (row.stacked ? row.labelLines.length * lineHeight : 0);
+          row.valueLines.forEach((line, index) => context.fillText(line, valueX, valueY + index * lineHeight));
+        }
+        return true;
+      }
+
+      function showDiagram(drawn) {
+        root.toggleAttribute('data-canvas-drawn', drawn);
+        canvas.hidden = !drawn;
+      }
+
+      function render() {
+        if (!root.open || !body.getClientRects().length) return;
+        const { paddingLeft, paddingRight } = getComputedStyle(body);
+        const width = body.clientWidth - parseFloat(paddingLeft) - parseFloat(paddingRight);
+        let drawn = false;
+        try {
+          drawn = draw(width);
+        } catch {
+          // The authored state remains readable and traversable after a drawing failure.
+        }
+        showDiagram(drawn);
+
+        const step = `第 ${index + 1} 步／共 ${frames.length} 步 · ${snapshots[index].title}`;
+        if (caption.value !== step) caption.value = step;
+        root.setAttribute('data-canvas-ready', '');
+        caption.hidden = controls.hidden = false;
+        frames.forEach((frame, position) => { frame.hidden = position !== index; });
+
+        const focused = document.activeElement;
+        previous.disabled = index === 0;
+        next.disabled = index === frames.length - 1;
+        if (focused === previous && previous.disabled) next.focus();
+        if (focused === next && next.disabled) previous.focus();
+      }
+
+      previous.addEventListener('click', () => { index -= 1; render(); });
+      next.addEventListener('click', () => { index += 1; render(); });
+      root.addEventListener('toggle', render);
+      canvas.addEventListener('contextlost', () => showDiagram(false));
+      canvas.addEventListener('contextrestored', render);
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(([entry]) => {
+          if (entry.contentRect.width === observedWidth) return;
+          observedWidth = entry.contentRect.width;
+          render();
+        }).observe(body);
+      }
+      render();
+    })();
+  </script>
+</details>
