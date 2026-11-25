@@ -58,6 +58,8 @@ npx skills@latest update answer-me -g
 
 也可從 [GitHub Releases](https://github.com/CarlLee1983/AnswerMe/releases) 下載原始碼，將 `skills/answer-me/` 整個資料夾放入所用 agent 的技能目錄。保留 `SKILL.md`、`agents/`、`references/`、`assets/` 與 `scripts/`，讓樣式指引、HTML 模板與可選的圖查詢腳本一併可用。手動安裝的副本需自行更新；替換前保留自己的客製修改。
 
+要一步步學，可以說「用一個例子教我快取」，或在解說中說「這段切成 Teach 模式」。指定在對話中學時，Answer Me 會等你預測後再解釋；指定離線 HTML 時，可以直接在頁內試答。
+
 ## 適合的問題
 
 - **概念學習**：理解陌生概念、文章或程式庫，沿著具體流程看懂它如何運作。
